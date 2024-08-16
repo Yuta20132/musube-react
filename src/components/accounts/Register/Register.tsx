@@ -1,7 +1,7 @@
 //ユーザー登録のページ
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+
 
 // FormDataの型定義
 interface FormData {
@@ -25,7 +25,7 @@ const Register: React.FC = () => {
     });
 
     // useNavigateフックを使用してナビゲーション関数を取得します。
-    const navigate = useNavigate();
+
 
     // フォームの入力値が変更された時に呼び出されるハンドラー。
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -61,8 +61,7 @@ const Register: React.FC = () => {
             // レスポンスメッセージをアラートで表示。
             alert(response.data.message);
 
-            // 登録成功後、成功ページにナビゲート。
-            navigate('/success');
+        
         } catch (error) {
             console.error(error);
             alert('Registration failed');
