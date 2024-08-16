@@ -1,6 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Container, Typography, TextField, Button, Grid } from '@mui/material';
+//import { useNavigate } from "react-router-dom";
 
 
 // レスポンスデータの型を定義します。これはAPIからのレスポンスの形を表します。
@@ -23,7 +24,7 @@ const Login = () => {
     });
 
     // ナビゲーションフックを使用して、後でページ遷移を行うための関数を取得します。
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
 
     // 入力フィールドが変更されたときに呼び出される関数です。入力された値をformData状態にセットします。
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -49,7 +50,7 @@ const Login = () => {
             localStorage.setItem("access_token", response.data.access);
             localStorage.setItem("refresh_token", response.data.refresh);
             // ログイン成功後にリダイレクトします。
-            navigate('/login-success');
+            //navigate('/login-success');
         } catch (error) {
             console.error(error);
             alert("Login failed");
@@ -58,6 +59,7 @@ const Login = () => {
 
     // コンポーネントのUI部分です。フォーム入力フィールドと送信ボタンが含まれます。
     return (
+        /*
         <div>
             <h1>Login</h1>
             <form onSubmit={handleSubmit}>
@@ -66,6 +68,51 @@ const Login = () => {
                 <button type="submit">Login</button>
             </form>
         </div>
+        */
+        <Container component="main" maxWidth="xs">
+            <Typography component="h1" variant="h5">Login</Typography>
+            <form onSubmit={handleSubmit} noValidate>
+                <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                        <TextField
+                            variant="outlined"
+                            required
+                            fullWidth
+                            id="email"
+                            label="Email"
+                            name="email"
+                            autoComplete="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <TextField
+                            variant="outlined"
+                            required
+                            fullWidth
+                            name="password"
+                            label="Password"
+                            type="password"
+                            id="password"
+                            autoComplete="current-password"
+                            value={formData.password}
+                            onChange={handleChange}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                        >
+                            Login
+                        </Button>
+                    </Grid>
+                </Grid>
+            </form>
+        </Container>
     );
 };
 
