@@ -1,7 +1,8 @@
 //ユーザー登録のページ
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
-import { TextField, Button, Grid, Container, Typography } from '@mui/material';
+import { TextField, Button, Grid, Container, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { SelectChangeEvent } from '@mui/material/Select';
 
 // FormDataの型定義
 interface FormData {
@@ -11,6 +12,7 @@ interface FormData {
     lastName: string;
     password: string;
     passwordConfirm: string;
+    memberType: string;
 }
 
 const Register: React.FC = () => {
@@ -22,6 +24,7 @@ const Register: React.FC = () => {
         lastName: '',
         password: '',
         passwordConfirm: '',
+        memberType: '',
     });
 
     // useNavigateフックを使用してナビゲーション関数を取得します。
@@ -32,6 +35,13 @@ const Register: React.FC = () => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
+        });
+    };
+
+    const handleSelectChange = (event: SelectChangeEvent) => {
+        setFormData({
+            ...formData,
+            [event.target.name]: event.target.value
         });
     };
 
@@ -71,20 +81,6 @@ const Register: React.FC = () => {
 
     // JSXを返してUIをレンダリング。
     return (
-        /*
-        <div>
-            <h1>Register</h1>
-            <form onSubmit={handleSubmit}>
-                <input type="text" name="username" placeholder="Username" onChange={handleChange} value={formData.username} required />
-                <input type="email" name="email" placeholder="Email" onChange={handleChange} value={formData.email} required />
-                <input type="text" name="firstName" placeholder="First Name" onChange={handleChange} value={formData.firstName} required />
-                <input type="text" name="lastName" placeholder="Last Name" onChange={handleChange} value={formData.lastName} required />
-                <input type="password" name="password" placeholder="Password" onChange={handleChange} value={formData.password} required />
-                <input type="password" name="passwordConfirm" placeholder="Confirm Password" onChange={handleChange} value={formData.passwordConfirm} required />
-                <button type="submit">Register</button>
-            </form>
-        </div>
-        */
         <Container component="main" maxWidth="xs">
             <Typography component="h1" variant="h5">
                 Register
@@ -143,6 +139,25 @@ const Register: React.FC = () => {
                             onChange={handleChange}
                         />
                     </Grid>
+                    
+                    <Grid item xs={12}>
+                        <FormControl fullWidth>
+                            <InputLabel id="member-type-label">Member Type</InputLabel>
+                            <Select
+                                labelId="member-type-label"
+                                id="memberType"
+                                name="memberType"
+                                value={formData.memberType}
+                                label="Member Type"
+                                onChange={handleSelectChange}
+                            >
+                                <MenuItem value="General">一般</MenuItem>
+                                <MenuItem value="Academic">大学・研究所</MenuItem>
+                                <MenuItem value="Corporate">企業</MenuItem>
+                                <MenuItem value="Medical">医者</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
                     <Grid item xs={12}>
                         <TextField
                             variant="outlined"
@@ -170,6 +185,7 @@ const Register: React.FC = () => {
                             onChange={handleChange}
                         />
                     </Grid>
+                    
                     <Grid item xs={12}>
                         <Button
                             type="submit"
