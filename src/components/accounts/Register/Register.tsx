@@ -1,7 +1,7 @@
 //ユーザー登録のページ
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
-
+import { TextField, Button, Grid, Container, Typography } from '@mui/material';
 
 // FormDataの型定義
 interface FormData {
@@ -42,6 +42,7 @@ const Register: React.FC = () => {
         // デストラクチャリングを使用してformDataから値を取得。
         const { username, email, firstName, lastName, password, passwordConfirm } = formData;
         console.log(formData);
+        
 
         try {
             // axiosを使用してサーバーにPOSTリクエストを送信。
@@ -70,6 +71,7 @@ const Register: React.FC = () => {
 
     // JSXを返してUIをレンダリング。
     return (
+        /*
         <div>
             <h1>Register</h1>
             <form onSubmit={handleSubmit}>
@@ -82,6 +84,105 @@ const Register: React.FC = () => {
                 <button type="submit">Register</button>
             </form>
         </div>
+        */
+        <Container component="main" maxWidth="xs">
+            <Typography component="h1" variant="h5">
+                Register
+            </Typography>
+            <form onSubmit={handleSubmit} noValidate>
+                <Grid container spacing={2}>
+                    <Grid item xs={12}>
+                        <TextField
+                            variant="outlined"
+                            required
+                            fullWidth
+                            id="username"
+                            label="Username"
+                            name="username"
+                            autoComplete="username"
+                            value={formData.username}
+                            onChange={handleChange}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <TextField
+                            variant="outlined"
+                            required
+                            fullWidth
+                            id="email"
+                            label="Email"
+                            name="email"
+                            autoComplete="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <TextField
+                            variant="outlined"
+                            required
+                            fullWidth
+                            id="firstName"
+                            label="First Name"
+                            name="firstName"
+                            autoComplete="fname"
+                            value={formData.firstName}
+                            onChange={handleChange}
+                        />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                        <TextField
+                            variant="outlined"
+                            required
+                            fullWidth
+                            id="lastName"
+                            label="Last Name"
+                            name="lastName"
+                            autoComplete="lname"
+                            value={formData.lastName}
+                            onChange={handleChange}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <TextField
+                            variant="outlined"
+                            required
+                            fullWidth
+                            name="password"
+                            label="Password"
+                            type="password"
+                            id="password"
+                            autoComplete="current-password"
+                            value={formData.password}
+                            onChange={handleChange}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <TextField
+                            variant="outlined"
+                            required
+                            fullWidth
+                            name="passwordConfirm"
+                            label="Confirm Password"
+                            type="password"
+                            id="passwordConfirm"
+                            value={formData.passwordConfirm}
+                            onChange={handleChange}
+                        />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                        >
+                            Register
+                        </Button>
+                    </Grid>
+                </Grid>
+            </form>
+        </Container>
     );
 };
 
