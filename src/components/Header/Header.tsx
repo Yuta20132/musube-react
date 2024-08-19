@@ -8,6 +8,7 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import SideBar from '../SideBar/SideBar';
 
+
 const Header = () => {
     //サイドバーの状態を指定
     const [isSidebarOpen, setSidebarOpen] = useState<boolean>(false);
