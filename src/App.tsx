@@ -1,23 +1,19 @@
 import React from 'react';
 import './App.css';
-//import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 // 追加されたコンポーネントのインポート
 import Header from './components/Header/Header'
-import Register from './components/accounts/Register/Register';
-import Login from './components/accounts/Login/Login';
+
+import Threads from './components/board/threads';
 
 
-
-function App() {
+const App: React.FC = () => {
   return (
-    <div className="App">
+    <div>
       <Header />
-      <Login />
-      
-
+      <Threads />
     </div>
   );
-}
+};
 
 export default App;
