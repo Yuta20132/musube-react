@@ -12,8 +12,16 @@ interface FormData {
     lastName: string;
     password: string;
     passwordConfirm: string;
-    memberType: string;
+    memberType: number;
 }
+
+//メンバータイプとIDをマッピング
+const memberTypeOptions: { [key: string]: number } = {
+    General: 1,
+    Academic: 2,
+    Corporate: 3,
+    Medical: 4,
+};
 
 const Register: React.FC = () => {
     // formDataの初期状態を設定し、useStateで管理します。
@@ -24,10 +32,9 @@ const Register: React.FC = () => {
         lastName: '',
         password: '',
         passwordConfirm: '',
-        memberType: '',
+        memberType: 1,
     });
 
-    // useNavigateフックを使用してナビゲーション関数を取得します。
 
 
     // フォームの入力値が変更された時に呼び出されるハンドラー。
@@ -38,11 +45,14 @@ const Register: React.FC = () => {
         });
     };
 
-    const handleSelectChange = (event: SelectChangeEvent) => {
+    const handleSelectChange = (event: SelectChangeEvent<number>) => {
+        const selectedType = event.target.value;
         setFormData({
             ...formData,
             [event.target.name]: event.target.value
         });
+
+        console.log('Updated formData:', formData);
     };
 
     // フォーム送信時に呼び出される非同期関数。
@@ -50,19 +60,25 @@ const Register: React.FC = () => {
         e.preventDefault();
 
         // デストラクチャリングを使用してformDataから値を取得。
-        const { username, email, firstName, lastName, password, passwordConfirm } = formData;
+        const { username, email, firstName, lastName, password, passwordConfirm, memberType } = formData;
         console.log(formData);
         
+        //パスワードと確認パスワードが一致しているかチェック
+        if (password !== passwordConfirm) {
+            alert('パスワードが一致していません');
+            return;
+        }
 
         try {
             // axiosを使用してサーバーにPOSTリクエストを送信。
+            console.log(formData);
             const response = await axios.post('http://127.0.0.1:8000/api/users/register/', {
                 username,
                 email,
                 first_name: firstName,
                 last_name: lastName,
                 password,
-                password_confirm: passwordConfirm
+                memberType
             }, {
                 headers: {
                     'Content-Type': 'application/json'
@@ -151,10 +167,10 @@ const Register: React.FC = () => {
                                 label="Member Type"
                                 onChange={handleSelectChange}
                             >
-                                <MenuItem value="General">一般</MenuItem>
-                                <MenuItem value="Academic">大学・研究所</MenuItem>
-                                <MenuItem value="Corporate">企業</MenuItem>
-                                <MenuItem value="Medical">医者</MenuItem>
+                                <MenuItem value={1}>一般</MenuItem>
+                                <MenuItem value={2}>大学・研究所</MenuItem>
+                                <MenuItem value={3}>企業</MenuItem>
+                                <MenuItem value={4}>医者</MenuItem>
                             </Select>
                         </FormControl>
                     </Grid>
@@ -192,6 +208,7 @@ const Register: React.FC = () => {
                             fullWidth
                             variant="contained"
                             color="primary"
+                            
                         >
                             Register
                         </Button>
