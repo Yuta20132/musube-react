@@ -17,39 +17,40 @@ const UserProfile: React.FC<UserProfileProps> = ({
     email = 'default@example.com'
 }) => {
     const handleSaveChanges = () => {
-        alert('Profile updated with current data.');
+        alert('プロフィールを更新しました');
     };
 
     return (
         <Container component="main" maxWidth="xs">
-            <Typography component="h1" variant="h5" style={{ marginTop: 20, marginBottom: 20 }}>User Profile</Typography>
+            <Typography component="h1" variant="h5" style={{ marginTop: 20, marginBottom: 20 }}>ユーザープロフィール</Typography>
             <Grid container spacing={2} justifyContent="center">
                 <Grid item xs={12}>
-                    <TextField label="Username" fullWidth value={username} variant="outlined" margin="dense" InputProps={{ readOnly: true }} />
+                    <TextField label="ユーザーネーム" fullWidth value={username} variant="outlined" margin="dense" InputProps={{ readOnly: true }} />
                 </Grid>
                 <Grid item xs={12}>
-                    <TextField label="First Name" fullWidth value={firstName} variant="outlined" margin="dense" InputProps={{ readOnly: true }} />
+                    <TextField label="名字" fullWidth value={lastName} variant="outlined" margin="dense" InputProps={{ readOnly: true }} />
                 </Grid>
                 <Grid item xs={12}>
-                    <TextField label="Last Name" fullWidth value={lastName} variant="outlined" margin="dense" InputProps={{ readOnly: true }} />
+                    <TextField label="名前" fullWidth value={firstName} variant="outlined" margin="dense" InputProps={{ readOnly: true }} />
                 </Grid>
+                
                 <Grid item xs={12}>
                     <FormControl fullWidth variant="outlined" margin="dense">
                         <InputLabel>Member Type</InputLabel>
-                        <Select value={memberType} disabled={true} label="Member Type">
-                            <MenuItem value="General">General</MenuItem>
-                            <MenuItem value="Academic">Academic</MenuItem>
-                            <MenuItem value="Corporate">Corporate</MenuItem>
-                            <MenuItem value="Medical">Medical</MenuItem>
+                        <Select value={memberType} disabled={true} label="所属">
+                            <MenuItem value="General">一般</MenuItem>
+                            <MenuItem value="Academic">大学・研究所</MenuItem>
+                            <MenuItem value="Corporate">企業</MenuItem>
+                            <MenuItem value="Medical">医者</MenuItem>
                         </Select>
                     </FormControl>
                 </Grid>
                 <Grid item xs={12}>
-                    <TextField label="Email" fullWidth value={email} variant="outlined" margin="dense" InputProps={{ readOnly: true }} />
+                    <TextField label="メールアドレス" fullWidth value={email} variant="outlined" margin="dense" InputProps={{ readOnly: true }} />
                 </Grid>
                 <Grid item xs={12}>
                     <Button variant="contained" color="primary" onClick={handleSaveChanges}>
-                        Save Changes
+                        保存
                     </Button>
                 </Grid>
             </Grid>
