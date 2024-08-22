@@ -36,7 +36,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
                 
                 <Grid item xs={12}>
                     <FormControl fullWidth variant="outlined" margin="dense">
-                        <InputLabel>Member Type</InputLabel>
+                        <InputLabel>所属</InputLabel>
                         <Select value={memberType} disabled={true} label="所属">
                             <MenuItem value="General">一般</MenuItem>
                             <MenuItem value="Academic">大学・研究所</MenuItem>
