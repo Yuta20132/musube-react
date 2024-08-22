@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Container, Typography, TextField, Grid, FormControl, InputLabel, Select, MenuItem, Button } from '@mui/material';
-import { SelectChangeEvent } from '@mui/material/Select';
 
-// UserProfileのプロパティをオプショナルにする
 interface UserProfileProps {
     username?: string;
     firstName?: string;
@@ -18,62 +16,27 @@ const UserProfile: React.FC<UserProfileProps> = ({
     memberType = 'General',
     email = 'default@example.com'
 }) => {
-    const [profile, setProfile] = useState<UserProfileProps>({ username, firstName, lastName, memberType, email });
-
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const name = event.target.name as keyof typeof profile;
-        const value = event.target.value;
-        setProfile(prev => ({ ...prev, [name]: value }));
-    };
-
-    const handleSelectChange = (event: SelectChangeEvent<string>) => {
-        const name = event.target.name as keyof typeof profile;
-        const value = event.target.value;
-        setProfile(prev => ({ ...prev, [name]: value }));
+    const handleSaveChanges = () => {
+        alert('Profile updated with current data.');
     };
 
     return (
         <Container component="main" maxWidth="xs">
             <Typography component="h1" variant="h5" style={{ marginTop: 20, marginBottom: 20 }}>User Profile</Typography>
-            <Grid container spacing={3}>
+            <Grid container spacing={2} justifyContent="center">
                 <Grid item xs={12}>
-                    <TextField
-                        label="Username"
-                        fullWidth
-                        value={username}
-                        InputProps={{ readOnly: true }}
-                        variant="outlined"
-                        margin="dense"
-                    />
+                    <TextField label="Username" fullWidth value={username} variant="outlined" margin="dense" InputProps={{ readOnly: true }} />
                 </Grid>
                 <Grid item xs={12}>
-                    <TextField
-                        label="First Name"
-                        fullWidth
-                        value={firstName}
-                        InputProps={{ readOnly: true }}
-                        variant="outlined"
-                        margin="dense"
-                    />
+                    <TextField label="First Name" fullWidth value={firstName} variant="outlined" margin="dense" InputProps={{ readOnly: true }} />
                 </Grid>
                 <Grid item xs={12}>
-                    <TextField
-                        label="Last Name"
-                        fullWidth
-                        value={lastName}
-                        InputProps={{ readOnly: true }}
-                        variant="outlined"
-                        margin="dense"
-                    />
+                    <TextField label="Last Name" fullWidth value={lastName} variant="outlined" margin="dense" InputProps={{ readOnly: true }} />
                 </Grid>
                 <Grid item xs={12}>
                     <FormControl fullWidth variant="outlined" margin="dense">
                         <InputLabel>Member Type</InputLabel>
-                        <Select
-                            value={memberType}
-                            disabled={true}
-                            label="Member Type"
-                        >
+                        <Select value={memberType} disabled={true} label="Member Type">
                             <MenuItem value="General">General</MenuItem>
                             <MenuItem value="Academic">Academic</MenuItem>
                             <MenuItem value="Corporate">Corporate</MenuItem>
@@ -82,14 +45,12 @@ const UserProfile: React.FC<UserProfileProps> = ({
                     </FormControl>
                 </Grid>
                 <Grid item xs={12}>
-                    <TextField
-                        label="Email"
-                        fullWidth
-                        value={email}
-                        InputProps={{ readOnly: true }}
-                        variant="outlined"
-                        margin="dense"
-                    />
+                    <TextField label="Email" fullWidth value={email} variant="outlined" margin="dense" InputProps={{ readOnly: true }} />
+                </Grid>
+                <Grid item xs={12}>
+                    <Button variant="contained" color="primary" onClick={handleSaveChanges}>
+                        Save Changes
+                    </Button>
                 </Grid>
             </Grid>
         </Container>
