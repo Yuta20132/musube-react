@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import axios from "axios";
-import { Container, Typography, TextField, Button, Grid } from '@mui/material';
-//import { useNavigate } from "react-router-dom";
+import {Box,  Container, Typography, TextField, Button, Grid, Link } from '@mui/material';
+import { useNavigate } from "react-router-dom";
 
 
 // レスポンスデータの型を定義します。これはAPIからのレスポンスの形を表します。
@@ -23,8 +23,11 @@ const Login = () => {
         password: ""
     });
 
-    // ナビゲーションフックを使用して、後でページ遷移を行うための関数を取得します。
-    //const navigate = useNavigate();
+    const navigate = useNavigate();
+
+    const handleForgotPassword = () => {
+        navigate("/forgot-password");
+    }
 
     // 入力フィールドが変更されたときに呼び出される関数です。入力された値をformData状態にセットします。
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -59,18 +62,15 @@ const Login = () => {
 
     // コンポーネントのUI部分です。フォーム入力フィールドと送信ボタンが含まれます。
     return (
-        /*
-        <div>
-            <h1>Login</h1>
-            <form onSubmit={handleSubmit}>
-                <input type="email" name="email" placeholder="Email" onChange={handleChange} value={formData.email} required />
-                <input type="password" name="password" placeholder="Password" onChange={handleChange} value={formData.password} required />
-                <button type="submit">Login</button>
-            </form>
-        </div>
-        */
         <Container component="main" maxWidth="xs">
-            <Typography component="h1" variant="h5">Login</Typography>
+            <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                sx={{ mt: 4, mb: 4, mx: 'auto', p: 2 }}           
+            >
+            <Typography component="h1" variant="h5">ログイン</Typography>
+            </Box>
             <form onSubmit={handleSubmit} noValidate>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
@@ -107,11 +107,21 @@ const Login = () => {
                             variant="contained"
                             color="primary"
                         >
-                            Login
+                            ログイン
                         </Button>
+                    </Grid>
+                    <Grid item xs={12} textAlign="center"> 
+                        <Link
+                            component="button"
+                            variant="body2"
+                            onClick={handleForgotPassword}
+                        >
+                            パスワードを忘れた場合はこちら
+                        </Link>
                     </Grid>
                 </Grid>
             </form>
+
         </Container>
     );
 };
