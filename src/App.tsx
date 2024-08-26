@@ -7,6 +7,7 @@ import Register from './components/accounts/Register/Register';
 import TopPage from './components/TopPage/TopPage';
 import Login from './components/accounts/Login/Login';
 import ForgotPassword from './components/accounts/Login/ForgotPassword';
+import Search from './components/Search/Search';
 
 const App: React.FC = () => {
   return (
@@ -18,6 +19,7 @@ const App: React.FC = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/user-search" element={<Search />} />
         </Routes>
       </Router>
     </div>
