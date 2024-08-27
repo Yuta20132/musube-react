@@ -1,8 +1,10 @@
 //ユーザー登録のページ
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
-import { TextField, Button, Grid, Container, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { TextField, Button, Box,Grid, Container, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
+import { useNavigate } from 'react-router-dom';
+
 
 // FormDataの型定義
 interface FormData {
@@ -13,15 +15,8 @@ interface FormData {
     password: string;
     passwordConfirm: string;
     memberType: number;
+    institution: string,
 }
-
-//メンバータイプとIDをマッピング
-const memberTypeOptions: { [key: string]: number } = {
-    General: 1,
-    Academic: 2,
-    Corporate: 3,
-    Medical: 4,
-};
 
 const Register: React.FC = () => {
     // formDataの初期状態を設定し、useStateで管理します。
@@ -32,6 +27,7 @@ const Register: React.FC = () => {
         lastName: '',
         password: '',
         passwordConfirm: '',
+        institution: '',
         memberType: 1,
     });
 
@@ -46,22 +42,25 @@ const Register: React.FC = () => {
     };
 
     const handleSelectChange = (event: SelectChangeEvent<number>) => {
-        const selectedType = event.target.value;
+        
         setFormData({
             ...formData,
-            [event.target.name]: event.target.value
+            [event.target.name]: event.target.value as number
         });
 
         console.log('Updated formData:', formData);
     };
 
+    const navigate = useNavigate();
+
     // フォーム送信時に呼び出される非同期関数。
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
+        
+
         // デストラクチャリングを使用してformDataから値を取得。
-        const { username, email, firstName, lastName, password, passwordConfirm, memberType } = formData;
-        console.log(formData);
+        const { username, email, firstName, lastName, password, passwordConfirm, memberType, institution } = formData;
         
         //パスワードと確認パスワードが一致しているかチェック
         if (password !== passwordConfirm) {
@@ -69,16 +68,25 @@ const Register: React.FC = () => {
             return;
         }
 
+         // memberTypeが2（大学・研究所）の場合、メールアドレスのドメインがac.jpであるかをチェック
+        if (memberType === 2) {
+            const emailDomain = email.split('@')[1];
+            if (emailDomain.endsWith('ac.jp')){
+                alert('大学・研究所を選択した場合、メールアドレスのドメインは「ac.jp」でなければなりません。');
+                return;
+            }
+        }
         try {
             // axiosを使用してサーバーにPOSTリクエストを送信。
             console.log(formData);
-            const response = await axios.post('http://127.0.0.1:8000/api/users/register/', {
-                username,
+            const response = await axios.post('http://localhost:8080/users/register/', {
+                name : username,
                 email,
                 first_name: firstName,
                 last_name: lastName,
+                institution,
+                category_id:memberType,
                 password,
-                memberType
             }, {
                 headers: {
                     'Content-Type': 'application/json'
@@ -86,21 +94,27 @@ const Register: React.FC = () => {
             });
 
             // レスポンスメッセージをアラートで表示。
-            alert(response.data.message);
+            console.log(response.data.message);
 
-        
+            //ページ遷移
+            navigate('/send-mail')
+
         } catch (error) {
             console.error(error);
             alert('Registration failed');
         }
     };
 
-    // JSXを返してUIをレンダリング。
     return (
         <Container component="main" maxWidth="xs">
-            <Typography component="h1" variant="h5">
-                Register
-            </Typography>
+            <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                sx={{ mt: 4, mb: 4, mx: 'auto', p: 2 }}           
+            >
+            <Typography component="h1" variant="h5">新規登録</Typography>
+            </Box>
             <form onSubmit={handleSubmit} noValidate>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
@@ -109,7 +123,7 @@ const Register: React.FC = () => {
                             required
                             fullWidth
                             id="username"
-                            label="Username"
+                            label="ユーザー名"
                             name="username"
                             autoComplete="username"
                             value={formData.username}
@@ -122,10 +136,24 @@ const Register: React.FC = () => {
                             required
                             fullWidth
                             id="email"
-                            label="Email"
+                            label="メールアドレス"
                             name="email"
                             autoComplete="email"
                             value={formData.email}
+                            onChange={handleChange}
+                        />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6}>
+                        <TextField
+                            variant="outlined"
+                            required
+                            fullWidth
+                            id="lastName"
+                            label="苗字"
+                            name="lastName"
+                            autoComplete="lname"
+                            value={formData.lastName}
                             onChange={handleChange}
                         />
                     </Grid>
@@ -135,26 +163,14 @@ const Register: React.FC = () => {
                             required
                             fullWidth
                             id="firstName"
-                            label="First Name"
+                            label="名前"
                             name="firstName"
                             autoComplete="fname"
                             value={formData.firstName}
                             onChange={handleChange}
                         />
                     </Grid>
-                    <Grid item xs={12} sm={6}>
-                        <TextField
-                            variant="outlined"
-                            required
-                            fullWidth
-                            id="lastName"
-                            label="Last Name"
-                            name="lastName"
-                            autoComplete="lname"
-                            value={formData.lastName}
-                            onChange={handleChange}
-                        />
-                    </Grid>
+                    
                     
                     <Grid item xs={12}>
                         <FormControl fullWidth>
@@ -164,7 +180,7 @@ const Register: React.FC = () => {
                                 id="memberType"
                                 name="memberType"
                                 value={formData.memberType}
-                                label="Member Type"
+                                label="所属カテゴリ"
                                 onChange={handleSelectChange}
                             >
                                 <MenuItem value={1}>一般</MenuItem>
@@ -174,13 +190,29 @@ const Register: React.FC = () => {
                             </Select>
                         </FormControl>
                     </Grid>
+
+                    <Grid item xs={12}>
+                        <TextField
+                            variant="outlined"
+                            required
+                            fullWidth
+                            id="institution"
+                            label="所属"
+                            name="institution"
+                            autoComplete="institution"
+                            value={formData.institution}
+                            onChange={handleChange}
+                        />
+                    </Grid>
+
+                    
                     <Grid item xs={12}>
                         <TextField
                             variant="outlined"
                             required
                             fullWidth
                             name="password"
-                            label="Password"
+                            label="パスワード"
                             type="password"
                             id="password"
                             autoComplete="current-password"
@@ -194,7 +226,7 @@ const Register: React.FC = () => {
                             required
                             fullWidth
                             name="passwordConfirm"
-                            label="Confirm Password"
+                            label="確認パスワード"
                             type="password"
                             id="passwordConfirm"
                             value={formData.passwordConfirm}
@@ -210,7 +242,7 @@ const Register: React.FC = () => {
                             color="primary"
                             
                         >
-                            Register
+                            登録
                         </Button>
                     </Grid>
                 </Grid>

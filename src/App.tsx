@@ -8,6 +8,8 @@ import TopPage from './components/TopPage/TopPage';
 import Login from './components/accounts/Login/Login';
 import ForgotPassword from './components/accounts/Login/ForgotPassword';
 import Search from './components/Search/Search';
+import SendEmail from './components/accounts/Register/SendEmail';
+import UserActivate from './components/accounts/Register/UserActivate';
 
 const App: React.FC = () => {
   return (
@@ -16,10 +18,12 @@ const App: React.FC = () => {
       <Router>
         <Routes>
           <Route path="/" element={<TopPage />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/register_form" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/user-search" element={<Search />} />
+          <Route path="/send-mail" element={<SendEmail />} />
+          <Route path="/register" element={<UserActivate />} />
         </Routes>
       </Router>
     </div>
