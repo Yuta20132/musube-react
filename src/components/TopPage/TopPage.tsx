@@ -7,7 +7,7 @@ const TopPage = () => {
     const navigate = useNavigate(); 
 
     const handleRegister = () => {
-        navigate('/register');
+        navigate('/register_form');
     };
 
     const handleLogin = () => {

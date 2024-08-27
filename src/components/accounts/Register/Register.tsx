@@ -3,6 +3,7 @@ import React, { useState, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
 import { TextField, Button, Box,Grid, Container, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
+import { useNavigate } from 'react-router-dom';
 
 
 // FormDataの型定義
@@ -50,11 +51,13 @@ const Register: React.FC = () => {
         console.log('Updated formData:', formData);
     };
 
-
+    const navigate = useNavigate();
 
     // フォーム送信時に呼び出される非同期関数。
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        
 
         // デストラクチャリングを使用してformDataから値を取得。
         const { username, email, firstName, lastName, password, passwordConfirm, memberType, institution } = formData;
@@ -91,7 +94,10 @@ const Register: React.FC = () => {
             });
 
             // レスポンスメッセージをアラートで表示。
-            alert(response.data.message);
+            console.log(response.data.message);
+
+            //ページ遷移
+            navigate('/send-mail')
 
         } catch (error) {
             console.error(error);
