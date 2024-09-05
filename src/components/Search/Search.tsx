@@ -1,15 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import { Container, TextField, Button, Box, Typography, MenuItem, Select, FormControl, InputLabel, SelectChangeEvent, Card, CardContent  } from '@mui/material';
-
-interface SearchResult {
-id: number;
-firstName: string;
-lastName: string;
-userName: string;
-email: string;
-institution: string;
-institutionType: string;
-}
+import { SearchResult } from './SearchTypes';
+import SearchDetailModal from './SearchDetailModal';
 
 const SearchForm: React.FC = () => {
 const [searchData, setSearchData] = useState({
@@ -19,6 +11,17 @@ const [searchData, setSearchData] = useState({
 });
 
 const [results, setResults] = useState<SearchResult[]>([]);
+const [openModal, setOpenModal] = useState(false);
+const [modalContent, setModalContent] = useState<SearchResult | null>(null);
+
+// useEffectを用いた条件付きモーダル開閉制御
+useEffect(() => {
+    if (modalContent) { // modalContentがnullでない時にモーダルを開く
+        setOpenModal(true);
+    } else {
+        setOpenModal(false);
+    }
+}, [modalContent]); // modalContentが変更されたときに実行
 
 const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -41,11 +44,12 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     // 仮の検索結果データを設定
     const mockResults: SearchResult[] = [
     { id: 1, firstName: '太郎', lastName: '山田', userName: 'taro_y', email: 'taro@example.com', institution: 'A大学', institutionType: '大学・研究所' },
-    { id: 1, firstName: '花子', lastName: '佐藤', userName: '佐藤花子', email: 'hanako@example.com', institution: 'B研究所', institutionType: '大学・研究所' },
-    { id: 1, firstName: '一郎', lastName: '鈴木', userName: 'suzuki', email: 'suzuki@example.com', institution: 'C企業', institutionType: '企業' },
-    { id: 1, firstName: '健二', lastName: '高橋', userName: 'hassi-', email: 'takahashi@example.com', institution: 'D病院', institutionType: '医者' },
-    { id: 1, firstName: '真一', lastName: '中村', userName: '中村真一', email: 'takahashi@example.com', institution: 'E会社', institutionType: '一般' },
+    { id: 2, firstName: '花子', lastName: '佐藤', userName: '佐藤花子', email: 'hanako@example.com', institution: 'B研究所', institutionType: '大学・研究所' },
+    { id: 3, firstName: '一郎', lastName: '鈴木', userName: 'suzuki', email: 'suzuki@example.com', institution: 'C企業', institutionType: '企業' },
+    { id: 4, firstName: '健二', lastName: '高橋', userName: 'hassi-', email: 'takahashi@example.com', institution: 'D病院', institutionType: '医者' },
+    { id: 5, firstName: '真一', lastName: '中村', userName: '中村真一', email: 'takahashi@example.com', institution: 'E会社', institutionType: '一般' },
     ];
+    setResults(mockResults);
 
     // 検索フィルタ
     const filteredResults = mockResults.filter(result => 
@@ -55,6 +59,15 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     );
 
     setResults(filteredResults); // フィルタされた結果をセット
+};
+
+const handleOpenModal = (result: SearchResult) => {
+    setModalContent(result);
+    setOpenModal(true);
+};
+
+const handleCloseModal = () => {
+    setOpenModal(false);
 };
 
 return (
@@ -114,7 +127,18 @@ return (
     <Box sx={{ mt: 4 }}>
         {results.length > 0 ? (
         results.map(result => (
-            <Card key={result.id} sx={{ mb: 2 }}>
+            <Card 
+                key={result.id}
+                sx={{ mb: 2 }}
+                onMouseEnter={(event) => {
+                    event.stopPropagation();
+                    handleOpenModal(result);
+                }}
+                onMouseLeave={(event) => {
+                    event.stopPropagation();
+                    handleCloseModal();
+                }}
+            >
             <CardContent>
                 <Typography variant="h6">
                 {result.lastName} {result.firstName}
@@ -134,6 +158,11 @@ return (
         </Typography>
         )}
     </Box>
+    <SearchDetailModal
+            open={openModal}
+            content={modalContent}
+            onClose={handleCloseModal}
+    />
 
     </Container>
 );
