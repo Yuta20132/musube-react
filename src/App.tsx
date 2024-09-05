@@ -6,14 +6,14 @@ import './App.css';
 import Header from './components/Header/Header'
 import Register from './components/accounts/Register/Register';
 import Login from './components/accounts/Login/Login';
+import UserProfile from './components/accounts/UserProfile/UserProfile';
 
 
 
 function App() {
   return (
     <div className="App">
-      <Header />
-      <Login />
+      <UserProfile />
       
 
     </div>
