@@ -3,7 +3,10 @@ import { Container, TextField, Button, Box, Typography, MenuItem, Select, FormCo
 
 interface SearchResult {
 id: number;
-name: string;
+firstName: string;
+lastName: string;
+userName: string;
+email: string;
 institution: string;
 institutionType: string;
 }
@@ -37,16 +40,16 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // 仮の検索結果データを設定
     const mockResults: SearchResult[] = [
-    { id: 1, name: '山田 太郎', institution: 'A大学', institutionType: '大学・研究所' },
-    { id: 2, name: '佐藤 花子', institution: 'B研究所', institutionType: '大学・研究所' },
-    { id: 3, name: '鈴木 一郎', institution: 'C企業', institutionType: '企業' },
-    { id: 4, name: '高橋 健二', institution: 'D病院', institutionType: '医者' },
-    { id: 5, name: '中村 真一', institution: 'E会社', institutionType: '一般' },
+    { id: 1, firstName: '太郎', lastName: '山田', userName: 'taro_y', email: 'taro@example.com', institution: 'A大学', institutionType: '大学・研究所' },
+    { id: 1, firstName: '花子', lastName: '佐藤', userName: '佐藤花子', email: 'hanako@example.com', institution: 'B研究所', institutionType: '大学・研究所' },
+    { id: 1, firstName: '一郎', lastName: '鈴木', userName: 'suzuki', email: 'suzuki@example.com', institution: 'C企業', institutionType: '企業' },
+    { id: 1, firstName: '健二', lastName: '高橋', userName: 'hassi-', email: 'takahashi@example.com', institution: 'D病院', institutionType: '医者' },
+    { id: 1, firstName: '真一', lastName: '中村', userName: '中村真一', email: 'takahashi@example.com', institution: 'E会社', institutionType: '一般' },
     ];
 
     // 検索フィルタ
     const filteredResults = mockResults.filter(result => 
-    (searchData.name === '' || result.name.includes(searchData.name)) &&
+    (searchData.name === '' || result.firstName.includes(searchData.name) || result.lastName.includes(searchData.name) || result.userName.includes(searchData.name)) &&
     (searchData.institution === '' || result.institution.includes(searchData.institution)) &&
     (searchData.institutionType === '' || result.institutionType === searchData.institutionType)
     );
@@ -114,7 +117,7 @@ return (
             <Card key={result.id} sx={{ mb: 2 }}>
             <CardContent>
                 <Typography variant="h6">
-                {result.name}
+                {result.lastName} {result.firstName}
                 </Typography>
                 <Typography color="text.secondary">
                 {result.institution}
