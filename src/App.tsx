@@ -10,6 +10,7 @@ import ForgotPassword from './components/accounts/Login/ForgotPassword';
 import Search from './components/Search/Search';
 import SendEmail from './components/accounts/Register/SendEmail';
 import UserActivate from './components/accounts/Register/UserActivate';
+import LoginSuccsess from './components/accounts/Login/LoginSuccsess';
 
 const App: React.FC = () => {
   return (
@@ -24,6 +25,7 @@ const App: React.FC = () => {
           <Route path="/user-search" element={<Search />} />
           <Route path="/send-mail" element={<SendEmail />} />
           <Route path="/register" element={<UserActivate />} />
+          <Route path="login-success" element= {<LoginSuccsess />} />
         </Routes>
       </Router>
     </div>
