@@ -4,6 +4,62 @@ import {Box,  Container, Typography, TextField, Button, Grid, Link } from '@mui/
 import { useNavigate } from "react-router-dom";
 
 
+
+//axiosのインスタンスを作成してインターセプターを追加
+const axiosInstance = axios.create({
+    baseURL:'',
+    headers: {
+        'Content-Type': 'application/json',
+    }
+});
+
+//リクエストのインターセプターでトークンを添付
+axiosInstance.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('access_token');
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
+
+// トークンのリフレッシュ処理も追加
+axiosInstance.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    async (error) => {
+        const originalRequest = error.config;
+
+        // 401 Unauthorizedのエラーレスポンスでリフレッシュトークンを使用
+        if (error.response.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+            try {
+                const refreshToken = localStorage.getItem('refresh_token');
+                const { data } = await axios.post('http://localhost:8080/users/refresh/', { refresh: refreshToken });
+
+                localStorage.setItem('access_token', data.access);
+                axios.defaults.headers.common['Authorization'] = `Bearer ${data.access}`;
+
+                return axiosInstance(originalRequest);
+            } catch (refreshError) {
+                console.error(refreshError);
+                alert('リフレッシュトークンが無効です。再ログインしてください。');
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('refresh_token');
+                window.location.href = '/login';  // ログインページにリダイレクト
+            }
+        }
+        return Promise.reject(error);
+    }
+);
+
+
+
 // レスポンスデータの型を定義します。これはAPIからのレスポンスの形を表します。
 interface LoginResponse {
     access: string;
@@ -27,7 +83,8 @@ const Login = () => {
 
     const handleForgotPassword = () => {
         navigate("/forgot-password");
-    }
+    };
+
 
     // 入力フィールドが変更されたときに呼び出される関数です。入力された値をformData状態にセットします。
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -36,15 +93,18 @@ const Login = () => {
             [e.target.name]: e.target.value
         });
     };
-
+    const {email, password} = formData;
     // フォームが送信されたときに呼び出される非同期関数です。APIへのPOSTリクエストを行います。
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        
+        console.log(formData)
         try {
             // axiosを使用してログインAPIエンドポイントにPOSTリクエストを送信します。
             // レスポンスの型はLoginResponseです。
-            const response = await axios.post<LoginResponse>("http://127.0.0.1:8000/login/", formData, {
+            const response = await axiosInstance.post<LoginResponse>("http://localhost:8080/users/login/", {
+                email:email,
+                password:password
+            }, {
                 headers: {
                     "Content-Type": "application/json"
                 }
@@ -53,8 +113,9 @@ const Login = () => {
             localStorage.setItem("access_token", response.data.access);
             localStorage.setItem("refresh_token", response.data.refresh);
             // ログイン成功後にリダイレクトします。
-            //navigate('/login-success');
+            navigate('/login-success');
         } catch (error) {
+            console.log(formData)
             console.error(error);
             alert("Login failed");
         }
