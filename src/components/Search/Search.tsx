@@ -10,18 +10,18 @@ const [searchData, setSearchData] = useState({
     institutionType: '',
 });
 
-const [results, setResults] = useState<SearchResult[]>([]);
-const [openModal, setOpenModal] = useState(false);
-const [modalContent, setModalContent] = useState<SearchResult | null>(null);
+const [results, setResults] = React.useState<SearchResult[]>([]);
+const [openModal, setOpenModal] = React.useState(false);
+const [modalContent, setModalContent] = React.useState<SearchResult | null>(null);
 
-// useEffectを用いた条件付きモーダル開閉制御
+/* // useEffectを用いた条件付きモーダル開閉制御
 useEffect(() => {
     if (modalContent) { // modalContentがnullでない時にモーダルを開く
         setOpenModal(true);
     } else {
         setOpenModal(false);
     }
-}, [modalContent]); // modalContentが変更されたときに実行
+}, [modalContent]); // modalContentが変更されたときに実行 */
 
 const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -34,8 +34,9 @@ const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 const handleSelectChange = (event: SelectChangeEvent<string>) => {
     setSearchData({
     ...searchData,
-    institutionType: event.target.value,
-    });
+    institutionType: event.target.value as string,
+    /* institutionType: event.target.value, */
+});
 };
 
 
@@ -124,7 +125,7 @@ return (
         </Button>
     </Box>
 
-    <Box sx={{ mt: 4 }}>
+    {/* <Box sx={{ mt: 4 }}>
         {results.length > 0 ? (
         results.map(result => (
             <Card 
@@ -157,6 +158,17 @@ return (
             検索結果がここに表示されます。
         </Typography>
         )}
+    </Box> */}
+    <Box sx={{ mt: 4 }}>
+        {results.map(result => (
+          <Card key={result.id} sx={{ mb: 2 }} onClick={() => handleOpenModal(result)} >
+            <CardContent>
+              <Typography variant="h6">{result.lastName} {result.firstName}</Typography>
+              <Typography color="text.secondary">{result.institution}</Typography>
+              <Typography variant="body2">種類: {result.institutionType}</Typography>
+            </CardContent>
+          </Card>
+        ))}
     </Box>
     <SearchDetailModal
             open={openModal}
