@@ -2,8 +2,7 @@ import React from 'react';
 import { Box, Modal, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { IconButton } from '@mui/material';
-import { SearchResult } from './SearchTypes'; // 適切なパスに調整してください
-
+import { SearchResult } from './SearchTypes'; 
 
 
 interface SearchDetailModalProps {
