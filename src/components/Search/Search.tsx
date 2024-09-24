@@ -1,12 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import { Container, TextField, Button, Box, Typography, MenuItem, Select, FormControl, InputLabel, SelectChangeEvent, Card, CardContent  } from '@mui/material';
-
-interface SearchResult {
-id: number;
-name: string;
-institution: string;
-institutionType: string;
-}
+import { SearchResult } from './SearchTypes';
+import SearchDetailModal from './SearchDetailModal';
 
 const SearchForm: React.FC = () => {
 const [searchData, setSearchData] = useState({
@@ -15,7 +10,11 @@ const [searchData, setSearchData] = useState({
     institutionType: '',
 });
 
-const [results, setResults] = useState<SearchResult[]>([]);
+const [results, setResults] = React.useState<SearchResult[]>([]);
+const [openModal, setOpenModal] = React.useState(false);
+const [modalContent, setModalContent] = React.useState<SearchResult | null>(null);
+
+
 
 const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -28,8 +27,9 @@ const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 const handleSelectChange = (event: SelectChangeEvent<string>) => {
     setSearchData({
     ...searchData,
-    institutionType: event.target.value,
-    });
+    institutionType: event.target.value as string,
+    
+});
 };
 
 
@@ -37,21 +37,31 @@ const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     // 仮の検索結果データを設定
     const mockResults: SearchResult[] = [
-    { id: 1, name: '山田 太郎', institution: 'A大学', institutionType: '大学・研究所' },
-    { id: 2, name: '佐藤 花子', institution: 'B研究所', institutionType: '大学・研究所' },
-    { id: 3, name: '鈴木 一郎', institution: 'C企業', institutionType: '企業' },
-    { id: 4, name: '高橋 健二', institution: 'D病院', institutionType: '医者' },
-    { id: 5, name: '中村 真一', institution: 'E会社', institutionType: '一般' },
+    { id: 1, firstName: '太郎', lastName: '山田', userName: 'taro_y', email: 'taro@example.com', institution: 'A大学', institutionType: '大学・研究所' },
+    { id: 2, firstName: '花子', lastName: '佐藤', userName: '佐藤花子', email: 'hanako@example.com', institution: 'B研究所', institutionType: '大学・研究所' },
+    { id: 3, firstName: '一郎', lastName: '鈴木', userName: 'suzuki', email: 'suzuki@example.com', institution: 'C企業', institutionType: '企業' },
+    { id: 4, firstName: '健二', lastName: '高橋', userName: 'hassi-', email: 'takahashi@example.com', institution: 'D病院', institutionType: '医者' },
+    { id: 5, firstName: '真一', lastName: '中村', userName: '中村真一', email: 'takahashi@example.com', institution: 'E会社', institutionType: '一般' },
     ];
+    setResults(mockResults);
 
     // 検索フィルタ
     const filteredResults = mockResults.filter(result => 
-    (searchData.name === '' || result.name.includes(searchData.name)) &&
+    (searchData.name === '' || result.firstName.includes(searchData.name) || result.lastName.includes(searchData.name) || result.userName.includes(searchData.name)) &&
     (searchData.institution === '' || result.institution.includes(searchData.institution)) &&
     (searchData.institutionType === '' || result.institutionType === searchData.institutionType)
     );
 
     setResults(filteredResults); // フィルタされた結果をセット
+};
+
+const handleOpenModal = (result: SearchResult) => {
+    setModalContent(result);
+    setOpenModal(true);
+};
+
+const handleCloseModal = () => {
+    setOpenModal(false);
 };
 
 return (
@@ -108,29 +118,24 @@ return (
         </Button>
     </Box>
 
+    
     <Box sx={{ mt: 4 }}>
-        {results.length > 0 ? (
-        results.map(result => (
-            <Card key={result.id} sx={{ mb: 2 }}>
+        {results.map(result => (
+          <Card key={result.id} sx={{ mb: 2 }} onClick={() => handleOpenModal(result)} >
+            
             <CardContent>
-                <Typography variant="h6">
-                {result.name}
-                </Typography>
-                <Typography color="text.secondary">
-                {result.institution}
-                </Typography>
-                <Typography variant="body2">
-                種類: {result.institutionType}
-                </Typography>
+              <Typography variant="h6">{result.lastName} {result.firstName}</Typography>
+              <Typography color="text.secondary">{result.institution}</Typography>
+              <Typography variant="body2">種類: {result.institutionType}</Typography>
             </CardContent>
-            </Card>
-        ))
-        ) : (
-        <Typography variant="body2">
-            検索結果がここに表示されます。
-        </Typography>
-        )}
+          </Card>
+        ))}
     </Box>
+    <SearchDetailModal
+            open={openModal}
+            content={modalContent}
+            onClose={handleCloseModal}
+    />
 
     </Container>
 );
