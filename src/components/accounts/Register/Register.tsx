@@ -54,7 +54,7 @@ const Register: React.FC = () => {
     const navigate = useNavigate();
 
     // フォーム送信時に呼び出される非同期関数。
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    /* const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         
@@ -103,7 +103,69 @@ const Register: React.FC = () => {
             console.error(error);
             alert('Registration failed');
         }
+    }; */
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+    
+        const { username, email, firstName, lastName, password, passwordConfirm, memberType, institution } = formData;
+        
+        // 全てのフィールドが入力されているかチェック
+        if (!username || !email || !firstName || !lastName || !password || !passwordConfirm || !institution) {
+            alert('すべてのフィールドを入力してください。');
+            return;
+        }
+    
+        // ユーザーネームが5文字以上であることを確認
+        if (username.length > 5) {
+            alert('ユーザーネームは4文字以下である必要があります。');
+            return;
+        }
+        
+        // パスワードと確認パスワードが一致しているかチェック
+        if (password !== passwordConfirm) {
+            alert('パスワードが一致していません');
+            return;
+        }
+    
+        // memberTypeが2（大学・研究所）の場合、メールアドレスのドメインがac.jpであるかをチェック
+        if (memberType === 2) {
+            const emailDomain = email.split('@')[1];
+            if (!emailDomain.endsWith('ac.jp')) {
+                alert('大学・研究所を選択した場合、メールアドレスのドメインは「ac.jp」でなければなりません。');
+                return;
+            }
+        }
+    
+        try {
+            const response = await axios.post('http://localhost:8080/users/register/', {
+                name: username,
+                email,
+                first_name: firstName,
+                last_name: lastName,
+                institution,
+                category_id: memberType,
+                password,
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+    
+            // 成功した場合、成功メッセージを表示し、ページ遷移を行う
+            alert('登録成功!');
+            navigate('/send-mail');
+        } catch (error) {
+            console.error(error);
+            if (axios.isAxiosError(error) && error.response) {
+                // サーバーからのエラー応答がある場合はその内容を表示
+                alert(error.response.data.message || '登録に失敗しました。後ほど再度お試しください。');
+            } else {
+                // その他のエラーは一般的なエラーメッセージで表示
+                alert('登録に失敗しました。後ほど再度お試しください。');
+            }
+        }
     };
+    
 
     return (
         <Container component="main" maxWidth="xs">
