@@ -3,15 +3,15 @@ import './App.css';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 // 追加されたコンポーネントのインポート
 import Header from './components/Header/Header'
-import Register from './components/accounts/Register/Register';
+import Register from './components/Accounts/Register/Register';
 import TopPage from './components/TopPage/TopPage';
-import Login from './components/accounts/Login/Login';
-import ForgotPassword from './components/accounts/Login/ForgotPassword';
+import Login from './components/Accounts/Login/Login';
+import ForgotPassword from './components/Accounts/Login/ForgotPassword';
 import Search from './components/Search/Search';
-import SendEmail from './components/accounts/Register/SendEmail';
-import UserActivate from './components/accounts/Register/UserActivate';
-import LoginSuccsess from './components/accounts/Login/LoginSuccsess';
-import ThreadsPage from './components/board/ThreadsPage';
+import SendEmail from './components/Accounts/Register/SendEmail';
+import UserActivate from './components/Accounts/Register/UserActivate';
+import LoginSuccsess from './components/Accounts/Login/LoginSuccsess';
+import ThreadsPage from './components/Board/ThreadsPage';
 
 const App: React.FC = () => {
   return (

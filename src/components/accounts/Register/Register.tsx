@@ -4,7 +4,7 @@ import axios from 'axios';
 import { TextField, Button, Box,Grid, Container, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { useNavigate } from 'react-router-dom';
-import ThreadsCreate from '../../board/ThreadsCreate';
+import ThreadsCreate from '../../Board/ThreadsCreate';
 
 
 // FormDataの型定義
