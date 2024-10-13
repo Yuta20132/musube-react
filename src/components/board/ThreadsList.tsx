@@ -10,31 +10,56 @@ import {
   Grid,
   Skeleton,
 } from '@mui/material';
+import ThreadsView from './ThreadsView';
+import { Thread } from './typeThreads';
 
-interface Thread {
-  title: string;
-  description: string;
-}
 
-// 仮のスレッドデータ
+
 const mockThreads: Thread[] = [
   {
+    id: 1,
     title: 'スレッド1',
     description: 'これはスレッド1の説明です。',
+    posts: [
+      {
+        id: 1,
+        username: 'ユーザーA',
+        content: 'スレッド1の投稿1です。',
+        timestamp: '2024-04-01 10:00',
+      },
+      {
+        id: 2,
+        username: 'ユーザーB',
+        content: 'スレッド1の投稿2です。',
+        timestamp: '2024-04-01 10:05',
+      },
+    ],
   },
   {
+    id: 2,
     title: 'スレッド2',
     description: 'これはスレッド2の説明です。',
+    posts: [
+      {
+        id: 3,
+        username: 'ユーザーC',
+        content: 'スレッド2の投稿1です。',
+        timestamp: '2024-04-02 11:00',
+      },
+    ],
   },
   {
+    id: 3,
     title: 'スレッド3',
     description: 'これはスレッド3の説明です。',
+    posts: [],
   },
 ];
 
 const ThreadsList: React.FC = () => {
   const [threads, setThreads] = useState<Thread[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [selectedThread, setSelectedThread] = useState<Thread | null>(null);
 
   useEffect(() => {
     const fetchThreads = async () => {
@@ -48,6 +73,14 @@ const ThreadsList: React.FC = () => {
 
     fetchThreads();
   }, []);
+
+  const handleSelectThread = (thread: Thread) => {
+    setSelectedThread(thread);
+  };
+
+  const handleBack = () => {
+    setSelectedThread(null);
+  };
 
   return (
     <Box sx={{ maxWidth: '1200px', margin: '0 auto', padding: 2 }}>
@@ -72,14 +105,16 @@ const ThreadsList: React.FC = () => {
             </Grid>
           ))}
         </Grid>
+      ) : selectedThread ? (
+        <ThreadsView thread={selectedThread} onBack={handleBack} />
       ) : threads.length === 0 ? (
         <Typography variant="h6" sx={{ color: 'text.secondary' }}>
           スレッドがありません
         </Typography>
       ) : (
         <Grid container spacing={2}>
-          {threads.map((thread, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index}>
+          {threads.map((thread) => (
+            <Grid item xs={12} sm={6} md={4} key={thread.id}>
               <Card
                 sx={{
                   backgroundColor: 'background.paper',
@@ -113,6 +148,7 @@ const ThreadsList: React.FC = () => {
                         backgroundColor: 'primary.dark',
                       },
                     }}
+                    onClick={() => handleSelectThread(thread)}
                   >
                     詳細を見る
                   </Button>
