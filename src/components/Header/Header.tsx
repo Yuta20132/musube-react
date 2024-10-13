@@ -1,4 +1,6 @@
-import React, {useState} from 'react'
+// src/components/Header/Header.tsx
+import React, { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -7,29 +9,32 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import SideBar from '../SideBar/SideBar';
-
-
-
-
-
+import { AuthContext } from '../../contexts/AuthContext';
 
 const Header = () => {
-    //サイドバーの状態を指定
-    //test
-    const [isSidebarOpen, setSidebarOpen] = useState<boolean>(false);
+  const [isSidebarOpen, setSidebarOpen] = React.useState<boolean>(false);
+  const { isAuthenticated, logout } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-    const handleSidebarOpen = () => {
-        setSidebarOpen(true);
-      };
+  const handleSidebarOpen = () => {
+    setSidebarOpen(true);
+  };
 
-    const handleSidebarClose = () => {
-        setSidebarOpen(false);
-    }
+  const handleSidebarClose = () => {
+    setSidebarOpen(false);
+  };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
+
+  const handleLogin = () => {
+    navigate('/login');
+  };
 
   return (
-    <div>
-      <Box sx={{ flexGrow: 1 }}>
+    <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
           <IconButton
@@ -45,15 +50,21 @@ const Header = () => {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             musuBe
           </Typography>
-          <Button color="inherit">Login</Button>
+          {isAuthenticated ? (
+            <Button color="inherit" onClick={handleLogout}>
+              Logout
+            </Button>
+          ) : (
+            <Button color="inherit" onClick={handleLogin}>
+              Login
+            </Button>
+          )}
         </Toolbar>
       </AppBar>
 
       <SideBar open={isSidebarOpen} onClose={handleSidebarClose} />
     </Box>
-    </div>
-  )
-}
+  );
+};
 
-export default Header
-
+export default Header;

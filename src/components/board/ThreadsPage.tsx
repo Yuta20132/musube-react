@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import ThreadsCreate from './ThreadsCreate';
 import ThreadsList from './ThreadsList';
-import axios from 'axios';
+import ThreadsCreate from './ThreadsCreate';
+
 
 interface Thread {
   title: string;
