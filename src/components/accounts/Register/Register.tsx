@@ -4,6 +4,7 @@ import axios from 'axios';
 import { TextField, Button, Box,Grid, Container, Typography, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { useNavigate } from 'react-router-dom';
+import ThreadsCreate from '../../board/ThreadsCreate';
 
 
 // FormDataの型定義
@@ -93,7 +94,7 @@ const Register: React.FC = () => {
                 }
             });
 
-            // レスポンスメッセージをアラートで表示。
+            // レスポンスメッセージを表示。
             console.log(response.data.message);
 
             //ページ遷移

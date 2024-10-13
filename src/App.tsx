@@ -11,6 +11,7 @@ import Search from './components/Search/Search';
 import SendEmail from './components/accounts/Register/SendEmail';
 import UserActivate from './components/accounts/Register/UserActivate';
 import LoginSuccsess from './components/accounts/Login/LoginSuccsess';
+import ThreadsPage from './components/board/ThreadsPage';
 
 const App: React.FC = () => {
   return (
@@ -26,6 +27,7 @@ const App: React.FC = () => {
           <Route path="/send-mail" element={<SendEmail />} />
           <Route path="/register" element={<UserActivate />} />
           <Route path="login-success" element= {<LoginSuccsess />} />
+          <Route path="threads_page" element={<ThreadsPage />}/>
         </Routes>
       </Router>
     </div>
