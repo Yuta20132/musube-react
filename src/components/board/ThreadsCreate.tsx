@@ -33,9 +33,6 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({ onSubmit }) => {
     }
   };
 
-  const handleSelectChange = (event: SelectChangeEvent<number>) => {
-    setMemberType(event.target.value as number);
-  };
 
   return (
     <Paper elevation={3} sx={{ padding: 3, marginTop: 4, maxWidth: 600, marginLeft: 'auto', marginRight: 'auto', mb: 4 }}>
