@@ -20,7 +20,7 @@ interface ListItem {
 const SideBar: React.FC<SideBarProps> = ({ open, onClose }) => {
   const listItems: ListItem[] = [
     { text: 'プロフィール', path: '/profile' },
-    { text: '掲示板', path: '/bulletin-board' },
+    { text: '掲示板', path: '/threads_page' },
     { text: 'ユーザ検索', path: '/user-search'}
   ];
 
