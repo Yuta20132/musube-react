@@ -47,16 +47,19 @@ const Header = () => {
           >
             <MenuIcon />
           </IconButton>
+          <h1 className="text-2xl font-bold">musuBe</h1>
+
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            musuBe
+            
           </Typography>
+          
           {isAuthenticated ? (
-            <Button color="inherit" onClick={handleLogout}>
-              Logout
+            <Button color="inherit" sx={{ fontWeight: 'bold' }} onClick={handleLogout}>
+              ログアウト
             </Button>
           ) : (
-            <Button color="inherit" onClick={handleLogin}>
-              Login
+            <Button color="inherit" sx={{ fontWeight: 'bold' }} onClick={handleLogin}>
+              ログイン
             </Button>
           )}
         </Toolbar>
