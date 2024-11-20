@@ -19,12 +19,15 @@ const UserActivate: React.FC = () => {
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
-        const id = params.get('id')
+        const token = params.get('token')
+        console.log(token)
         const activateUser = async () => {
             try {
 
                 //成功したときの処理
-                const respone = await axios.post(`http://localhost:8080/users/validate/?id=${id}`);
+                const respone = await axios.post(`http://localhost:8080/users/verify/`,{
+                    token: token,
+                });
                 setActivationStatus('success');
                 alert('アカウントがアクティベーㇳされました');
                 console.log(respone);
