@@ -15,9 +15,6 @@ const TopPage = () => {
     }
   return (
     <Container maxWidth="sm">
-        <h1 className="text-3xl font-bold underline">
-      Hello world!
-    </h1>
         <Box
             display="flex"
             flexDirection="column"

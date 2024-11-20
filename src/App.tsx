@@ -80,7 +80,7 @@ const App: React.FC = () => {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/user-search" element={<Search />} />
           <Route path="/send-mail" element={<SendEmail />} />
-          <Route path="/register" element={<UserActivate />} />
+          <Route path="/verify" element={<UserActivate />} />
           <Route path="/login-success" element={<LoginSuccess />} />
           <Route 
             path="/threads_page" 
