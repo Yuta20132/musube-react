@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import ThreadsView from './ThreadsView';
 import { Thread } from './typeThreads';
+import axios from 'axios';
 
 const mockThreads: Thread[] = [
   {
@@ -62,6 +63,12 @@ const ThreadsList: React.FC = () => {
   useEffect(() => {
     const fetchThreads = async () => {
       setLoading(true);
+      
+      try {
+        const response = await axios.get("")
+      } finally {
+
+      }
       // ネットワークリクエストをシミュレート
       setTimeout(() => {
         setThreads(mockThreads);
