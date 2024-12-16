@@ -63,11 +63,23 @@ const ThreadsList: React.FC = () => {
   useEffect(() => {
     const fetchThreads = async () => {
       setLoading(true);
+      const token = localStorage.getItem("access_token");
+      
       
       try {
-        const response = await axios.get("")
-      } finally {
-
+        const response = await axios.get(
+          "http://localhost:8080/threads/1",{
+            withCredentials: true,
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            },
+        });
+        console.log(response.data);
+      } catch (error) {
+        console.error('Error fetching threads:', error);
+      }
+      finally {
+        setLoading(false);
       }
       // ネットワークリクエストをシミュレート
       setTimeout(() => {
@@ -75,7 +87,7 @@ const ThreadsList: React.FC = () => {
         setLoading(false);
       }, 1000); // 1秒の遅延
     };
-
+    
     fetchThreads();
   }, []);
 

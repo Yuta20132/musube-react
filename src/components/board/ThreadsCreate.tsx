@@ -22,25 +22,39 @@ import axios from 'axios';
 import { SelectChangeEvent } from '@mui/material/Select';
 
 interface ThreadsCreateForm {
-  onSubmit: (thread: { title: string, description: string, memberType: number }) => void;
+  onSubmit: (thread: { title: string, description: string, memberType: string }) => void;
 }
 
 const ThreadsCreate: React.FC<ThreadsCreateForm> = ({ onSubmit }) => {
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-  const [memberType, setMemberType] = useState<number>(1);
+  const [memberType, setMemberType] = useState<string>('1');
   const [loading, setLoading] = useState<boolean>(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (title.trim() && description.trim()) {
+      const token = localStorage.getItem("access_token");
       setLoading(true);
+      console.log(memberType);
       try {
-        const response = await axios.post('/api/threads', { title, description, memberType });
+        const response = await axios.post('http://localhost:8080/threads/', 
+        { 
+          title: title, 
+          description: description, 
+          category_id:memberType
+         },{
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },withCredentials: true,
+         }
+         
+         );
         onSubmit(response.data);
         setTitle('');
         setDescription('');
-        setMemberType(1);
+        setMemberType('1');
       } catch (error) {
         console.error('スレッド作成時のエラー:', error);
       } finally {
@@ -49,8 +63,8 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({ onSubmit }) => {
     }
   };
 
-  const handleMemberTypeChange = (event: SelectChangeEvent<number>) => {
-    setMemberType(Number(event.target.value));
+  const handleMemberTypeChange = (event: SelectChangeEvent<String>) => {
+    setMemberType(String(event.target.value));
   };
 
   return (
@@ -141,9 +155,9 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({ onSubmit }) => {
                 </InputAdornment>
               }
             >
-              <MenuItem value={1}>一般</MenuItem>
-              <MenuItem value={2}>管理者</MenuItem>
-              <MenuItem value={3}>モデレーター</MenuItem>
+              <MenuItem value={'1'}>一般</MenuItem>
+              <MenuItem value={'2'}>管理者</MenuItem>
+              <MenuItem value={'3'}>モデレーター</MenuItem>
             </Select>
           </FormControl>
           <Box sx={{ textAlign: 'center' }}>
