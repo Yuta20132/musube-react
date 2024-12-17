@@ -25,8 +25,8 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    logout();
-    navigate('/login');
+
+    navigate('/logout');
   };
 
   const handleLogin = () => {

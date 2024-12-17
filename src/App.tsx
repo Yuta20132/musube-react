@@ -14,7 +14,8 @@ import SendEmail from './components/Accounts/Register/SendEmail';
 import UserActivate from './components/Accounts/Register/UserActivate';
 import LoginSuccess from './components/Accounts/Login/LoginSuccess';
 import ThreadsPage from './components/Board/ThreadsPage';
-import { AuthProvider } from './contexts/AuthContext'
+import { AuthProvider } from './contexts/AuthContext';
+import Logout from './components/Accounts/Login/Logout';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'; // 既存のProtectedRoute
 
 const theme = createTheme({
@@ -82,6 +83,7 @@ const App: React.FC = () => {
           <Route path="/send-mail" element={<SendEmail />} />
           <Route path="/verify" element={<UserActivate />} />
           <Route path="/login-success" element={<LoginSuccess />} />
+          <Route path="/logout" element={<Logout />} />
           <Route 
             path="/threads_page" 
             element={
