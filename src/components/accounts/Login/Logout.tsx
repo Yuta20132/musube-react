@@ -7,8 +7,7 @@ const Logout = () => {
     const token = localStorage.getItem("access_token");
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/logout/",
-        {}, // 送信データが不要なので空オブジェクト
+        "http://localhost:8080/users/logout/",
         {
           withCredentials: true,
           headers: {

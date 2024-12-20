@@ -16,7 +16,8 @@ import LoginSuccess from './components/Accounts/Login/LoginSuccess';
 import ThreadsPage from './components/Board/ThreadsPage';
 import { AuthProvider } from './contexts/AuthContext';
 import Logout from './components/Accounts/Login/Logout';
-import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'; // 既存のProtectedRoute
+import UserProfile from './components/Accounts/UserProfile/UserProfile';
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'; 
 
 const theme = createTheme({
   palette: {
@@ -84,6 +85,7 @@ const App: React.FC = () => {
           <Route path="/verify" element={<UserActivate />} />
           <Route path="/login-success" element={<LoginSuccess />} />
           <Route path="/logout" element={<Logout />} />
+          <Route path="/profile" element={<UserProfile />} />
           <Route 
             path="/threads_page" 
             element={
