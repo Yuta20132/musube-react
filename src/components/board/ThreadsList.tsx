@@ -14,46 +14,7 @@ import ThreadsView from './ThreadsView';
 import { Thread } from './typeThreads';
 import axios from 'axios';
 
-const mockThreads: Thread[] = [
-  {
-    id: 1,
-    title: 'スレッド1',
-    description: 'これはスレッド1の説明です。',
-    posts: [
-      {
-        id: 1,
-        username: 'ユーザーA',
-        content: 'スレッド1の投稿1です。',
-        timestamp: '2024-04-01 10:00',
-      },
-      {
-        id: 2,
-        username: 'ユーザーB',
-        content: 'スレッド1の投稿2です。',
-        timestamp: '2024-04-01 10:05',
-      },
-    ],
-  },
-  {
-    id: 2,
-    title: 'スレッド2',
-    description: 'これはスレッド2の説明です。',
-    posts: [
-      {
-        id: 3,
-        username: 'ユーザーC',
-        content: 'スレッド2の投稿1です。',
-        timestamp: '2024-04-02 11:00',
-      },
-    ],
-  },
-  {
-    id: 3,
-    title: 'スレッド3',
-    description: 'これはスレッド3の説明です。',
-    posts: [],
-  },
-];
+
 
 const ThreadsList: React.FC = () => {
   const [threads, setThreads] = useState<Thread[]>([]);
@@ -74,17 +35,13 @@ const ThreadsList: React.FC = () => {
             },
         });
         console.log(response.data);
+        setThreads(response.data);
       } catch (error) {
         console.error('Error fetching threads:', error);
       }
       finally {
         setLoading(false);
       }
-      // ネットワークリクエストをシミュレート
-      setTimeout(() => {
-        setThreads(mockThreads);
-        setLoading(false);
-      }, 1000); // 1秒の遅延
     };
     
     fetchThreads();
@@ -131,7 +88,7 @@ const ThreadsList: React.FC = () => {
           ))}
         </Grid>
       ) : selectedThread ? (
-        <ThreadsView thread={selectedThread} onBack={handleBack} />
+        <ThreadsView thread={selectedThread} posts ={[]}onBack={handleBack} />
       ) : threads.length === 0 ? (
         <Typography variant="h6" sx={{ color: 'text.secondary' }}>
           スレッドがありません

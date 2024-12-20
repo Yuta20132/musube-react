@@ -1,28 +1,48 @@
 import React, {useState} from 'react'
 import { TextField, Button, Box, Paper, Typography } from '@mui/material';
+import { threadId } from 'worker_threads';
+import axios from 'axios';
 
-interface PostFormProps {
-    onSubmit: (title: string, content: string) => void;
-    //IDなどはのちに加える
-}
 
-const PostForm: React.FC<PostFormProps> = ({onSubmit}) => {
+const PostForm: React.FC = () => {
     const [title, setTitle] = useState<string>('');
     const [content, setContent] = useState<string>('');
+    const [threadId, setThreadId] = useState<number>(1);
+    const [categoryId, setCategoryId] = useState<string>('1');
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (title.trim() && content.trim()) {
-            onSubmit(title, content);
-            setTitle('');
-            setContent('');
+        
+        const payload = {
+            title: title.trim(),
+            content: content.trim(),
+            thread_id: threadId,
+            category_id: categoryId.trim(),
+        };
+
+        setIsSubmitting(true);
+        console.log(payload);
+        try {
+            const response = await axios.post('http://localhost:8080/posts/', payload, {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                withCredentials: true,
+            });
+            console.log(response.data);
+            alert('Post submitted');
+        }catch (error) {
+            console.error('handleSubmit error:', error);
+        }finally {
+            setIsSubmitting(false);
         }
     }
 
     return (
         <Paper elevation={3} sx={{ padding: 3, marginTop: 4, maxWidth: 600, marginLeft: 'auto', marginRight: 'auto', mb: 4 }}>
             <Typography variant="h6" gutterBottom>
-                Create a New Post
+                ポストの投稿
             </Typography>
             <Box component="form" onSubmit={handleSubmit}>
                 <TextField
@@ -48,7 +68,12 @@ const PostForm: React.FC<PostFormProps> = ({onSubmit}) => {
                 sx={{ width: '100%', maxWidth: 500 }}
                 />
                 <Box sx={{ textAlign: 'right', marginTop: 2 }}>
-                <Button type="submit" variant="contained" color="primary">
+                <Button 
+                    type="submit" 
+                    variant="contained" 
+                    color="primary"
+                    disabled={isSubmitting}
+                >
                     Post
                 </Button>
                 </Box>
