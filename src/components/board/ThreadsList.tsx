@@ -63,15 +63,14 @@ const ThreadsList: React.FC = () => {
   useEffect(() => {
     const fetchThreads = async () => {
       setLoading(true);
-      const token = localStorage.getItem("access_token");
-      
+      //const token = localStorage.getItem("access_token");
       
       try {
         const response = await axios.get(
           "http://localhost:8080/threads/1",{
             withCredentials: true,
             headers: {
-              'Authorization': `Bearer ${token}`,
+             // 'Authorization': `Bearer ${token}`,
             },
         });
         console.log(response.data);
