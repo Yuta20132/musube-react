@@ -1,8 +1,12 @@
 import React from "react";
 import axios from "axios";
 import { Button, Box, Container, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const Logout = () => {
+
+  const navigate = useNavigate();
+  
   const handleLogout = async () => {
     try {
       const response = await axios.post(
@@ -10,9 +14,11 @@ const Logout = () => {
         {},
         {
           withCredentials: true,
-        }
+        },
+
       );
       console.log(response);
+      navigate("/login");
     } catch (error) {
       console.error(error);
     }
