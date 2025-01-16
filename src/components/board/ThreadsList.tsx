@@ -88,7 +88,7 @@ const ThreadsList: React.FC = () => {
           ))}
         </Grid>
       ) : selectedThread ? (
-        <ThreadsView thread={selectedThread} posts ={[]}onBack={handleBack} />
+        <ThreadsView thread={selectedThread} onBack={handleBack} />
       ) : threads.length === 0 ? (
         <Typography variant="h6" sx={{ color: 'text.secondary' }}>
           スレッドがありません
