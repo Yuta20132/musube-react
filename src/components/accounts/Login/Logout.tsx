@@ -4,15 +4,12 @@ import { Button, Box, Container, Typography } from "@mui/material";
 
 const Logout = () => {
   const handleLogout = async () => {
-    const token = localStorage.getItem("access_token");
     try {
       const response = await axios.post(
         "http://localhost:8080/users/logout/",
+        {},
         {
           withCredentials: true,
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
         }
       );
       console.log(response);
@@ -20,7 +17,6 @@ const Logout = () => {
       console.error(error);
     }
   };
-
   return (
     <Container maxWidth="sm">
       <Box
