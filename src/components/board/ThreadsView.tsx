@@ -13,16 +13,14 @@ import {
 import PostForm from './PostForm';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Thread, Post } from './typeThreads';
+import PostView from './PostView';
 
 type Props = {
   thread: Thread | null;
-  posts: Post[];
   onBack: () => void;
 };
 
-const ThreadsView: React.FC<Props> = ({ thread, posts,onBack }) => {
-  const handlePostSubmit = (title: string, content: string, threadId: string, categoryId: string) => {
-};
+const ThreadsView: React.FC<Props> = ({ thread, onBack }) => {
 
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, mb: 4 }}>
@@ -73,27 +71,7 @@ const ThreadsView: React.FC<Props> = ({ thread, posts,onBack }) => {
               <Typography variant="body2" sx={{ color: 'text.secondary', mb: 3, fontWeight: 'bold' }}>
                 {thread.description}
               </Typography>
-              <List sx={{ mt: 2 }}>
-                {posts.length > 0 ? (
-                  posts.map((post) => (
-                    <React.Fragment key={post.id}>
-                      <ListItem alignItems="flex-start" sx={{ display: 'block', paddingLeft: 0, paddingRight: 0 }}>
-                        <Typography variant="subtitle2" sx={{ color: 'primary.main', fontWeight: 'bold' }}>
-                          投稿者: {post.user_id}
-                        </Typography>
-                        <Typography variant="body1" sx={{ mt: 1 }}>
-                          {post.content}
-                        </Typography>
-                      </ListItem>
-                      <Divider sx={{ my: 2 }} />
-                    </React.Fragment>
-                  ))
-                ) : (
-                  <Typography variant="body1" sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
-                    投稿がありません
-                  </Typography>
-                )}
-              </List>
+              <PostView threadId={thread?.id}/>
             </>
           ) : (
             <Typography variant="body1" sx={{ color: 'text.secondary', textAlign: 'center' }}>
