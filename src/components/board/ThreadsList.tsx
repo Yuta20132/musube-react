@@ -10,49 +10,37 @@ import {
   Grid,
   Skeleton,
 } from '@mui/material';
-import ThreadsView from './ThreadsView';
 import { Thread } from './typeThreads';
 import axios from 'axios';
-
-
+import { useNavigate } from 'react-router-dom';
 
 const ThreadsList: React.FC = () => {
   const [threads, setThreads] = useState<Thread[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [selectedThread, setSelectedThread] = useState<Thread | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchThreads = async () => {
       setLoading(true);
-      //const token = localStorage.getItem("access_token");
-      
       try {
-        const response = await axios.get(
-          "http://localhost:8080/threads/1",{
-            withCredentials: true,
-            headers: {
-             // 'Authorization': `Bearer ${token}`,
-            },
+        const response = await axios.get("http://localhost:8080/threads/1", {
+          withCredentials: true,
         });
         console.log(response.data);
         setThreads(response.data);
       } catch (error) {
         console.error('Error fetching threads:', error);
-      }
-      finally {
+      } finally {
         setLoading(false);
       }
     };
-    
+
     fetchThreads();
   }, []);
 
   const handleSelectThread = (thread: Thread) => {
-    setSelectedThread(thread);
-  };
-
-  const handleBack = () => {
-    setSelectedThread(null);
+    // 選択したスレッドを state として渡す
+    navigate('/threads/view', { state: { thread } });
   };
 
   return (
@@ -87,8 +75,6 @@ const ThreadsList: React.FC = () => {
             </Grid>
           ))}
         </Grid>
-      ) : selectedThread ? (
-        <ThreadsView thread={selectedThread} onBack={handleBack} />
       ) : threads.length === 0 ? (
         <Typography variant="h6" sx={{ color: 'text.secondary' }}>
           スレッドがありません

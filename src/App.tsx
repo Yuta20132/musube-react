@@ -18,6 +18,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import Logout from './components/Accounts/Login/Logout';
 import UserProfile from './components/Accounts/UserProfile/UserProfile';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'; 
+import ThreadsView from './components/Board/ThreadsView';
 
 const theme = createTheme({
   palette: {
@@ -94,6 +95,7 @@ const App: React.FC = () => {
               </ProtectedRoute>
             }
           />
+           <Route path="/threads/view" element={<ThreadsView />} />
         </Routes>
       </Router>
     </AuthProvider>
