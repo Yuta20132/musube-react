@@ -1,15 +1,35 @@
 import React, {useState} from 'react'
 import { Container, Box, Typography, TextField, Button, Grid } from '@mui/material';
-
+import axios from 'axios';
 
 const ForgotPassword = () => {
 
     const [email, setEmail] = useState('');
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        //パスワードリセットの処理を実装
-        //API側待ち
+        //パスワードリセットの処理
+        console.log('Reset password for email:', email);
+        try{
+            //サーバー側ではクッキーからトークンを取得するため、
+            const response = await axios.get(
+                'http://localhost:8080/users/reset-password', 
+                { 
+                    withCredentials: true, // クッキーを送信するために必要
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                }
+            );
+            console.log(response);
+            // 成功した場合のユーザーへのフィードバック
+            alert('パスワードリセット用のメールを送信しました。メールをご確認ください。');
+        }
+        catch(error){
+            //エラー時の処理
+            console.error('Error resetting password:', error);
+            alert('パスワードリセットメールの送信に失敗しました。ログインしていることを確認してください。');
+        }    
     };
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

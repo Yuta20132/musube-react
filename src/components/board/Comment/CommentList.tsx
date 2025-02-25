@@ -4,7 +4,8 @@ import { List, ListItem, ListItemText, Divider } from '@mui/material';
 export interface IComment {
     id: number;
     post_id: number;
-    user_id: number;
+    user_id: string;
+    user_name?: string; // ユーザー名を表示するために追加
     content: string;
     created_at: string; // API からは文字列で受け取る想定（必要に応じ Date に変換）
   }
@@ -19,7 +20,8 @@ export interface IComment {
           <React.Fragment key={comment.id}>
             <ListItem alignItems="flex-start">
               <ListItemText
-                primary={`User ${comment.user_id} - ${new Date(comment.created_at).toLocaleString()}`}
+                // ユーザー名と日時のみを表示
+                primary={`${comment.user_name || 'Unknown User'} - ${new Date(comment.created_at).toLocaleString()}`}
                 secondary={comment.content}
               />
             </ListItem>
