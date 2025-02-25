@@ -44,12 +44,12 @@ const ThreadsList: React.FC = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: '1200px', margin: '0 auto', padding: 2 }}>
+    <Box sx={{ maxWidth: '1200px', mx: 'auto', p: 3 }}>
       <Typography
         variant="h4"
         component="h1"
         gutterBottom
-        sx={{ color: 'primary.main', fontWeight: 'bold', mb: 4 }}
+        sx={{ color: 'primary.main', textAlign: 'center', mb: 4 }}
       >
         スレッド一覧
       </Typography>
@@ -76,7 +76,7 @@ const ThreadsList: React.FC = () => {
           ))}
         </Grid>
       ) : threads.length === 0 ? (
-        <Typography variant="h6" sx={{ color: 'text.secondary' }}>
+        <Typography variant="h6" sx={{ color: 'text.secondary', textAlign: 'center' }}>
           スレッドがありません
         </Typography>
       ) : (
@@ -85,11 +85,11 @@ const ThreadsList: React.FC = () => {
             <Grid item xs={12} sm={6} md={4} key={thread.id}>
               <Card
                 sx={{
-                  background: 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)',
-                  boxShadow: 3,
-                  borderRadius: 2,
+                  background: 'linear-gradient(135deg, #E8EEF1 0%, #F5F7FA 100%)',
+                  borderRadius: 3,
                   transition: 'transform 0.3s, box-shadow 0.3s',
                   cursor: 'pointer',
+                  boxShadow: 3,
                   '&:hover': {
                     transform: 'translateY(-5px)',
                     boxShadow: 6,
@@ -117,13 +117,13 @@ const ThreadsList: React.FC = () => {
                     variant="contained"
                     fullWidth
                     sx={{
-                      background: 'linear-gradient(45deg, #2196f3 30%, #21cbf3 90%)',
+                      background: 'linear-gradient(45deg, #304FFE 30%, #1E40FF 90%)',
                       color: 'common.white',
                       borderRadius: 2,
-                      boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
+                      boxShadow: '0 3px 5px 2px rgba(48,79,254,0.3)',
                       '&:hover': {
-                        background: 'linear-gradient(45deg, #21cbf3 30%, #2196f3 90%)',
-                        boxShadow: '0 4px 8px 3px rgba(33, 203, 243, .4)',
+                        background: 'linear-gradient(45deg, #1E40FF 30%, #304FFE 90%)',
+                        boxShadow: '0 4px 8px 3px rgba(48,79,254,0.4)',
                       },
                     }}
                     onClick={() => handleSelectThread(thread)}

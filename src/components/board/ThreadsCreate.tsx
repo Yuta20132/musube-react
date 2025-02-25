@@ -68,21 +68,14 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({ onSubmit }) => {
   };
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        mt: 4,
-        mb: 4,
-      }}
-    >
+    <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
       <Paper 
         elevation={3} 
         sx={{ 
-          padding: 4, 
+          p: 4, 
           maxWidth: 600, 
           width: '100%', 
-          background: 'linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%)', 
+          background: 'linear-gradient(135deg, #F0F4F8 0%, #D9E2EC 100%)', 
           borderRadius: 3 
         }}
       >
@@ -94,15 +87,7 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({ onSubmit }) => {
         >
           スレッドの作成
         </Typography>
-        <Box
-          component="form"
-          onSubmit={handleSubmit}
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 3,
-          }}
-        >
+        <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
           <TextField
             label="タイトル"
             value={title}
@@ -117,10 +102,7 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({ onSubmit }) => {
                 </InputAdornment>
               ),
             }}
-            sx={{
-              backgroundColor: '#ffffff',
-              borderRadius: 2,
-            }}
+            sx={{ backgroundColor: '#ffffff', borderRadius: 2 }}
           />
           <TextField
             label="説明"
@@ -138,10 +120,7 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({ onSubmit }) => {
                 </InputAdornment>
               ),
             }}
-            sx={{
-              backgroundColor: '#ffffff',
-              borderRadius: 2,
-            }}
+            sx={{ backgroundColor: '#ffffff', borderRadius: 2 }}
           />
           <FormControl variant="outlined" fullWidth sx={{ backgroundColor: '#ffffff', borderRadius: 2 }}>
             <InputLabel>メンバータイプ</InputLabel>
@@ -167,16 +146,15 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({ onSubmit }) => {
               color="primary"
               disabled={loading}
               size="large"
-              startIcon={loading ? null : <></>}
-              sx={{ 
-                paddingX: 4,
-                paddingY: 1.5,
+              sx={{
+                px: 4,
+                py: 1.5,
                 borderRadius: 2,
-                background: 'linear-gradient(45deg, #2196f3 30%, #21cbf3 90%)',
-                boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
+                background: 'linear-gradient(45deg, #304FFE 30%, #1E40FF 90%)',
+                boxShadow: '0 3px 5px 2px rgba(48,79,254,0.3)',
                 transition: 'background 0.3s',
                 '&:hover': {
-                  background: 'linear-gradient(45deg, #21cbf3 30%, #2196f3 90%)',
+                  background: 'linear-gradient(45deg, #1E40FF 30%, #304FFE 90%)',
                 },
               }}
             >
