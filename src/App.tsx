@@ -1,7 +1,7 @@
 // src/App.tsx
 import React from 'react';
 import './App.css';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 // インポートしたコンポーネント
 import Header from './components/Header/Header';
@@ -19,6 +19,7 @@ import Logout from './components/Accounts/Login/Logout';
 import UserProfile from './components/Accounts/UserProfile/UserProfile';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'; 
 import ThreadsView from './components/Board/ThreadsView';
+import { Box } from '@mui/material';
 
 const theme = createTheme({
   palette: {
@@ -73,32 +74,33 @@ const theme = createTheme({
 const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
-    <AuthProvider>
-      <Router>
-        <Header />
-        <Routes>
-          <Route path="/" element={<TopPage />} />
-          <Route path="/register_form" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/user-search" element={<Search />} />
-          <Route path="/send-mail" element={<SendEmail />} />
-          <Route path="/verify" element={<UserActivate />} />
-          <Route path="/login-success" element={<LoginSuccess />} />
-          <Route path="/logout" element={<Logout />} />
-          <Route path="/profile" element={<UserProfile />} />
-          <Route 
-            path="/threads_page" 
-            element={
-              <ProtectedRoute>
-                <ThreadsPage />
-              </ProtectedRoute>
-            }
-          />
-           <Route path="/threads/view" element={<ThreadsView />} />
-        </Routes>
-      </Router>
-    </AuthProvider>
+      <AuthProvider>
+        <Header>
+          <Box component="main" sx={{ flexGrow: 1 }}>
+            <Routes>
+              <Route path="/" element={<TopPage />} />
+              <Route path="/register_form" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/user-search" element={<Search />} />
+              <Route path="/send-mail" element={<SendEmail />} />
+              <Route path="/verify" element={<UserActivate />} />
+              <Route path="/login-success" element={<LoginSuccess />} />
+              <Route path="/logout" element={<Logout />} />
+              <Route path="/profile" element={<UserProfile />} />
+              <Route 
+                path="/threads_page" 
+                element={
+                  <ProtectedRoute>
+                    <ThreadsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/threads/view" element={<ThreadsView />} />
+            </Routes>
+          </Box>
+        </Header>
+      </AuthProvider>
     </ThemeProvider>
   );
 };
