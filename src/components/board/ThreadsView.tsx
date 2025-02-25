@@ -4,27 +4,25 @@ import {
   CardContent, 
   CardHeader, 
   Typography, 
-  List, 
-  ListItem, 
-  Divider, 
   Button, 
   Box 
 } from '@mui/material';
 import PostForm from './PostForm';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Thread, Post } from './typeThreads';
+import { Thread } from './typeThreads';
 import PostView from './PostView';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-type Props = {
-  thread: Thread | null;
-  onBack: () => void;
-};
+const ThreadsView: React.FC = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
 
-const ThreadsView: React.FC<Props> = ({ thread, onBack }) => {
+  // List から渡された state 内の thread を取得
+  const thread = (location.state as { thread?: Thread })?.thread;
 
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, mb: 4 }}>
-      <PostForm/>
+      <PostForm />
       <Card 
         sx={{ 
           width: '100%', 
@@ -51,7 +49,7 @@ const ThreadsView: React.FC<Props> = ({ thread, onBack }) => {
           }
           action={
             <Button 
-              onClick={onBack} 
+              onClick={() => navigate('/threads')}
               sx={{ 
                 color: 'common.white', 
                 background: 'rgba(255, 255, 255, 0.2)',
@@ -68,13 +66,19 @@ const ThreadsView: React.FC<Props> = ({ thread, onBack }) => {
         <CardContent>
           {thread ? (
             <>
-              <Typography variant="body2" sx={{ color: 'text.secondary', mb: 3, fontWeight: 'bold' }}>
+              <Typography 
+                variant="body2" 
+                sx={{ color: 'text.secondary', mb: 3, fontWeight: 'bold' }}
+              >
                 {thread.description}
               </Typography>
-              <PostView threadId={thread?.id}/>
+              <PostView threadId={thread.id} />
             </>
           ) : (
-            <Typography variant="body1" sx={{ color: 'text.secondary', textAlign: 'center' }}>
+            <Typography 
+              variant="body1" 
+              sx={{ color: 'text.secondary', textAlign: 'center' }}
+            >
               スレッドを選択してください
             </Typography>
           )}

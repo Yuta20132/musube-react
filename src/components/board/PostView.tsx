@@ -4,8 +4,13 @@ import {
   Typography, 
   List, 
   ListItem, 
-  Divider, 
+  Divider,
+  Box, 
+  Button,
+  ButtonBase
 } from '@mui/material';
+import Comment from "./Comment/Comment";
+
 
 
 export interface Post  {
@@ -29,6 +34,9 @@ const PostView: React.FC<Props> = ({ threadId, limit = 5, offset = 0 }) => {
     const [posts, setPosts] = useState<Post[]>([]);
     const [error, setError] = useState<string | null>(null);
 
+    const [openComments, setOpenComments] = useState<{ [key: number]: boolean }>({});
+
+
     useEffect(() => {
     const fetchPosts = async () => {
         try {
@@ -51,6 +59,15 @@ const PostView: React.FC<Props> = ({ threadId, limit = 5, offset = 0 }) => {
         };
         fetchPosts();
       }, [threadId, limit, offset]);
+
+      const toggleComments = (postId: number) => {
+        setOpenComments((prev) => ({
+          ...prev,
+          [postId]: !prev[postId],
+        }));
+      };
+
+
   return (
     <div>
     <List sx={{ mt: 2 }}>
@@ -79,6 +96,19 @@ const PostView: React.FC<Props> = ({ threadId, limit = 5, offset = 0 }) => {
                           <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1 }}>
                             投稿日: {new Date(post.post_created_at).toLocaleString()}
                           </Typography>
+                          <Box sx={{ mt: 1 }}>
+                            <Button
+                              variant="outlined"
+                              size="small"
+                              onClick={() => toggleComments(post.post_id)}>
+                               {openComments[post.post_id] ? 'コメントを隠す' : 'コメントを表示'}
+                            </Button>
+                          </Box>
+                          {openComments[post.post_id] && (
+                          <Box sx={{ mt: 2, ml: 2 }}>
+                            <Comment postId={post.post_id} />
+                          </Box>
+                          )}
                           </ListItem>
                           <Divider sx={{ my: 2 }} />
                         </React.Fragment>
