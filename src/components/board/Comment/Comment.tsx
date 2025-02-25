@@ -65,7 +65,7 @@ const Comment: React.FC<CommentProps> = ({ postId }) => {
       <Typography variant="h6" sx={{ mb: 2 }}>
         コメント
       </Typography>
-      <CommentForm onSubmit={handleAddComment} />
+      <CommentForm postId={postId} categoryId={1} />
       {loading ? (
         <Typography>コメントを取得中...</Typography>
       ) : (
