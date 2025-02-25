@@ -1,8 +1,6 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react';
 import { TextField, Button, Box, Paper, Typography } from '@mui/material';
-import { threadId } from 'worker_threads';
 import axios from 'axios';
-
 
 const PostForm: React.FC = () => {
     const [title, setTitle] = useState<string>('');
@@ -40,46 +38,46 @@ const PostForm: React.FC = () => {
     }
 
     return (
-        <Paper elevation={3} sx={{ padding: 3, marginTop: 4, maxWidth: 600, marginLeft: 'auto', marginRight: 'auto', mb: 4 }}>
-            <Typography variant="h6" gutterBottom>
+        <Paper elevation={3} sx={{ padding: 3, marginTop: 4, maxWidth: 600, marginLeft: 'auto', marginRight: 'auto', mb: 4, backgroundColor: '#e3f2fd', height: 'auto', borderRadius: 3 }}>
+            <Typography variant="h6" gutterBottom sx={{ color: '#0d47a1' }}>
                 ポストの投稿
             </Typography>
             <Box component="form" onSubmit={handleSubmit}>
                 <TextField
-                label="Title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                margin="normal"
-                variant="outlined"
-                required
-                fullWidth={false}
-                sx={{ width: '100%', maxWidth: 500 }}
+                    label="Title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    margin="normal"
+                    variant="outlined"
+                    required
+                    fullWidth
+                    sx={{ backgroundColor: '#ffffff', borderRadius: 1 }}
                 />
                 <TextField
-                label="Content"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                margin="normal"
-                variant="outlined"
-                multiline
-                rows={4}
-                required
-                fullWidth={false}
-                sx={{ width: '100%', maxWidth: 500 }}
+                    label="Content"
+                    value={content}
+                    onChange={(e) => setContent(e.target.value)}
+                    margin="normal"
+                    variant="outlined"
+                    multiline
+                    rows={4}
+                    required
+                    fullWidth
+                    sx={{ backgroundColor: '#ffffff', borderRadius: 1 }}
                 />
                 <Box sx={{ textAlign: 'right', marginTop: 2 }}>
-                <Button 
-                    type="submit" 
-                    variant="contained" 
-                    color="primary"
-                    disabled={isSubmitting}
-                >
-                    Post
-                </Button>
+                    <Button 
+                        type="submit" 
+                        variant="contained" 
+                        sx={{ backgroundColor: '#0d47a1', '&:hover': { backgroundColor: '#0b3c91' } }}
+                        disabled={isSubmitting}
+                    >
+                        Post
+                    </Button>
                 </Box>
             </Box>
-            </Paper>
-        );
-}
+        </Paper>
+    );
+};
 
-export default PostForm
+export default PostForm;

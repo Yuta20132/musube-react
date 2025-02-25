@@ -3,19 +3,19 @@ import { createTheme } from '@mui/material/styles';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#2196f3',
+      main: '#304FFE', // 鮮やかで落ち着いた青
       light: '#64b5f6',
       dark: '#1976d2',
       contrastText: '#ffffff',
     },
     secondary: {
-      main: '#ff4081',
+      main: '#FF1744',
       light: '#ff79b0',
       dark: '#c60055',
       contrastText: '#ffffff',
     },
     background: {
-      default: '#f5f7fa',
+      default: '#F5F7FA',
       paper: '#ffffff',
     },
     text: {
@@ -34,7 +34,7 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: '"Roboto", "Noto Sans JP", sans-serif',
+    fontFamily: '"Roboto", sans-serif',
     h1: {
       fontWeight: 700,
       fontSize: '2.5rem',
@@ -48,7 +48,7 @@ const theme = createTheme({
       fontSize: '1.75rem',
     },
     h4: {
-      fontWeight: 600,
+      fontWeight: 700,
       fontSize: '1.5rem',
     },
     h5: {
@@ -67,6 +67,7 @@ const theme = createTheme({
   shape: {
     borderRadius: 12,
   },
+  shadows: Array(25).fill('none') as any, // 余計なシャドウを排除し、必要な箇所だけに追加
   components: {
     MuiButton: {
       styleOverrides: {
