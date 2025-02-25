@@ -21,9 +21,22 @@ const Comment: React.FC<CommentProps> = ({ postId }) => {
       setLoading(true);
       try {
         // エンドポイント例: http://localhost:8080/123/comments
-        const response = await axios.get(`http://loccalhost:8080/${postId}/comments`);
-        // response.data は IComment[] として返ってくる想定
-        setComments(response.data);
+        const response = await axios.get(`http://localhost:8080/posts/${postId}/comments`,{
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      
+        // APIからのデータ例: { rows: [{ comment_id, comment_content, user_id, user_name, comment_created_at }, ...] }
+        const transformedComments = response.data.rows.map((row: any) => ({
+          id: row.comment_id,
+          post_id: postId,
+          user_id: row.user_id,
+          content: row.comment_content,
+          created_at: row.comment_created_at,
+        }));
+        setComments(transformedComments);
       } catch (error) {
         console.error('Error fetching comments:', error);
       } finally {
@@ -65,12 +78,11 @@ const Comment: React.FC<CommentProps> = ({ postId }) => {
       <Typography variant="h6" sx={{ mb: 2 }}>
         コメント
       </Typography>
+      {/* コメント一覧を表示 */}
+      <CommentList comments={comments} />
+      {/* コメントフォーム */}
       <CommentForm postId={postId} categoryId={1} />
-      {loading ? (
-        <Typography>コメントを取得中...</Typography>
-      ) : (
-        <CommentList comments={comments} />
-      )}
+      
     </Box>
   );
 };
