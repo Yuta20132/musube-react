@@ -84,54 +84,61 @@ const ThreadsList: React.FC = () => {
           {threads.map((thread) => (
             <Grid item xs={12} sm={6} md={4} key={thread.id}>
               <Card
-                sx={{
-                  background: 'linear-gradient(135deg, #E8EEF1 0%, #F5F7FA 100%)',
-                  borderRadius: 3,
-                  transition: 'transform 0.3s, box-shadow 0.3s',
-                  cursor: 'pointer',
-                  boxShadow: 3,
-                  '&:hover': {
-                    transform: 'translateY(-5px)',
-                    boxShadow: 6,
-                  },
-                }}
-                onClick={() => handleSelectThread(thread)}
-              >
-                <CardHeader
-                  title={
-                    <Typography
-                      variant="h6"
-                      sx={{ color: 'primary.dark', fontWeight: 'bold' }}
-                    >
-                      {thread.title}
-                    </Typography>
-                  }
-                />
-                <CardContent>
-                  <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 'bold' }}>
-                    {thread.description}
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  <Button
-                    variant="contained"
-                    fullWidth
-                    sx={{
-                      background: 'linear-gradient(45deg, #304FFE 30%, #1E40FF 90%)',
-                      color: 'common.white',
-                      borderRadius: 2,
-                      boxShadow: '0 3px 5px 2px rgba(48,79,254,0.3)',
-                      '&:hover': {
-                        background: 'linear-gradient(45deg, #1E40FF 30%, #304FFE 90%)',
-                        boxShadow: '0 4px 8px 3px rgba(48,79,254,0.4)',
-                      },
-                    }}
-                    onClick={() => handleSelectThread(thread)}
-                  >
-                    詳細を見る
-                  </Button>
-                </CardActions>
-              </Card>
+  sx={{
+    display: 'flex',
+    flexDirection: 'column',
+    height: 200,
+    background: 'linear-gradient(135deg, #E8EEF1 0%, #F5F7FA 100%)',
+    borderRadius: 3,
+    transition: 'transform 0.3s, box-shadow 0.3s',
+    cursor: 'pointer',
+    boxShadow: 3,
+    '&:hover': {
+      transform: 'translateY(-5px)',
+      boxShadow: 6,
+    },
+  }}
+  onClick={() => handleSelectThread(thread)}
+>
+  <CardHeader
+    title={
+      <Typography variant="h6" sx={{ color: 'primary.dark', fontWeight: 'bold', textAlign: 'center' }}>
+        {thread.title}
+      </Typography>
+    }
+    sx={{ textAlign: 'center' }}
+  />
+
+  <CardContent sx={{ flexGrow: 1, overflowY: 'auto' }}>
+    <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 'bold' }}>
+      {thread.description}
+    </Typography>
+  </CardContent>
+
+  <CardActions>
+    <Button
+      variant="contained"
+      fullWidth
+      sx={{
+        background: 'linear-gradient(45deg, #304FFE 30%, #1E40FF 90%)',
+        color: 'common.white',
+        borderRadius: 2,
+        boxShadow: '0 3px 5px 2px rgba(48,79,254,0.3)',
+        '&:hover': {
+          background: 'linear-gradient(45deg, #1E40FF 30%, #304FFE 90%)',
+          boxShadow: '0 4px 8px 3px rgba(48,79,254,0.4)',
+        },
+      }}
+      onClick={(e) => {
+        e.stopPropagation();
+        handleSelectThread(thread);
+      }}
+    >
+      詳細を見る
+    </Button>
+  </CardActions>
+</Card>
+
             </Grid>
           ))}
         </Grid>
