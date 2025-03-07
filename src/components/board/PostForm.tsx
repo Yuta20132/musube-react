@@ -38,7 +38,7 @@ const PostForm: React.FC = () => {
     }
 
     return (
-        <Paper elevation={3} sx={{ padding: 3, marginTop: 4, maxWidth: 600, marginLeft: 'auto', marginRight: 'auto', mb: 4, backgroundColor: '#e3f2fd', height: 'auto', borderRadius: 3 }}>
+        <Paper elevation={3} sx={{ padding: 3, marginTop: 4, maxHeight: 400,maxWidth: 600, marginLeft: 'auto', marginRight: 'auto', mb: 4, backgroundColor: '#e3f2fd', height: 'auto', borderRadius: 3 }}>
             <Typography variant="h6" gutterBottom sx={{ color: '#0d47a1' }}>
                 ポストの投稿
             </Typography>
