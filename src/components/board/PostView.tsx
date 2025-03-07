@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Comment from "./Comment/Comment";
+import PostSearch from "./Post/PostSearch";
 
 export interface Post  {
   post_id: number;
@@ -31,32 +32,64 @@ interface Props {
 }
 
 const PostView: React.FC<Props> = ({ threadId, limit = 5, offset = 0 }) => {
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [allPosts, setAllPosts] = useState<Post[]>([]);
+  const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [openComments, setOpenComments] = useState<{ [key: number]: boolean }>({});
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await axios.get(`http://localhost:8080/threads/${threadId}/posts`, {
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          params: {
-            limit,
-            offset,
-          },
-        });
-        console.log(response.data.rows);
-        setPosts(response.data.rows);
-        setError(null);
-      } catch (error) {
-        console.error('Error fetching posts:', error);
-      }
-    };
     fetchPosts();
   }, [threadId, limit, offset]);
+
+  // 検索条件が変わったら投稿をフィルタリング
+  useEffect(() => {
+    filterPosts();
+  }, [searchTerm, allPosts]);
+
+  // 投稿のフィルタリング関数
+  const filterPosts = () => {
+    if (!searchTerm.trim()) {
+      setFilteredPosts(allPosts);
+      return;
+    }
+
+    const term = searchTerm.toLowerCase();
+    const filtered = allPosts.filter(post => 
+      post.post_title.toLowerCase().includes(term) || 
+      post.post_content.toLowerCase().includes(term)
+    );
+    setFilteredPosts(filtered);
+  };
+
+  const fetchPosts = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8080/threads/${threadId}/posts`, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        params: {
+          limit,
+          offset,
+          // 検索パラメータは送信しない
+        },
+      });
+      
+      const posts = response.data.rows;
+      console.log(posts);
+      setAllPosts(posts);
+      setFilteredPosts(posts); // 初期状態では全ての投稿を表示
+      setError(null);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+      setError('投稿の取得に失敗しました');
+    }
+  };
+
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+  };
 
   const toggleComments = (postId: number) => {
     setOpenComments((prev) => ({
@@ -67,9 +100,17 @@ const PostView: React.FC<Props> = ({ threadId, limit = 5, offset = 0 }) => {
 
   return (
     <Box sx={{ mt: 2 }}>
-      <List>
-        {posts.length > 0 ? (
-          posts.map((post) => (
+      <PostSearch onSearch={handleSearch} />
+      
+      {error && (
+        <Typography color="error" sx={{ mt: 2 }}>
+          {error}
+        </Typography>
+      )}
+      
+      <List sx={{ mt: 2 }}>
+        {filteredPosts.length > 0 ? (
+          filteredPosts.map((post) => (
             <React.Fragment key={post.post_id}>
               <Card variant="outlined" sx={{ mb: 2, borderRadius: 3, boxShadow: 3 }}>
                 <CardContent>
@@ -112,7 +153,7 @@ const PostView: React.FC<Props> = ({ threadId, limit = 5, offset = 0 }) => {
           ))
         ) : (
           <Typography variant="body1" sx={{ color: 'text.secondary', fontStyle: 'italic' }}>
-            投稿がありません
+            {searchTerm ? `「${searchTerm}」に一致する投稿はありません` : '投稿がありません'}
           </Typography>
         )}
       </List>
