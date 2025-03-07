@@ -49,7 +49,7 @@ const ThreadsView: React.FC = () => {
           }
           action={
             <Button 
-              onClick={() => navigate('/threads')}
+              onClick={() => navigate('/threads_page')}
               sx={{ 
                 color: 'common.white', 
                 background: 'rgba(255, 255, 255, 0.2)',
