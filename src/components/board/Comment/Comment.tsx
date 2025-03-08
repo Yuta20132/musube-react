@@ -33,36 +33,37 @@ const Comment: React.FC<CommentProps> = ({ postId }) => {
     fetchCurrentUser();
   }, []);
 
+  // コメント取得関数を独立させる
+  const fetchComments = async () => {
+    setLoading(true);
+    try {
+      // エンドポイント例: http://localhost:8080/123/comments
+      const response = await axios.get(`http://localhost:8080/posts/${postId}/comments`,{
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    
+      // APIからのデータ例: { rows: [{ comment_id, comment_content, user_id, user_name, comment_created_at }, ...] }
+      const transformedComments = response.data.rows.map((row: any) => ({
+        id: row.comment_id,
+        post_id: postId,
+        user_id: row.user_id,
+        content: row.comment_content,
+        created_at: row.comment_created_at,
+      }));
+      setComments(transformedComments);
+      console.log(response.data);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // 指定の投稿IDに紐づくコメントを取得
   useEffect(() => {
-    const fetchComments = async () => {
-      setLoading(true);
-      try {
-        // エンドポイント例: http://localhost:8080/123/comments
-        const response = await axios.get(`http://localhost:8080/posts/${postId}/comments`,{
-          withCredentials: true,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-      
-        // APIからのデータ例: { rows: [{ comment_id, comment_content, user_id, user_name, comment_created_at }, ...] }
-        const transformedComments = response.data.rows.map((row: any) => ({
-          id: row.comment_id,
-          post_id: postId,
-          user_id: row.user_id,
-          content: row.comment_content,
-          created_at: row.comment_created_at,
-        }));
-        setComments(transformedComments);
-        console.log(response.data);
-      } catch (error) {
-        console.error('Error fetching comments:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchComments();
   }, [postId]);
 
@@ -73,15 +74,19 @@ const Comment: React.FC<CommentProps> = ({ postId }) => {
     }
     
     try {
-      await axios.delete(`http://localhost:8080/comments/${commentId}`, {
+      // コメントIDとユーザーIDをリクエストボディで送信
+      await axios.post('http://localhost:8080/comments/delete', {
+        comment_id: commentId,
+        user_id: currentUserId
+      }, {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/json',
         },
       });
       
-      // 削除成功したらコメントリストから該当コメントを削除
-      setComments(comments.filter(comment => comment.id !== commentId));
+      // 削除成功したら最新のコメント一覧を再取得
+      await fetchComments();
     } catch (error) {
       console.error('Error deleting comment:', error);
       alert('コメントの削除に失敗しました');
