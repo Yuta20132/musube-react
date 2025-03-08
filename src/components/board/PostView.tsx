@@ -37,8 +37,10 @@ const PostView: React.FC<Props> = ({ threadId, limit = 5, offset = 0 }) => {
   const [error, setError] = useState<string | null>(null);
   const [openComments, setOpenComments] = useState<{ [key: number]: boolean }>({});
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [currentUserId, setCurrentUserId] = useState<string>('');
 
   useEffect(() => {
+    fetchCurrentUser();
     fetchPosts();
   }, [threadId, limit, offset]);
 
@@ -46,6 +48,50 @@ const PostView: React.FC<Props> = ({ threadId, limit = 5, offset = 0 }) => {
   useEffect(() => {
     filterPosts();
   }, [searchTerm, allPosts]);
+
+  // 現在のログインユーザー情報を取得
+  
+    const fetchCurrentUser = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/users/me', {
+          withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        setCurrentUserId(response.data.id);
+      } catch (error) {
+        console.error('Error fetching current user:', error);
+      }
+    };
+
+
+  // 投稿削除機能
+  const deletePost = async (postId: number, userId: string) => {
+    if (!window.confirm('この投稿を削除してもよろしいですか？')) {
+      return;
+    }
+    
+    try {
+      await axios.delete(`http://localhost:8080/posts/`, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        data: {
+          post_id: postId,
+          user_id: userId
+        }
+      });
+      
+      // 削除成功後、投稿リストを更新
+      setAllPosts(prevPosts => prevPosts.filter(post => post.post_id !== postId));
+      setFilteredPosts(prevPosts => prevPosts.filter(post => post.post_id !== postId));
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      setError('投稿の削除に失敗しました');
+    }
+  };
 
   // 投稿のフィルタリング関数
   const filterPosts = () => {
@@ -142,6 +188,18 @@ const PostView: React.FC<Props> = ({ threadId, limit = 5, offset = 0 }) => {
                   >
                     {openComments[post.post_id] ? 'コメントを隠す' : 'コメントを表示'}
                   </Button>
+                  
+                  {currentUserId === post.user_id && (
+                    <Button
+                      variant="contained"
+                      color="error"
+                      size="small"
+                      onClick={() => deletePost(post.post_id, post.user_id)}
+                      sx={{ ml: 'auto' }}
+                    >
+                      削除
+                    </Button>
+                  )}
                 </CardActions>
                 <Collapse in={openComments[post.post_id]} timeout="auto" unmountOnExit>
                   <CardContent>
