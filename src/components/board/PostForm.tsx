@@ -20,7 +20,6 @@ const PostForm: React.FC = () => {
         };
 
         setIsSubmitting(true);
-        console.log(payload);
         try {
             const response = await axios.post('http://localhost:8080/posts/', payload, {
                 headers: {
