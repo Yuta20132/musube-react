@@ -19,6 +19,7 @@ import Logout from './components/Accounts/Login/Logout';
 import UserProfile from './components/Accounts/UserProfile/UserProfile';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'; 
 import ThreadsView from './components/Board/ThreadsView';
+import Policy from './components/Policy/Policy';
 import { Box } from '@mui/material';
 
 const theme = createTheme({
@@ -97,6 +98,7 @@ const App: React.FC = () => {
                 }
               />
               <Route path="/threads/view" element={<ThreadsView />} />
+              <Route path="/policy" element={<Policy />} />
             </Routes>
           </Box>
         </Header>
