@@ -47,5 +47,4 @@ const ThreadsSearch: React.FC<ThreadsSearchProps> = ({ onSearch }) => {
   )
 }
 
-
 export default ThreadsSearch
