@@ -50,7 +50,6 @@ const PostView: React.FC<Props> = ({ threadId, limit = 5, offset = 0 }) => {
   }, [searchTerm, allPosts]);
 
   // 現在のログインユーザー情報を取得
-  
     const fetchCurrentUser = async () => {
       try {
         const response = await axios.get('http://localhost:8080/users/me', {
