@@ -19,13 +19,16 @@ import {
     InputAdornment,
     Select,
     MenuItem,
-    SelectChangeEvent
+    SelectChangeEvent,
+    IconButton
 } from '@mui/material';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import SchoolIcon from '@mui/icons-material/School';
 import PersonIcon from '@mui/icons-material/Person';
 import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 // FormDataの型定義
 interface FormData {
@@ -55,6 +58,7 @@ const Register: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [activeStep, setActiveStep] = useState(0);
     const steps = ['基本情報', '個人情報', '認証情報'];
+    const [showPasswords, setShowPasswords] = useState<boolean>(false);
 
     // フォームの入力値が変更された時に呼び出されるハンドラー。
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -166,6 +170,11 @@ const Register: React.FC = () => {
             console.error('登録エラー:', error);
             setError('登録中にエラーが発生しました。もう一度お試しください。');
         }
+    };
+
+    // パスワード表示/非表示を切り替える関数
+    const togglePasswordVisibility = () => {
+        setShowPasswords(!showPasswords);
     };
 
     return (
@@ -354,7 +363,7 @@ const Register: React.FC = () => {
                                                 fullWidth
                                                 name="password"
                                                 label="パスワード"
-                                                type="password"
+                                                type={showPasswords ? "text" : "password"}
                                                 id="password"
                                                 autoComplete="new-password"
                                                 value={formData.password}
@@ -365,6 +374,17 @@ const Register: React.FC = () => {
                                                             <LockIcon />
                                                         </InputAdornment>
                                                     ),
+                                                    endAdornment: (
+                                                        <InputAdornment position="end">
+                                                            <IconButton
+                                                                aria-label="パスワードの表示切り替え"
+                                                                onClick={togglePasswordVisibility}
+                                                                edge="end"
+                                                            >
+                                                                {showPasswords ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                                                            </IconButton>
+                                                        </InputAdornment>
+                                                    )
                                                 }}
                                             />
                                         </Grid>
@@ -375,7 +395,7 @@ const Register: React.FC = () => {
                                                 fullWidth
                                                 name="passwordConfirm"
                                                 label="確認パスワード"
-                                                type="password"
+                                                type={showPasswords ? "text" : "password"}
                                                 id="passwordConfirm"
                                                 value={formData.passwordConfirm}
                                                 onChange={handleChange}
@@ -385,6 +405,17 @@ const Register: React.FC = () => {
                                                             <LockIcon />
                                                         </InputAdornment>
                                                     ),
+                                                    endAdornment: (
+                                                        <InputAdornment position="end">
+                                                            <IconButton
+                                                                aria-label="パスワードの表示切り替え"
+                                                                onClick={togglePasswordVisibility}
+                                                                edge="end"
+                                                            >
+                                                                {showPasswords ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                                                            </IconButton>
+                                                        </InputAdornment>
+                                                    )
                                                 }}
                                             />
                                         </Grid>
