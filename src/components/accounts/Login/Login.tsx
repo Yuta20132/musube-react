@@ -14,11 +14,13 @@ import {
     Divider,
     Paper,
     Alert,
+    IconButton
 } from '@mui/material';
 import { useNavigate } from "react-router-dom";
 import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
 import LoginIcon from '@mui/icons-material/Login';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 //axiosのインスタンスを作成してインターセプターを追加
 const axiosInstance = axios.create({
@@ -58,6 +60,7 @@ const Login = () => {
     
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState<boolean>(false);
 
     const navigate = useNavigate();
 
@@ -103,6 +106,11 @@ const Login = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    // パスワードの表示/非表示を切り替える関数
+    const handleTogglePasswordVisibility = () => {
+        setShowPassword(!showPassword);
     };
 
     return (
@@ -171,7 +179,7 @@ const Login = () => {
                                             fullWidth
                                             name="password"
                                             label="Password"
-                                            type="password"
+                                            type={showPassword ? 'text' : 'password'}
                                             id="password"
                                             autoComplete="current-password"
                                             value={formData.password}
@@ -180,6 +188,16 @@ const Login = () => {
                                                 startAdornment: (
                                                     <InputAdornment position="start">
                                                         <LockIcon />
+                                                    </InputAdornment>
+                                                ),
+                                                endAdornment: (
+                                                    <InputAdornment position="end">
+                                                        <IconButton
+                                                            onClick={handleTogglePasswordVisibility}
+                                                            edge="end"
+                                                        >
+                                                            <VisibilityIcon />
+                                                        </IconButton>
                                                     </InputAdornment>
                                                 ),
                                             }}
