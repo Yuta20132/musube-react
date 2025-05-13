@@ -10,7 +10,7 @@ interface CommentFormProps {
 
 const CommentForm: React.FC<CommentFormProps> = ({postId, categoryId=1 }) => {
   const [content, setContent] = useState('');
-  const [userId, setUserId] = useState('');
+  const [userId, setUserId] = useState<string>('');
 
   const fetchUserId = async () => {
 

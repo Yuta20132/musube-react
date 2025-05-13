@@ -122,6 +122,7 @@ const PostView: React.FC<Props> = ({ threadId, limit = 5, offset = 0 }) => {
       });
       
       const posts = response.data.rows;
+      console.log('Fetched posts:');
       console.log(posts);
       setAllPosts(posts);
       setFilteredPosts(posts); // 初期状態では全ての投稿を表示

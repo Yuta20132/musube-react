@@ -4,6 +4,7 @@ import { Box, Typography } from '@mui/material';
 import axios from 'axios';
 import CommentForm from './CommentForm';
 import CommentList, { IComment } from './CommentList';
+import { c } from 'framer-motion/dist/types.d-6pKw1mTI';
 
 interface CommentProps {
   postId: number;
@@ -35,6 +36,7 @@ const Comment: React.FC<CommentProps> = ({ postId }) => {
 
   // コメント取得関数を独立させる
   const fetchComments = async () => {
+    console.log(postId);
     setLoading(true);
     try {
       // エンドポイント例: http://localhost:8080/123/comments
@@ -44,12 +46,15 @@ const Comment: React.FC<CommentProps> = ({ postId }) => {
           'Content-Type': 'application/json',
         },
       });
+      console.log('コメント取得成功');
+      console.log(response.data);
     
       // APIからのデータ例: { rows: [{ comment_id, comment_content, user_id, user_name, comment_created_at }, ...] }
       const transformedComments = response.data.rows.map((row: any) => ({
         id: row.comment_id,
         post_id: postId,
         user_id: row.user_id,
+        user_name: row.user_name,
         content: row.comment_content,
         created_at: row.comment_created_at,
       }));
