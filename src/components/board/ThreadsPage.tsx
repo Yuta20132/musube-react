@@ -6,6 +6,8 @@ import axios from 'axios';
 import ThreadsSearch from './Threads/ThreadsSearch';
 import { Thread } from './typeThreads';
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 const ThreadsPage: React.FC = () => {
   // 取得した全スレッドと表示用のスレッドの両方を状態管理
   const [allThreads, setAllThreads] = useState<Thread[]>([]);
@@ -16,10 +18,9 @@ const ThreadsPage: React.FC = () => {
   const fetchThreads = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("http://localhost:8080/threads/1", {
+      const response = await axios.get(`${apiUrl}/threads/1`, {
         withCredentials: true,
       });
-      console.log(response.data);
       setAllThreads(response.data);
       setThreads(response.data);
     } catch (error) {
@@ -36,7 +37,7 @@ const ThreadsPage: React.FC = () => {
   // 新しいスレッド作成時、全件および表示用の配列に追加
   const handleCreateThread = async (newThread: { title: string; description: string; memberType: string }) => {
     try {
-      const response = await axios.post("http://localhost:8080/threads", newThread, {
+      const response = await axios.post(`${apiUrl}/threads`, newThread, {
         withCredentials: true,
       });
       const updatedThreads = [...allThreads, response.data];

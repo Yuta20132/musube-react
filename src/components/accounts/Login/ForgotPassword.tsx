@@ -1,6 +1,7 @@
 import React, {useState} from 'react'
 import { Container, Box, Typography, TextField, Button, Grid } from '@mui/material';
 import axios from 'axios';
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const ForgotPassword = () => {
 
@@ -13,7 +14,7 @@ const ForgotPassword = () => {
         try{
             //サーバー側ではクッキーからトークンを取得するため、
             const response = await axios.get(
-                'http://localhost:8080/users/reset-password', 
+                `${apiUrl}/users/reset-password`, 
                 { 
                     withCredentials: true, // クッキーを送信するために必要
                     headers: {
@@ -21,7 +22,6 @@ const ForgotPassword = () => {
                     }
                 }
             );
-            console.log(response);
             // 成功した場合のユーザーへのフィードバック
             alert('パスワードリセット用のメールを送信しました。メールをご確認ください。');
         }

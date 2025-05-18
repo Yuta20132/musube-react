@@ -31,6 +31,8 @@ interface Props {
   offset?: number;
 }
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 const PostView: React.FC<Props> = ({ threadId, limit = 5, offset = 0 }) => {
   const [allPosts, setAllPosts] = useState<Post[]>([]);
   const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
@@ -52,7 +54,7 @@ const PostView: React.FC<Props> = ({ threadId, limit = 5, offset = 0 }) => {
   // 現在のログインユーザー情報を取得
     const fetchCurrentUser = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/users/me', {
+        const response = await axios.get(`${apiUrl}/users/me`, {
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json',
@@ -72,7 +74,7 @@ const PostView: React.FC<Props> = ({ threadId, limit = 5, offset = 0 }) => {
     }
     
     try {
-      await axios.delete(`http://localhost:8080/posts/`, {
+      await axios.delete(`${apiUrl}/posts/`, {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/json',
@@ -109,7 +111,7 @@ const PostView: React.FC<Props> = ({ threadId, limit = 5, offset = 0 }) => {
 
   const fetchPosts = async () => {
     try {
-      const response = await axios.get(`http://localhost:8080/threads/${threadId}/posts`, {
+      const response = await axios.get(`${apiUrl}/threads/${threadId}/posts`, {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/json',
@@ -122,7 +124,6 @@ const PostView: React.FC<Props> = ({ threadId, limit = 5, offset = 0 }) => {
       });
       
       const posts = response.data.rows;
-      console.log(posts);
       setAllPosts(posts);
       setFilteredPosts(posts); // 初期状態では全ての投稿を表示
       setError(null);

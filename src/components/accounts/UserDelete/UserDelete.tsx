@@ -26,7 +26,6 @@ const DeleteUser: React.FC = () => {
                     'Content-Type': 'application/json',
                 }
             });
-            console.log(response.data.message); // レスポンスメッセージをコンソールに出力
         } catch (error) {
             console.log(error);
             alert('Delete failed'); // エラーが発生した場合はアラートを表示
