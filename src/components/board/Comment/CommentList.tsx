@@ -17,7 +17,6 @@ export interface IComment {
     currentUserId: string; // 現在のユーザーIDを追加
   }
   const CommentList: React.FC<CommentListProps> = ({ comments, onDeleteComment, currentUserId }) => {
-    console.log(comments);
     return (
       <List>
         {comments.map((comment, index) => (

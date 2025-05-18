@@ -4,11 +4,13 @@ import { Box, Typography } from '@mui/material';
 import axios from 'axios';
 import CommentForm from './CommentForm';
 import CommentList, { IComment } from './CommentList';
-import { c } from 'framer-motion/dist/types.d-6pKw1mTI';
+import { Api } from '@mui/icons-material';
 
 interface CommentProps {
   postId: number;
 }
+
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const Comment: React.FC<CommentProps> = ({ postId }) => {
   const [comments, setComments] = useState<IComment[]>([]);
@@ -19,7 +21,7 @@ const Comment: React.FC<CommentProps> = ({ postId }) => {
   useEffect(() => {
     const fetchCurrentUser = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/users/me', {
+        const response = await axios.get(`${apiUrl}/users/me`, {
           withCredentials: true,
           headers: {
             'Content-Type': 'application/json',
@@ -39,17 +41,12 @@ const Comment: React.FC<CommentProps> = ({ postId }) => {
     console.log(postId);
     setLoading(true);
     try {
-      // エンドポイント例: http://localhost:8080/123/comments
-      const response = await axios.get(`http://localhost:8080/posts/${postId}/comments`,{
+      const response = await axios.get(`${apiUrl}/posts/${postId}/comments`,{
         withCredentials: true,
         headers: {
           'Content-Type': 'application/json',
         },
       });
-      console.log('コメント取得成功');
-      console.log(response.data);
-    
-      // APIからのデータ例: { rows: [{ comment_id, comment_content, user_id, user_name, comment_created_at }, ...] }
       const transformedComments = response.data.rows.map((row: any) => ({
         id: row.comment_id,
         post_id: postId,
@@ -59,7 +56,6 @@ const Comment: React.FC<CommentProps> = ({ postId }) => {
         created_at: row.comment_created_at,
       }));
       setComments(transformedComments);
-      console.log(response.data);
     } catch (error) {
       console.error('Error fetching comments:', error);
     } finally {
@@ -80,7 +76,7 @@ const Comment: React.FC<CommentProps> = ({ postId }) => {
     
     try {
       // コメントIDとユーザーIDをリクエストボディで送信
-      await axios.post('http://localhost:8080/comments/delete', {
+      await axios.post(`${apiUrl}/comments/delete`, {
         comment_id: commentId,
         user_id: currentUserId
       }, {

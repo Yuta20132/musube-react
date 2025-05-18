@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { TextField, Button, Box, Paper, Typography } from '@mui/material';
 import axios from 'axios';
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 const PostForm: React.FC = () => {
     const [title, setTitle] = useState<string>('');
     const [content, setContent] = useState<string>('');
@@ -21,7 +23,7 @@ const PostForm: React.FC = () => {
 
         setIsSubmitting(true);
         try {
-            const response = await axios.post('http://localhost:8080/posts/', payload, {
+            const response = await axios.post(`${apiUrl}/posts/`, payload, {
                 headers: {
                     'Content-Type': 'application/json',
                 },

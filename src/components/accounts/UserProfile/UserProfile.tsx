@@ -37,6 +37,8 @@ import {
 } from '@mui/icons-material';
 import axios from 'axios';
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 // Styled components using the theme
 const ProfileCard = styled(Card)(() => ({
   position: 'relative',
@@ -151,13 +153,12 @@ const UserProfile: React.FC = () => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await axios.get('http://localhost:8080/users/me', {
+        const response = await axios.get(`${apiUrl}/users/me`, {
           headers: {
             'Content-Type': 'application/json',
           },
           withCredentials: true,
         });
-        console.log(response.data);
         setUserProfile({
           username: response.data.user_name,
           firstName: response.data.first_name,

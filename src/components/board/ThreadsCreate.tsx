@@ -16,7 +16,8 @@ import {
 import { 
     Title as TitleIcon, 
     Description as DescriptionIcon, 
-    Group as GroupIcon 
+    Group as GroupIcon, 
+    Api
 } from '@mui/icons-material';
 import axios from 'axios';
 import { SelectChangeEvent } from '@mui/material/Select';
@@ -24,6 +25,8 @@ import { SelectChangeEvent } from '@mui/material/Select';
 interface ThreadsCreateForm {
   onSubmit: (thread: { title: string, description: string, memberType: string }) => void;
 }
+
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const ThreadsCreate: React.FC<ThreadsCreateForm> = ({ onSubmit }) => {
   const [title, setTitle] = useState<string>('');
@@ -37,9 +40,8 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({ onSubmit }) => {
     if (title.trim() && description.trim()) {
       const token = localStorage.getItem("access_token");
       setLoading(true);
-      console.log(memberType);
       try {
-        const response = await axios.post('http://localhost:8080/threads/', 
+        const response = await axios.post(`${apiUrl}/threads/`, 
         { 
           title: title, 
           description: description, 

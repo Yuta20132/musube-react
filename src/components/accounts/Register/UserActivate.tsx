@@ -3,6 +3,8 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 const UserActivate: React.FC = () => {
     const location = useLocation();
     console.log(location.search);
@@ -20,17 +22,15 @@ const UserActivate: React.FC = () => {
     useEffect(() => {
         const params = new URLSearchParams(location.search);
         const token = params.get('token')
-        console.log(token)
         const activateUser = async () => {
             try {
 
                 //成功したときの処理
-                const respone = await axios.post(`http://localhost:8080/users/verify/`,{
+                const respone = await axios.post(`${apiUrl}/users/verify/`,{
                     token: token,
                 });
                 setActivationStatus('success');
                 alert('アカウントがアクティベーㇳされました');
-                console.log(respone);
             } catch (error) {
 
                 //エラーのときの表示

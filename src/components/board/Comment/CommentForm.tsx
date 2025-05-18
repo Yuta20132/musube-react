@@ -8,6 +8,8 @@ interface CommentFormProps {
   categoryId: number;
 }
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 const CommentForm: React.FC<CommentFormProps> = ({postId, categoryId=1 }) => {
   const [content, setContent] = useState('');
   const [userId, setUserId] = useState<string>('');
@@ -15,14 +17,12 @@ const CommentForm: React.FC<CommentFormProps> = ({postId, categoryId=1 }) => {
   const fetchUserId = async () => {
 
     try {
-      const response = await axios.get('http://localhost:8080/users/me', {
+      const response = await axios.get(`${apiUrl}/me`, {
         headers: {
           'Content-Type': 'application/json',
         },
         withCredentials: true,
       });
-      console.log(response.data);
-      console.log(response.data.id);
       return response.data.id;
     } catch (error) {
       console.error('fetchData error:', error);
@@ -58,7 +58,7 @@ const CommentForm: React.FC<CommentFormProps> = ({postId, categoryId=1 }) => {
 
     try {
       await axios.post(
-        'http://localhost:8080/comments',
+        `${apiUrl}/comments`,
         {
           post_id: postId,
           category_id: categoryId,

@@ -41,6 +41,7 @@ interface FormData {
     memberType: number;
     institution: string,
 }
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const Register: React.FC = () => {
     // formDataの初期状態を設定し、useStateで管理します。
@@ -146,7 +147,7 @@ const Register: React.FC = () => {
         }
         try {
             // axiosを使用してサーバーにPOSTリクエストを送信。
-            const response = await axios.post('http://localhost:8080/users/register/', {
+            const response = await axios.post(`${apiUrl}/users/register/`, {
                 name : username,
                 email,
                 first_name: firstName,
@@ -159,13 +160,8 @@ const Register: React.FC = () => {
                     'Content-Type': 'application/json'
                 }
             });
-
-            // レスポンスメッセージを表示。
-            console.log(response.data.message);
-
             //ページ遷移
             navigate('/send-mail')
-
         } catch (error) {
             console.error('登録エラー:', error);
             setError('登録中にエラーが発生しました。もう一度お試しください。');

@@ -22,37 +22,14 @@ import LockIcon from '@mui/icons-material/Lock';
 import LoginIcon from '@mui/icons-material/Login';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 
-//axiosのインスタンスを作成してインターセプターを追加
-const axiosInstance = axios.create({
-    baseURL:'',
-    headers: {
-        'Content-Type': 'application/json',
-    },
-    withCredentials: true,
-});
+const apiUrl = process.env.REACT_APP_API_URL;
 
-//リクエストのインターセプターでトークンを添付
-axiosInstance.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem('access_token');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => {
-        return Promise.reject(error);
-    }
-);
-
-// formDataの型を定義します。これはユーザーがフォームに入力するデータの形を表します。
 interface FormData {
     email: string;
     password: string;
 }
 
 const Login = () => {
-    // useStateを使用してフォームデータの状態を管理します。初期値はemailとpasswordの空文字列です。
     const [formData, setFormData] = useState<FormData>({
         email: "",
         password: ""
@@ -68,7 +45,6 @@ const Login = () => {
         navigate("/forgot-password");
     };
 
-    // 入力フィールドが変更されたときに呼び出される関数です。入力された値をformData状態にセットします。
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFormData({
             ...formData,
@@ -77,17 +53,15 @@ const Login = () => {
     };
     
     const {email, password} = formData;
-    axios.defaults.withCredentials = true; // クッキーを使用して認証情報を保持するために必要です。
+    axios.defaults.withCredentials = true;
     
-    // フォームが送信されたときに呼び出される非同期関数です。APIへのPOSTリクエストを行います。
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError(null);
         setLoading(true);
         
         try {
-            // axiosを使用してログインAPIエンドポイントにPOSTリクエストを送信します。
-            const response = await axios.post("http://localhost:8080/users/login/", {
+            const response = await axios.post(`${apiUrl}/users/login/`, {
                 email: email,
                 password: password
             }, 
@@ -97,8 +71,6 @@ const Login = () => {
                 },
                 withCredentials: true
             });
-            
-            // ログイン成功後にリダイレクトします。
             navigate('/login-success');
         } catch (error) {
             console.error(error);
@@ -108,7 +80,6 @@ const Login = () => {
         }
     };
 
-    // パスワードの表示/非表示を切り替える関数
     const handleTogglePasswordVisibility = () => {
         setShowPassword(!showPassword);
     };

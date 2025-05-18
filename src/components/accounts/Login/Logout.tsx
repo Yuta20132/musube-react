@@ -13,6 +13,8 @@ import {
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from "react-router-dom";
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 const Logout = () => {
   const navigate = useNavigate();
   const theme = useTheme();
@@ -20,13 +22,12 @@ const Logout = () => {
   const handleLogout = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8080/users/logout/",
+        `${apiUrl}/users/logout/`,
         {},
         {
           withCredentials: true,
         }
       );
-      console.log(response);
       navigate("/login");
     } catch (error) {
       console.error(error);
