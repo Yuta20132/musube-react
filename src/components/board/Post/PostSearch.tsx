@@ -20,29 +20,35 @@ const PostSearch: React.FC<PostSearchProps> = ({ onSearch }) => {
         投稿検索
       </Typography>
       <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', alignItems: 'center' }}>
-        <TextField
-          label="検索キーワード"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          variant="outlined"
-          fullWidth
-          size="small"
-          sx={{ backgroundColor: '#ffffff', borderRadius: 1, mr: 1 }}
-        />
-        <Button 
-          type="submit" 
-          variant="contained" 
-          startIcon={<SearchIcon />}
-          sx={{ 
-            backgroundColor: '#0d47a1', 
-            '&:hover': { backgroundColor: '#0b3c91' },
-            height: '50%', // TextFieldの高さに合わせる
-            width: 'auto', // TextFieldの高さに合わせる
-          }}
-        >
-          検索
-        </Button>
-      </Box>
+  <TextField
+    label="検索キーワード"
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+    variant="outlined"
+    fullWidth
+    size="medium"
+    sx={{ backgroundColor: '#ffffff', borderRadius: 1, mr: 1 }}
+  />
+  <Button
+    type="submit"
+    variant="contained"
+    sx={{
+      backgroundColor: '#0d47a1',
+      '&:hover': { backgroundColor: '#0b3c91' },
+      minWidth: '56px',
+      height: '56px',
+      padding: 0,
+      borderRadius: 2,
+      boxShadow: 1,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}
+  >
+    <SearchIcon />
+  </Button>
+</Box>
+
     </Paper>
   )
 }

@@ -8,9 +8,7 @@ import {
   CardActions,
   Collapse,
   Button,
-  IconButton,
   Box,
-  Divider
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Comment from "./Comment/Comment";
@@ -125,7 +123,7 @@ const PostView: React.FC<Props> = ({ threadId, limit = 5, offset = 0 }) => {
       
       const posts = response.data.rows;
       setAllPosts(posts);
-      setFilteredPosts(posts); // 初期状態では全ての投稿を表示
+      setFilteredPosts(posts); 
       setError(null);
     } catch (error) {
       console.error('Error fetching posts:', error);

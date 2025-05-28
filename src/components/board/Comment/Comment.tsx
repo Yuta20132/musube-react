@@ -4,7 +4,6 @@ import { Box, Typography } from '@mui/material';
 import axios from 'axios';
 import CommentForm from './CommentForm';
 import CommentList, { IComment } from './CommentList';
-import { Api } from '@mui/icons-material';
 
 interface CommentProps {
   postId: number;
@@ -14,7 +13,6 @@ const apiUrl = process.env.REACT_APP_API_URL;
 
 const Comment: React.FC<CommentProps> = ({ postId }) => {
   const [comments, setComments] = useState<IComment[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
   const [currentUserId, setCurrentUserId] = useState<string>('');
 
   // 現在のログインユーザーIDを取得
@@ -39,7 +37,6 @@ const Comment: React.FC<CommentProps> = ({ postId }) => {
   // コメント取得関数を独立させる
   const fetchComments = async () => {
     console.log(postId);
-    setLoading(true);
     try {
       const response = await axios.get(`${apiUrl}/posts/${postId}/comments`,{
         withCredentials: true,
@@ -58,8 +55,6 @@ const Comment: React.FC<CommentProps> = ({ postId }) => {
       setComments(transformedComments);
     } catch (error) {
       console.error('Error fetching comments:', error);
-    } finally {
-      setLoading(false);
     }
   };
 

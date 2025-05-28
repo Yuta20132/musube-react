@@ -11,14 +11,11 @@ import {
   Menu, 
   MenuItem, 
   Tooltip, 
-  Badge,
   Zoom,
   useScrollTrigger,
   Slide
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import NotificationsIcon from '@mui/icons-material/Notifications';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import LoginIcon from '@mui/icons-material/Login';
 import PersonIcon from '@mui/icons-material/Person';
@@ -130,17 +127,6 @@ const Header: React.FC<HeaderProps> = ({ children }) => {
             
             {isAuthenticated ? (
               <>
-                <Tooltip title="通知">
-                  <IconButton 
-                    color="primary" 
-                    sx={{ mr: 2 }}
-                  >
-                    <Badge badgeContent={3} color="error">
-                      <NotificationsIcon />
-                    </Badge>
-                  </IconButton>
-                </Tooltip>
-                
                 <Tooltip title="アカウント設定">
                   <IconButton 
                     onClick={handleMenuOpen}

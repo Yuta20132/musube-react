@@ -32,15 +32,14 @@ const ThreadsSearch: React.FC<ThreadsSearchProps> = ({ onSearch }) => {
         <Button 
           type="submit" 
           variant="contained" 
-          startIcon={<SearchIcon />}
           sx={{ 
             backgroundColor: '#0d47a1', 
             '&:hover': { backgroundColor: '#0b3c91' },
-            height: '50%', // TextFieldの高さに合わせる
-            width: 'auto', // TextFieldの高さに合わせる
+            height: '50%',
+            width: 'auto',
           }}
         >
-          検索
+          <SearchIcon />
         </Button>
       </Box>
     </Paper>
