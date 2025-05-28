@@ -39,7 +39,7 @@ const PostForm: React.FC = () => {
     }
 
     return (
-        <Paper elevation={3} sx={{ padding: 3, marginTop: 4, maxHeight: 400,maxWidth: 600, marginLeft: 'auto', marginRight: 'auto', mb: 4, backgroundColor: '#e3f2fd', height: 'auto', borderRadius: 3 }}>
+        <Paper elevation={3} sx={{ padding: 3, marginTop: 4, maxHeight: 400,maxWidth: 600, marginRight: '4rem', mb: 4, backgroundColor: '#e3f2fd', height: 'auto', borderRadius: 3 }}>
             <Typography variant="h6" gutterBottom sx={{ color: '#0d47a1' }}>
                 ポストの投稿
             </Typography>
@@ -67,15 +67,26 @@ const PostForm: React.FC = () => {
                     sx={{ backgroundColor: '#ffffff', borderRadius: 1 }}
                 />
                 <Box sx={{ textAlign: 'right', marginTop: 2 }}>
-                    <Button 
-                        type="submit" 
-                        variant="contained" 
-                        sx={{ backgroundColor: '#0d47a1', '&:hover': { backgroundColor: '#0b3c91' } }}
-                        disabled={isSubmitting}
-                    >
-                        Post
-                    </Button>
-                </Box>
+  <Button
+    type="submit"
+    variant="contained"
+    sx={{
+      backgroundColor: '#0d47a1',
+      '&:hover': { backgroundColor: '#0b3c91' },
+      minWidth: '100px',          
+      height: '40px',             
+      borderRadius: 2,           
+      boxShadow: 1,
+      fontWeight: 'bold',         
+      fontSize: '1.05rem',        // 見やすく
+      letterSpacing: 1,
+    }}
+    disabled={isSubmitting}
+  >
+    Post
+  </Button>
+</Box>
+
             </Box>
         </Paper>
     );

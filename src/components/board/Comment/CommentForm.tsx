@@ -89,7 +89,7 @@ const CommentForm: React.FC<CommentFormProps> = ({postId, categoryId=1 }) => {
         onChange={(e) => setContent(e.target.value)}
         fullWidth
       />
-      <Button type="submit" variant="contained" color="primary">
+      <Button type="submit" variant="contained" color="primary" sx={{ whiteSpace: 'nowrap' }} >
         投稿
       </Button>
     </Box>

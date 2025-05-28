@@ -25,13 +25,15 @@ const ThreadsView: React.FC = () => {
       <PostForm />
       <Card 
         sx={{ 
-          width: '100%', 
-          maxWidth: 800, 
+          width: '80%', 
+          maxWidth: 1000, 
+          
           background: 'linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%)', 
           boxShadow: 3, 
           borderRadius: 3 
         }}
       >
+        
         <CardHeader
           sx={{ 
             background: 'linear-gradient(135deg, #2196f3 0%, #21cbf3 100%)', 
