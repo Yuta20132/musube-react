@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { 
   Card, 
   CardContent, 
@@ -10,19 +10,24 @@ import {
 import PostForm from './PostForm';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Thread } from './typeThreads';
-import PostView from './PostView';
 import { useLocation, useNavigate } from 'react-router-dom';
+import PostView, { PostViewHandle } from './PostView';
 
 const ThreadsView: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // List から渡された state 内の thread を取得
-  const thread = (location.state as { thread?: Thread })?.thread;
+  const postViewRef = useRef<PostViewHandle | null>(null);
 
+  const thread = (location.state as { thread: Thread })?.thread;
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, mb: 4 }}>
-      <PostForm />
+      <PostForm
+        getThreadId={thread.id}
+        onPostSuccess={() => {
+          postViewRef.current?.fetchPosts?.();
+        }}
+      />
       <Card 
         sx={{ 
           width: '80%', 
@@ -74,7 +79,7 @@ const ThreadsView: React.FC = () => {
               >
                 {thread.description}
               </Typography>
-              <PostView threadId={thread.id} />
+              <PostView ref={postViewRef} threadId={thread.id} />
             </>
           ) : (
             <Typography 

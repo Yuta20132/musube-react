@@ -22,7 +22,6 @@ const ThreadsList: React.FC<ThreadsListProps> = ({ threads, loading }) => {
   const navigate = useNavigate();
 
   const handleSelectThread = (thread: Thread) => {
-    // 選択したスレッドを state として渡す
     navigate('/threads/view', { state: { thread } });
   };
 

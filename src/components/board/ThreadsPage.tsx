@@ -9,12 +9,10 @@ import { Thread } from './typeThreads';
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const ThreadsPage: React.FC = () => {
-  // 取得した全スレッドと表示用のスレッドの両方を状態管理
   const [allThreads, setAllThreads] = useState<Thread[]>([]);
   const [threads, setThreads] = useState<Thread[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
-  // 全件のスレッドを取得
   const fetchThreads = async () => {
     setLoading(true);
     try {
