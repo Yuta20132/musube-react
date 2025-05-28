@@ -20,12 +20,12 @@ import axios from 'axios';
 import { SelectChangeEvent } from '@mui/material/Select';
 
 interface ThreadsCreateForm {
-  onSubmit: (thread: { title: string, description: string, memberType: string }) => void;
+  onThreadSuccess?: () => void;
 }
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
-const ThreadsCreate: React.FC<ThreadsCreateForm> = ({ onSubmit }) => {
+const ThreadsCreate: React.FC<ThreadsCreateForm> = ({onThreadSuccess }) => {
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [memberType, setMemberType] = useState<string>('1');
@@ -50,7 +50,9 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({ onSubmit }) => {
          }
          
          );
-        onSubmit(response.data);
+        if (onThreadSuccess) {
+          onThreadSuccess();
+        }
         setTitle('');
         setDescription('');
         setMemberType('1');

@@ -3,57 +3,25 @@ import axios from 'axios';
 import { TextField, Button, Box } from '@mui/material';
 
 interface CommentFormProps {
-  //onSubmit: (content: string) => void;
   postId: number;
   categoryId: number;
+  userId?: string;
+  onCommentSuccess?: () => void;
 }
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
-const CommentForm: React.FC<CommentFormProps> = ({postId, categoryId=1 }) => {
+const CommentForm: React.FC<CommentFormProps> = ({
+  postId,
+  categoryId = 1,
+  userId,
+  onCommentSuccess, 
+}) => {
   const [content, setContent] = useState('');
-  const [userId, setUserId] = useState<string>('');
-
-  const fetchUserId = async () => {
-
-    try {
-      const response = await axios.get(`${apiUrl}/me`, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        withCredentials: true,
-      });
-      return response.data.id;
-    } catch (error) {
-      console.error('fetchData error:', error);
-    }
-  };
-
-  useEffect(() => {
-    const getUserId = async () => {
-      try {
-        const id = await fetchUserId();
-        setUserId(id);
-      } catch (err) {
-        // エラー時の処理
-        console.error('Error getting userId:', err);
-      }
-    };
-
-    getUserId();
-  }, []);
 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Comment posted:',
-      {
-          post_id: postId,
-          category_id: categoryId,
-          content: content,
-          user_id: userId,
-        },
-      );
     if (content.trim() === '') return;
 
     try {
@@ -72,9 +40,10 @@ const CommentForm: React.FC<CommentFormProps> = ({postId, categoryId=1 }) => {
           withCredentials: true,
         }
       );
-      
-      //onSubmit(content);
       setContent('');
+      if (onCommentSuccess) {
+        onCommentSuccess();
+      }
     } catch (error) {
       console.error('Error posting comment:', error);
     }
