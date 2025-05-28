@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Paper, Typography } from '@mui/material';
 import axios from 'axios';
+import { on } from 'events';
 
 const apiUrl = process.env.REACT_APP_API_URL;
-
-const PostForm: React.FC = () => {
+type Props = {
+    getThreadId: number;
+    onPostSuccess?: () => void;  // ← 追加
+}
+const PostForm: React.FC<Props> = ({getThreadId, onPostSuccess}) => {
     const [title, setTitle] = useState<string>('');
     const [content, setContent] = useState<string>('');
-    const [threadId, setThreadId] = useState<number>(1);
+    const [threadId, setThreadId] = useState<number>(getThreadId);
     const [categoryId, setCategoryId] = useState<string>('1');
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
@@ -29,8 +33,9 @@ const PostForm: React.FC = () => {
                 },
                 withCredentials: true,
             });
-            console.log(response.data);
-            alert('Post submitted');
+            if (onPostSuccess) {
+                onPostSuccess();
+            }
         }catch (error) {
             console.error('handleSubmit error:', error);
         }finally {
@@ -67,26 +72,25 @@ const PostForm: React.FC = () => {
                     sx={{ backgroundColor: '#ffffff', borderRadius: 1 }}
                 />
                 <Box sx={{ textAlign: 'right', marginTop: 2 }}>
-  <Button
-    type="submit"
-    variant="contained"
-    sx={{
-      backgroundColor: '#0d47a1',
-      '&:hover': { backgroundColor: '#0b3c91' },
-      minWidth: '100px',          
-      height: '40px',             
-      borderRadius: 2,           
-      boxShadow: 1,
-      fontWeight: 'bold',         
-      fontSize: '1.05rem',        // 見やすく
-      letterSpacing: 1,
-    }}
-    disabled={isSubmitting}
-  >
-    Post
-  </Button>
-</Box>
-
+                <Button
+                    type="submit"
+                    variant="contained"
+                    sx={{
+                    backgroundColor: '#0d47a1',
+                    '&:hover': { backgroundColor: '#0b3c91' },
+                    minWidth: '100px',          
+                    height: '40px',             
+                    borderRadius: 2,           
+                    boxShadow: 1,
+                    fontWeight: 'bold',         
+                    fontSize: '1.05rem',       
+                    letterSpacing: 1,
+                    }}
+                    disabled={isSubmitting}
+                >
+                    Post
+                </Button>
+                </Box>
             </Box>
         </Paper>
     );

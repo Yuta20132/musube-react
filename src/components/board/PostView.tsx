@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useImperativeHandle, forwardRef, useEffect, useState } from 'react';
 import axios from "axios";
 import { 
   Typography, 
@@ -29,9 +29,15 @@ interface Props {
   offset?: number;
 }
 
+export interface PostViewHandle {
+  fetchPosts: () => void;
+}
+
 const apiUrl = process.env.REACT_APP_API_URL;
 
-const PostView: React.FC<Props> = ({ threadId, limit = 5, offset = 0 }) => {
+const PostView = forwardRef<PostViewHandle, Props>(
+  ({ threadId, limit = 5, offset = 0 }, ref) => {
+
   const [allPosts, setAllPosts] = useState<Post[]>([]);
   const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -44,12 +50,12 @@ const PostView: React.FC<Props> = ({ threadId, limit = 5, offset = 0 }) => {
     fetchPosts();
   }, [threadId, limit, offset]);
 
-  // 検索条件が変わったら投稿をフィルタリング
+  useImperativeHandle(ref, () => ({ fetchPosts }));
+
   useEffect(() => {
     filterPosts();
   }, [searchTerm, allPosts]);
 
-  // 現在のログインユーザー情報を取得
     const fetchCurrentUser = async () => {
       try {
         const response = await axios.get(`${apiUrl}/users/me`, {
@@ -65,7 +71,7 @@ const PostView: React.FC<Props> = ({ threadId, limit = 5, offset = 0 }) => {
     };
 
 
-  // 投稿削除機能
+
   const deletePost = async (postId: number, userId: string) => {
     if (!window.confirm('この投稿を削除してもよろしいですか？')) {
       return;
@@ -215,6 +221,6 @@ const PostView: React.FC<Props> = ({ threadId, limit = 5, offset = 0 }) => {
       </List>
     </Box>
   );
-};
+});
 
 export default PostView;
