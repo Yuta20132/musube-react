@@ -30,11 +30,9 @@ const Comment: React.FC<CommentProps> = ({ postId }) => {
         console.error('Error fetching current user:', error);
       }
     };
-
     fetchCurrentUser();
   }, []);
 
-  // コメント取得関数を独立させる
   const fetchComments = async () => {
     console.log(postId);
     try {
@@ -58,7 +56,6 @@ const Comment: React.FC<CommentProps> = ({ postId }) => {
     }
   };
 
-  // 指定の投稿IDに紐づくコメントを取得
   useEffect(() => {
     fetchComments();
   }, [postId]);
@@ -101,7 +98,7 @@ const Comment: React.FC<CommentProps> = ({ postId }) => {
         currentUserId={currentUserId} 
       />
       {/* コメントフォーム */}
-      <CommentForm postId={postId} categoryId={1} />
+      <CommentForm postId={postId} categoryId={1} userId={currentUserId} onCommentSuccess={fetchComments} />
     </Box>
   );
 };

@@ -32,19 +32,6 @@ const ThreadsPage: React.FC = () => {
     fetchThreads();
   }, []);
 
-  // 新しいスレッド作成時、全件および表示用の配列に追加
-  const handleCreateThread = async (newThread: { title: string; description: string; memberType: string }) => {
-    try {
-      const response = await axios.post(`${apiUrl}/threads`, newThread, {
-        withCredentials: true,
-      });
-      const updatedThreads = [...allThreads, response.data];
-      setAllThreads(updatedThreads);
-      setThreads(updatedThreads);
-    } catch (error) {
-      console.error('Error creating thread:', error);
-    }
-  };
 
   // クライアント側で検索フィルタリングを実装
   const handleSearchThreads = (searchTerm: string) => {
@@ -72,7 +59,7 @@ const ThreadsPage: React.FC = () => {
       >
         掲示板
       </Typography>
-      <ThreadsCreate onSubmit={handleCreateThread} />
+      <ThreadsCreate onThreadSuccess={fetchThreads} />
       {/* ThreadsSearch に onSearch プロパティとして handleSearchThreads を渡す */}
       <ThreadsSearch onSearch={handleSearchThreads} />
       <ThreadsList threads={threads} loading={loading} />
