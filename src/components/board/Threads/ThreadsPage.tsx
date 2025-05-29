@@ -3,8 +3,8 @@ import ThreadsList from './ThreadsList';
 import ThreadsCreate from './ThreadsCreate';
 import { Box, Typography } from '@mui/material';
 import axios from 'axios';
-import ThreadsSearch from './Threads/ThreadsSearch';
-import { Thread } from './typeThreads';
+import ThreadsSearch from './ThreadsSearch';
+import { Thread } from '../typeThreads';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 

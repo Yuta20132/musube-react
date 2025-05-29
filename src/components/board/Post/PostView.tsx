@@ -11,8 +11,8 @@ import {
   Box,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Comment from "./Comment/Comment";
-import PostSearch from "./Post/PostSearch";
+import Comment from "../Comment/Comment";
+import PostSearch from "./PostSearch";
 
 export interface Post  {
   post_id: number;

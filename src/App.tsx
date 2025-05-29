@@ -13,12 +13,12 @@ import Search from './components/Search/Search';
 import SendEmail from './components/Accounts/Register/SendEmail';
 import UserActivate from './components/Accounts/Register/UserActivate';
 import LoginSuccess from './components/Accounts/Login/LoginSuccess';
-import ThreadsPage from './components/Board/ThreadsPage';
+import ThreadsPage from './components/Board/Threads/ThreadsPage';
 import { AuthProvider } from './contexts/AuthContext';
 import Logout from './components/Accounts/Login/Logout';
 import UserProfile from './components/Accounts/UserProfile/UserProfile';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute'; 
-import ThreadsView from './components/Board/ThreadsView';
+import ThreadsView from './components/Board/Threads/ThreadsView';
 import Policy from './components/Policy/Policy';
 import { Box } from '@mui/material';
 

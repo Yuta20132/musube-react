@@ -6,7 +6,7 @@ import { on } from 'events';
 const apiUrl = process.env.REACT_APP_API_URL;
 type Props = {
     getThreadId: number;
-    onPostSuccess?: () => void;  // ← 追加
+    onPostSuccess?: () => void;
 }
 const PostForm: React.FC<Props> = ({getThreadId, onPostSuccess}) => {
     const [title, setTitle] = useState<string>('');
