@@ -60,14 +60,12 @@ const Comment: React.FC<CommentProps> = ({ postId }) => {
     fetchComments();
   }, [postId]);
 
-  // コメント削除処理
   const handleDeleteComment = async (commentId: number) => {
     if (!window.confirm('このコメントを削除してもよろしいですか？')) {
       return;
     }
     
     try {
-      // コメントIDとユーザーIDをリクエストボディで送信
       await axios.post(`${apiUrl}/comments/delete`, {
         comment_id: commentId,
         user_id: currentUserId
@@ -91,13 +89,11 @@ const Comment: React.FC<CommentProps> = ({ postId }) => {
       <Typography variant="h6" sx={{ mb: 2 }}>
         コメント
       </Typography>
-      {/* コメント一覧を表示、現在のユーザーIDを渡す */}
       <CommentList 
         comments={comments} 
         onDeleteComment={handleDeleteComment} 
         currentUserId={currentUserId} 
       />
-      {/* コメントフォーム */}
       <CommentForm postId={postId} categoryId={1} userId={currentUserId} onCommentSuccess={fetchComments} />
     </Box>
   );

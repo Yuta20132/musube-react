@@ -10,7 +10,7 @@ import {
   Grid,
   Skeleton,
 } from '@mui/material';
-import { Thread } from './typeThreads';
+import { Thread } from '../typeThreads';
 import { useNavigate } from 'react-router-dom';
 
 interface ThreadsListProps {

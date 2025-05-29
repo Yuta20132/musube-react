@@ -6,15 +6,15 @@ export interface IComment {
     id: number;
     post_id: number;
     user_id: string;
-    user_name?: string; // ユーザー名を表示するために追加
+    user_name?: string;
     content: string;
-    created_at: string; // API からは文字列で受け取る想定（必要に応じ Date に変換）
+    created_at: string;
   }
   
   interface CommentListProps {
     comments: IComment[];
     onDeleteComment?: (commentId: number) => void;
-    currentUserId: string; // 現在のユーザーIDを追加
+    currentUserId: string;
   }
   const CommentList: React.FC<CommentListProps> = ({ comments, onDeleteComment, currentUserId }) => {
     return (
@@ -36,7 +36,6 @@ export interface IComment {
               }
             >
               <ListItemText
-                // ユーザー名と日時のみを表示
                 primary={`${comment.user_name || 'Unknown User'} - ${new Date(comment.created_at).toLocaleString()}`}
                 secondary={comment.content}
               />

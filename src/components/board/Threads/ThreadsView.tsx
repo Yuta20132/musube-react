@@ -7,11 +7,11 @@ import {
   Button, 
   Box 
 } from '@mui/material';
-import PostForm from './PostForm';
+import PostForm from '../Post/PostForm';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import { Thread } from './typeThreads';
+import { Thread } from '../typeThreads';
 import { useLocation, useNavigate } from 'react-router-dom';
-import PostView, { PostViewHandle } from './PostView';
+import PostView, { PostViewHandle } from '../Post/PostView';
 
 const ThreadsView: React.FC = () => {
   const location = useLocation();
