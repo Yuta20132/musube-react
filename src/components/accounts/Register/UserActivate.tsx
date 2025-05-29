@@ -1,75 +1,86 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useNavigate } from "react-router-dom";
+import {
+  Box,
+  Container,
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  CircularProgress,
+  Alert,
+} from '@mui/material';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const UserActivate: React.FC = () => {
-    const location = useLocation();
-    console.log(location.search);
+  const location = useLocation();
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const [activationStatus, setActivationStatus] = useState<'pending' | 'success' | 'error'>('pending');
 
-    const handleLoginForm = () => {
-        navigate("/login");
-    }
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const token = params.get('token');
 
-    // 状態管理用のフックを追加
-    const [activationStatus, setActivationStatus] = useState<'pending' | 'success' | 'error'>('pending');
+    const activateUser = async () => {
+      try {
+        await axios.post(`${apiUrl}/users/verify/`, { token });
+        setActivationStatus('success');
+      } catch (error) {
+        console.error(error);
+        setActivationStatus('error');
+      }
+    };
 
+    activateUser();
+  }, [location.search]);
 
-    useEffect(() => {
-        const params = new URLSearchParams(location.search);
-        const token = params.get('token')
-        const activateUser = async () => {
-            try {
+  const handleLoginForm = () => navigate('/login');
 
-                //成功したときの処理
-                const respone = await axios.post(`${apiUrl}/users/verify/`,{
-                    token: token,
-                });
-                setActivationStatus('success');
-                alert('アカウントがアクティベーㇳされました');
-            } catch (error) {
-
-                //エラーのときの表示
-                console.error(error);
-                setActivationStatus('error');
-                alert('アカウントのアクティベーションに失敗しました');
-
-            }
-        };
-    
-        activateUser();
-        
-    },[location.search])
   return (
-    <div>
-        <h1>アカウントのアクティベート</h1>
-        {/* 状態に応じて表示を切り替える */}
+    <Container maxWidth="sm" sx={{ mt: 8 }}>
+      <Card elevation={6} sx={{ borderRadius: 2, overflow: 'hidden' }}>
+        <CardContent sx={{ p: 4, textAlign: 'center' }}>
+          <Typography variant="h4" gutterBottom>
+            アカウントのアクティベート
+          </Typography>
 
-        {activationStatus === 'pending' && (
-            /* アクティベート待ちの表示 */
-            <p>アカウントをアクティベート中です...</p>
-        )}
+          {activationStatus === 'pending' && (
+            <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <CircularProgress />
+              <Typography variant="body1" sx={{ mt: 2 }}>
+                アカウントをアクティベート中です...
+              </Typography>
+            </Box>
+          )}
 
-        {activationStatus === 'success' && (
-            /* アクティベートが成功したときの表示 */
-            <div>
-                <p>アカウントが正常にアクティベートされました。</p>
-                <button onClick={handleLoginForm}>ログインページへ</button>
-            </div>
-        )}
+          {activationStatus === 'success' && (
+            <Box sx={{ mt: 2 }}>
+              <Alert severity="success" sx={{ mb: 3 }}>
+                アカウントが正常にアクティベートされました。
+              </Alert>
+              <Button variant="contained" size="large" onClick={handleLoginForm} fullWidth>
+                ログインページへ
+              </Button>
+            </Box>
+          )}
 
-        {activationStatus === 'error' && (
-            /* アクティベートが失敗したときの表示  */
-            <div>
-                <p>アカウントのアクティベーションに失敗しました。再度お試しください。</p>
-            </div>
-        )}
-    </div>
-  )
-}
+          {activationStatus === 'error' && (
+            <Box sx={{ mt: 2 }}>
+              <Alert severity="error" sx={{ mb: 3 }}>
+                アカウントのアクティベーションに失敗しました。再度お試しください。
+              </Alert>
+              <Button variant="outlined" size="large" onClick={() => window.location.reload()} fullWidth>
+                リトライ
+              </Button>
+            </Box>
+          )}
+        </CardContent>
+      </Card>
+    </Container>
+  );
+};
 
 export default UserActivate;
