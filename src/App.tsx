@@ -1,7 +1,7 @@
 // src/App.tsx
 import React from 'react';
 import './App.css';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 // インポートしたコンポーネント
 import Header from './components/Header/Header';
@@ -79,6 +79,7 @@ const App: React.FC = () => {
         <Header>
           <Box component="main" sx={{ flexGrow: 1 }}>
             <Routes>
+              {/* １．公開ルート */}
               <Route path="/" element={<TopPage />} />
               <Route path="/register_form" element={<Register />} />
               <Route path="/login" element={<Login />} />
@@ -88,17 +89,17 @@ const App: React.FC = () => {
               <Route path="/verify" element={<UserActivate />} />
               <Route path="/login-success" element={<LoginSuccess />} />
               <Route path="/logout" element={<Logout />} />
-              <Route path="/profile" element={<UserProfile />} />
-              <Route 
-                path="/threads_page" 
-                element={
-                  <ProtectedRoute>
-                    <ThreadsPage />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/threads/view" element={<ThreadsView />} />
               <Route path="/policy" element={<Policy />} />
+
+              {/* ２．ログイン必須ルートをまとめる */}
+              <Route element={<ProtectedRoute />}>
+              <Route path="/profile" element={<UserProfile />} />
+              <Route path="/threads_page" element={<ThreadsPage />} />
+              <Route path="/threads/view" element={<ThreadsView />} />
+
+                {/* ３．ワイルドカードでキャッチ → ログイン済みなら ThreadsPage、未ログインなら /login */}
+              <Route path="*" element={<Navigate to="/threads_page" replace />} />
+              </Route>
             </Routes>
           </Box>
         </Header>

@@ -1,10 +1,10 @@
-import React, { useContext, useState } from 'react';
+// src/components/Header/Header.tsx
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   AppBar, 
   Box, 
   Toolbar, 
-  Typography, 
   Button, 
   IconButton, 
   Avatar, 
@@ -13,21 +13,21 @@ import {
   Tooltip, 
   Zoom,
   useScrollTrigger,
-  Slide
+  Slide,
+  Typography
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import LoginIcon from '@mui/icons-material/Login';
 import PersonIcon from '@mui/icons-material/Person';
 import SideBar from '../SideBar/SideBar';
-import { AuthContext } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';  // ← ここを追加
 import { styled } from '@mui/material/styles';
 
 // スクロール時にヘッダーを隠す関数
 function HideOnScroll(props: { children: React.ReactElement }) {
   const { children } = props;
   const trigger = useScrollTrigger();
-
   return (
     <Slide appear={false} direction="down" in={!trigger}>
       {children}
@@ -36,7 +36,7 @@ function HideOnScroll(props: { children: React.ReactElement }) {
 }
 
 // スタイル付きのロゴタイポグラフィ
-const LogoTypography = styled(Typography)(({ theme }) => ({
+const LogoTypography = styled('div')({
   fontWeight: 800,
   letterSpacing: 1,
   background: 'linear-gradient(90deg, #2196f3 0%, #64b5f6 100%)',
@@ -45,48 +45,43 @@ const LogoTypography = styled(Typography)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   cursor: 'pointer'
-}));
+});
 
 interface HeaderProps {
   children?: React.ReactNode;
 }
 
 const Header: React.FC<HeaderProps> = ({ children }) => {
-  const [isSidebarOpen, setSidebarOpen] = useState<boolean>(false);
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const { isAuthenticated, logout } = useContext(AuthContext);
+  const { isLoggedIn, logout } = useAuth();   // ← コンテキストから取得
   const navigate = useNavigate();
-  
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+
+  const handleMenuOpen = (e: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(e.currentTarget);
   };
-  
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
 
-  const handleSidebarOpen = () => {
-    setSidebarOpen(true);
-  };
+  const handleSidebarOpen = () => setSidebarOpen(true);
+  const handleSidebarClose = () => setSidebarOpen(false);
 
-  const handleSidebarClose = () => {
-    setSidebarOpen(false);
-  };
-
-  const handleLogout = () => {
+  const handleLogout = async () => {
     handleMenuClose();
-    navigate('/logout');
+    await logout();               // ← コンテキストの logout を呼ぶ
+    navigate('/login');           // ログアウト後は /login へ
   };
 
   const handleLogin = () => {
     navigate('/login');
   };
-  
+
   const handleProfile = () => {
     handleMenuClose();
     navigate('/profile');
   };
-  
+
   const handleLogoClick = () => {
     navigate('/');
   };
@@ -95,15 +90,15 @@ const Header: React.FC<HeaderProps> = ({ children }) => {
     <>
       <HideOnScroll>
         <AppBar 
-          position="sticky" 
-          elevation={0} 
-          sx={{ 
-            backdropFilter: 'blur(20px)', 
-            backgroundColor: 'rgba(255, 255, 255, 0.8)', 
-            borderBottom: '1px solid rgba(0, 0, 0, 0.05)'
+          position="sticky"
+          elevation={0}
+          sx={{
+            backdropFilter: 'blur(20px)',
+            backgroundColor: 'rgba(255,255,255,0.8)',
+            borderBottom: '1px solid rgba(0,0,0,0.05)'
           }}
         >
-          <Toolbar sx={{ px: { xs: 1, sm: 2, md: 4 } }}>
+          <Toolbar sx={{ px: { xs:1, sm:2, md:4 } }}>
             <IconButton
               size="large"
               edge="start"
@@ -114,83 +109,61 @@ const Header: React.FC<HeaderProps> = ({ children }) => {
             >
               <MenuIcon />
             </IconButton>
-            
-            <LogoTypography 
-              variant="h5" 
-              noWrap 
-              onClick={handleLogoClick}
-            >
-              musuBe
+
+            <LogoTypography onClick={handleLogoClick}>
+              <Typography variant="h5" component="span">musuBe</Typography>
             </LogoTypography>
 
             <Box sx={{ flexGrow: 1 }} />
-            
-            {isAuthenticated ? (
+
+            {isLoggedIn ? (
               <>
                 <Tooltip title="アカウント設定">
                   <IconButton 
                     onClick={handleMenuOpen}
-                    sx={{ 
+                    sx={{
                       p: 0,
-                      '&:hover': {
-                        backgroundColor: 'rgba(33, 150, 243, 0.1)'
-                      }
+                      '&:hover': { backgroundColor: 'rgba(33,150,243,0.1)' }
                     }}
                   >
-                    <Avatar 
-                      alt="ユーザーアイコン" 
-                      sx={{ 
-                        bgcolor: 'primary.main',
-                        width: 40,
-                        height: 40
-                      }}
-                    >
+                    <Avatar sx={{ bgcolor: 'primary.main', width:40, height:40 }}>
                       <PersonIcon />
                     </Avatar>
                   </IconButton>
                 </Tooltip>
-                
+
                 <Menu
                   anchorEl={anchorEl}
-                  id="account-menu"
                   open={Boolean(anchorEl)}
                   onClose={handleMenuClose}
                   PaperProps={{
                     sx: {
                       borderRadius: '12px',
-                      minWidth: '200px',
-                      boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.15)',
+                      minWidth: 200,
+                      boxShadow: '0px 8px 24px rgba(0,0,0,0.15)',
                       mt: 1.5,
-                      '& .MuiMenuItem-root': {
-                        py: 1.5,
-                        px: 2
-                      },
+                      '& .MuiMenuItem-root': { py:1.5, px:2 },
                     },
                   }}
-                  transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-                  anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+                  transformOrigin={{ horizontal:'right', vertical:'top' }}
+                  anchorOrigin={{ horizontal:'right', vertical:'bottom' }}
                 >
                   <MenuItem onClick={handleProfile}>
-                    <PersonIcon sx={{ mr: 2 }} />
-                    プロフィール
+                    <PersonIcon sx={{ mr:2 }} /> プロフィール
                   </MenuItem>
                   <MenuItem onClick={handleLogout}>
-                    <ExitToAppIcon sx={{ mr: 2 }} />
-                    ログアウト
+                    <ExitToAppIcon sx={{ mr:2 }} /> ログアウト
                   </MenuItem>
                 </Menu>
               </>
             ) : (
               <Zoom in>
-                <Button 
-                  variant="contained" 
+                <Button
+                  variant="contained"
                   color="primary"
                   startIcon={<LoginIcon />}
                   onClick={handleLogin}
-                  sx={{ 
-                    borderRadius: '24px',
-                    px: 3
-                  }}
+                  sx={{ borderRadius:'24px', px:3 }}
                 >
                   ログイン
                 </Button>
@@ -201,7 +174,7 @@ const Header: React.FC<HeaderProps> = ({ children }) => {
       </HideOnScroll>
 
       <SideBar open={isSidebarOpen} onClose={handleSidebarClose} />
-      
+
       {children}
     </>
   );
