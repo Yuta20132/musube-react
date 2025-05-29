@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
-import axios from "axios";
+import { useAuth } from '../../../contexts/AuthContext';
 import { 
     Box, 
     Container, 
@@ -11,8 +11,6 @@ import {
     Card, 
     CardContent, 
     InputAdornment, 
-    Divider,
-    Paper,
     Alert,
     IconButton
 } from '@mui/material';
@@ -22,7 +20,6 @@ import LockIcon from '@mui/icons-material/Lock';
 import LoginIcon from '@mui/icons-material/Login';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 
-const apiUrl = process.env.REACT_APP_API_URL;
 
 interface FormData {
     email: string;
@@ -30,6 +27,7 @@ interface FormData {
 }
 
 const Login = () => {
+    const { login } = useAuth();
     const [formData, setFormData] = useState<FormData>({
         email: "",
         password: ""
@@ -53,7 +51,6 @@ const Login = () => {
     };
     
     const {email, password} = formData;
-    axios.defaults.withCredentials = true;
     
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -61,16 +58,7 @@ const Login = () => {
         setLoading(true);
         
         try {
-            const response = await axios.post(`${apiUrl}/users/login/`, {
-                email: email,
-                password: password
-            }, 
-            {
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                withCredentials: true
-            });
+            await login(email, password);
             navigate('/login-success');
         } catch (error) {
             console.error(error);

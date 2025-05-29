@@ -1,42 +1,67 @@
-// src/contexts/AuthContext.tsx
-import React, { createContext, useState, useEffect, ReactNode } from 'react';
 
-interface AuthContextType {
-  isAuthenticated: boolean;
-  login: () => void;
-  logout: () => void;
-}
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import axios from 'axios';
+const apiUrl = process.env.REACT_APP_API_URL;
+type AuthContextType = {
+  isLoggedIn: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
+};
 
-export const AuthContext = createContext<AuthContextType>({
-  isAuthenticated: false,
-  login: () => {},
-  logout: () => {},
+const AuthContext = createContext<AuthContextType>({
+  isLoggedIn: false,
+  login: async () => {},
+  logout: async () => {},
 });
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    setIsAuthenticated(!!token);
+    (async () => {
+      try {
+        await axios.get(`${apiUrl}/users/me`, { withCredentials: true,
+          headers: {
+            'Content-Type': 'application/json',
+          }, }
+        );
+        setIsLoggedIn(true);
+      } catch {
+        setIsLoggedIn(false);
+      }
+    })();
   }, []);
 
-  const login = () => {
-    setIsAuthenticated(true);
+  const login = async (email: string, password: string) => {
+    await axios.post(`${apiUrl}/users/login/`, {
+      email: email,
+      password: password
+  }, 
+  {
+      headers: {
+          "Content-Type": "application/json"
+      },
+      withCredentials: true
+  });
+    setIsLoggedIn(true);
   };
 
-  const logout = () => {
-    localStorage.removeItem("access_token");
-    setIsAuthenticated(false);
+  const logout = async () => {
+    await axios.post(
+      `${apiUrl}/users/logout/`,
+      {},
+      {
+        withCredentials: true,
+      }
+    );
+    setIsLoggedIn(false);
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
+
+export const useAuth = () => useContext(AuthContext);

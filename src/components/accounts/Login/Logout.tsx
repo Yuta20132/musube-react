@@ -1,5 +1,4 @@
 import React from "react";
-import axios from "axios";
 import { 
   Button, 
   Box, 
@@ -12,22 +11,16 @@ import {
 } from "@mui/material";
 import LogoutIcon from '@mui/icons-material/Logout';
 import { useNavigate } from "react-router-dom";
-
-const apiUrl = process.env.REACT_APP_API_URL;
+import { useAuth } from '../../../contexts/AuthContext';
 
 const Logout = () => {
+  const { logout } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
   
   const handleLogout = async () => {
     try {
-      const response = await axios.post(
-        `${apiUrl}/users/logout/`,
-        {},
-        {
-          withCredentials: true,
-        }
-      );
+      await logout();
       navigate("/login");
     } catch (error) {
       console.error(error);

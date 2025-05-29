@@ -1,13 +1,11 @@
-import React from 'react'
-import { Navigate } from 'react-router-dom'
-const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-    const token = localStorage.getItem("access_token");
-    if (!token) {
-        // トークンがない場合、ログインページにリダイレクト
-        return <Navigate to="/login" />;
-    }
+// src/components/ProtectedRoute/ProtectedRoute.tsx
+import React from 'react';
+import { Navigate, Outlet } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 
-    return children;
+const ProtectedRoute: React.FC = () => {
+  const { isLoggedIn } = useAuth();
+  return isLoggedIn ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
-export default ProtectedRoute
+export default ProtectedRoute;
