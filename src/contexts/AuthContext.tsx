@@ -4,18 +4,21 @@ import axios from 'axios';
 const apiUrl = process.env.REACT_APP_API_URL;
 type AuthContextType = {
   isLoggedIn: boolean;
+  loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
 };
 
 const AuthContext = createContext<AuthContextType>({
   isLoggedIn: false,
+  loading: true,
   login: async () => {},
   logout: async () => {},
 });
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -28,6 +31,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setIsLoggedIn(true);
       } catch {
         setIsLoggedIn(false);
+      } finally {
+        setLoading(false);
       }
     })();
   }, []);
@@ -58,7 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
