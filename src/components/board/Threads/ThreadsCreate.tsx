@@ -71,20 +71,18 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({onThreadSuccess }) => {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
       <Paper 
-        elevation={3} 
+        elevation={1} 
         sx={{ 
           p: 4, 
           maxWidth: 600, 
-          width: '100%', 
-          background: 'linear-gradient(135deg, #F0F4F8 0%, #D9E2EC 100%)', 
-          borderRadius: 3 
+          width: '100%'
         }}
       >
         <Typography 
           variant="h5" 
           align="center" 
           gutterBottom 
-          sx={{ fontWeight: 'bold', color: 'primary.main', mb: 3 }}
+          sx={{ fontWeight: 600, color: 'primary.main', mb: 3 }}
         >
           スレッドの作成
         </Typography>
@@ -99,11 +97,10 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({onThreadSuccess }) => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <TitleIcon color="action" />
+                  <TitleIcon color="primary" />
                 </InputAdornment>
               ),
             }}
-            sx={{ backgroundColor: '#ffffff', borderRadius: 2 }}
           />
           <TextField
             label="説明"
@@ -117,13 +114,12 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({onThreadSuccess }) => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <DescriptionIcon color="action" />
+                  <DescriptionIcon color="primary" />
                 </InputAdornment>
               ),
             }}
-            sx={{ backgroundColor: '#ffffff', borderRadius: 2 }}
           />
-          <FormControl variant="outlined" fullWidth sx={{ backgroundColor: '#ffffff', borderRadius: 2 }}>
+          <FormControl variant="outlined" fullWidth>
             <InputLabel>メンバータイプ</InputLabel>
             <Select
               value={memberType}
@@ -131,7 +127,7 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({onThreadSuccess }) => {
               label="メンバータイプ"
               startAdornment={
                 <InputAdornment position="start">
-                  <GroupIcon color="action" />
+                  <GroupIcon color="primary" />
                 </InputAdornment>
               }
             >
@@ -147,17 +143,7 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({onThreadSuccess }) => {
               color="primary"
               disabled={loading}
               size="large"
-              sx={{
-                px: 4,
-                py: 1.5,
-                borderRadius: 2,
-                background: 'linear-gradient(45deg, #304FFE 30%, #1E40FF 90%)',
-                boxShadow: '0 3px 5px 2px rgba(48,79,254,0.3)',
-                transition: 'background 0.3s',
-                '&:hover': {
-                  background: 'linear-gradient(45deg, #1E40FF 30%, #304FFE 90%)',
-                },
-              }}
+              sx={{ px: 4, py: 1.5 }}
             >
               {loading ? '作成中...' : '作成'}
             </Button>

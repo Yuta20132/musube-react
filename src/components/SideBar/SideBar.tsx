@@ -47,19 +47,14 @@ const SideBar: React.FC<SideBarProps> = ({ open, onClose }) => {
       anchor='left'
       open={open}
       onClose={onClose}
-      PaperProps={{
-        sx: {
-          background: 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)',
-        },
-      }}
     >
       <Box sx={{ width: 250 }} role="presentation" onClick={onClose} onKeyDown={onClose}>
-        <Box sx={{ p: 2, textAlign: 'center' }}>
-          <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main' }}>
+        <Box sx={{ p: 3, textAlign: 'center', bgcolor: 'primary.main', color: 'common.white' }}>
+          <Typography variant="h6" sx={{ fontWeight: 600 }}>
             メニュー
           </Typography>
         </Box>
-        <List>
+        <List sx={{ pt: 0 }}>
           {listItems.map((item) => (
             <ListItemButton
               component="a"
@@ -68,11 +63,13 @@ const SideBar: React.FC<SideBarProps> = ({ open, onClose }) => {
               sx={{
                 display: 'flex',
                 alignItems: 'center',
-                paddingY: 1.5,
-                paddingX: 2,
+                py: 1.5,
+                px: 2,
+                transition: 'all 0.3s ease',
                 '&:hover': {
-                  backgroundColor: 'primary.light',
+                  bgcolor: 'primary.main',
                   color: 'common.white',
+                  transform: 'translateX(4px)',
                   '& .MuiListItemIcon-root': {
                     color: 'common.white',
                   },
@@ -84,7 +81,7 @@ const SideBar: React.FC<SideBarProps> = ({ open, onClose }) => {
               </ListItemIcon>
               <ListItemText 
                 primary={
-                  <Typography variant="body1" sx={{ fontWeight: 'medium' }}>
+                  <Typography variant="body1" sx={{ fontWeight: 500 }}>
                     {item.text}
                   </Typography>
                 } 

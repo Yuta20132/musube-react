@@ -67,7 +67,14 @@ const theme = createTheme({
   shape: {
     borderRadius: 12,
   },
-  shadows: Array(25).fill('none') as any, // 余計なシャドウを排除し、必要な箇所だけに追加
+  shadows: [
+    'none',
+    '0 2px 12px rgba(0,0,0,0.08)',
+    '0 4px 16px rgba(0,0,0,0.1)',
+    '0 8px 24px rgba(0,0,0,0.12)',
+    '0 12px 32px rgba(0,0,0,0.15)',
+    ...Array(20).fill('none')
+  ] as any,
   components: {
     MuiButton: {
       styleOverrides: {

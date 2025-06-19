@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Paper, Typography } from '@mui/material';
+import { TextField, Button, Box, Paper, Typography, InputAdornment } from '@mui/material';
+import { Title as TitleIcon, Create as CreateIcon } from '@mui/icons-material';
 import axios from 'axios';
-import { on } from 'events';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 type Props = {
@@ -36,6 +36,8 @@ const PostForm: React.FC<Props> = ({getThreadId, onPostSuccess}) => {
             if (onPostSuccess) {
                 onPostSuccess();
             }
+            setTitle('');
+            setContent('');
         }catch (error) {
             console.error('handleSubmit error:', error);
         }finally {
@@ -44,52 +46,54 @@ const PostForm: React.FC<Props> = ({getThreadId, onPostSuccess}) => {
     }
 
     return (
-        <Paper elevation={3} sx={{ padding: 3, marginTop: 4, maxHeight: 400,maxWidth: 600, marginRight: '4rem', mb: 4, backgroundColor: '#e3f2fd', height: 'auto', borderRadius: 3 }}>
-            <Typography variant="h6" gutterBottom sx={{ color: '#0d47a1' }}>
+        <Paper elevation={1} sx={{ padding: 3, marginTop: 4, maxHeight: 400, maxWidth: 600, marginRight: '4rem', mb: 4, height: 'auto' }}>
+            <Typography variant="h6" gutterBottom sx={{ color: 'primary.main', fontWeight: 600, mb: 2 }}>
                 ポストの投稿
             </Typography>
-            <Box component="form" onSubmit={handleSubmit}>
+            <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 <TextField
-                    label="Title"
+                    label="タイトル"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    margin="normal"
                     variant="outlined"
                     required
                     fullWidth
-                    sx={{ backgroundColor: '#ffffff', borderRadius: 1 }}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <TitleIcon color="primary" />
+                            </InputAdornment>
+                        ),
+                    }}
                 />
                 <TextField
-                    label="Content"
+                    label="内容"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
-                    margin="normal"
                     variant="outlined"
                     multiline
                     rows={4}
                     required
                     fullWidth
-                    sx={{ backgroundColor: '#ffffff', borderRadius: 1 }}
-                />
-                <Box sx={{ textAlign: 'right', marginTop: 2 }}>
-                <Button
-                    type="submit"
-                    variant="contained"
-                    sx={{
-                    backgroundColor: '#0d47a1',
-                    '&:hover': { backgroundColor: '#0b3c91' },
-                    minWidth: '100px',          
-                    height: '40px',             
-                    borderRadius: 2,           
-                    boxShadow: 1,
-                    fontWeight: 'bold',         
-                    fontSize: '1.05rem',       
-                    letterSpacing: 1,
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <CreateIcon color="primary" />
+                            </InputAdornment>
+                        ),
                     }}
-                    disabled={isSubmitting}
-                >
-                    Post
-                </Button>
+                />
+                <Box sx={{ textAlign: 'right', mt: 1 }}>
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        disabled={isSubmitting}
+                        size="large"
+                        sx={{ px: 4 }}
+                    >
+                        {isSubmitting ? '投稿中...' : '投稿'}
+                    </Button>
                 </Box>
             </Box>
         </Paper>

@@ -75,7 +75,7 @@ const Login = () => {
     return (
         <Box 
             sx={{
-                background: 'linear-gradient(135deg, #1976d2 0%, #64b5f6 100%)',
+                background: 'linear-gradient(135deg, #304FFE 0%, #64b5f6 100%)',
                 minHeight: '100vh',
                 display: 'flex',
                 alignItems: 'center',
@@ -83,15 +83,7 @@ const Login = () => {
             }}
         >
                 <Container component="main" maxWidth="sm">
-                    <Card 
-                        elevation={10} 
-                        sx={{ 
-                            borderRadius: 4, 
-                            overflow: 'hidden',
-                            backdropFilter: 'blur(20px)',
-                            bgcolor: 'rgba(255, 255, 255, 0.95)'
-                        }}
-                    >
+                    <Card elevation={2}>
                         <CardContent sx={{ p: 4 }}>
                             <Box
                                 display="flex"
@@ -99,8 +91,8 @@ const Login = () => {
                                 alignItems="center"
                                 sx={{ mb: 4 }}
                             >
-                                <LoginIcon sx={{ fontSize: 40, color: '#1976d2' }} />
-                                <Typography component="h1" variant="h5" sx={{ ml: 2 }}>
+                                <LoginIcon sx={{ fontSize: 40, color: 'primary.main' }} />
+                                <Typography component="h1" variant="h4" sx={{ ml: 2, color: 'primary.main' }}>
                                     ログイン
                                 </Typography>
                             </Box>
@@ -110,7 +102,7 @@ const Login = () => {
                                 </Alert>
                             )}
                             <form onSubmit={handleSubmit} noValidate>
-                                <Grid container spacing={2}>
+                                <Grid container spacing={3}>
                                     <Grid item xs={12}>
                                         <TextField
                                             variant="outlined"
@@ -125,7 +117,7 @@ const Login = () => {
                                             InputProps={{
                                                 startAdornment: (
                                                     <InputAdornment position="start">
-                                                        <EmailIcon />
+                                                        <EmailIcon color="primary" />
                                                     </InputAdornment>
                                                 ),
                                             }}
@@ -146,7 +138,7 @@ const Login = () => {
                                             InputProps={{
                                                 startAdornment: (
                                                     <InputAdornment position="start">
-                                                        <LockIcon />
+                                                        <LockIcon color="primary" />
                                                     </InputAdornment>
                                                 ),
                                                 endAdornment: (
@@ -154,6 +146,7 @@ const Login = () => {
                                                         <IconButton
                                                             onClick={handleTogglePasswordVisibility}
                                                             edge="end"
+                                                            color="primary"
                                                         >
                                                             <VisibilityIcon />
                                                         </IconButton>
@@ -170,6 +163,7 @@ const Login = () => {
                                             color="primary"
                                             disabled={loading}
                                             startIcon={<LoginIcon />}
+                                            size="large"
                                         >
                                             {loading ? 'ログイン中...' : 'ログイン'}
                                         </Button>
@@ -179,6 +173,7 @@ const Login = () => {
                                             component="button"
                                             variant="body2"
                                             onClick={handleForgotPassword}
+                                            sx={{ color: 'primary.main' }}
                                         >
                                             パスワードを忘れた場合はこちら
                                         </Link>

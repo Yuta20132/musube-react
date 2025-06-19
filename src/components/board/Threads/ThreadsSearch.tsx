@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { TextField, Button, Box, Paper, Typography } from '@mui/material';
+import { TextField, Button, Box, Paper, Typography, InputAdornment } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
 interface ThreadsSearchProps {
@@ -15,31 +15,33 @@ const ThreadsSearch: React.FC<ThreadsSearchProps> = ({ onSearch }) => {
   };
 
   return (
-    <Paper elevation={3} sx={{ padding: 2, marginTop: 2, maxWidth: 700, marginLeft: 'auto', marginRight: 'auto', backgroundColor: '#e3f2fd', borderRadius: 3 }}>
-      <Typography variant="h6" gutterBottom sx={{ color: '#0d47a1' }}>
+    <Paper elevation={1} sx={{ padding: 3, marginTop: 2, maxWidth: 700, marginLeft: 'auto', marginRight: 'auto' }}>
+      <Typography variant="h6" gutterBottom sx={{ color: 'primary.main', fontWeight: 600, mb: 2 }}>
         スレッド検索
       </Typography>
-      <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', alignItems: 'center' }}>
+      <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
         <TextField
           label="検索キーワード"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           variant="outlined"
           fullWidth
-          size="small"
-          sx={{ backgroundColor: '#ffffff', borderRadius: 1, mr: 1 }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon color="primary" />
+              </InputAdornment>
+            ),
+          }}
         />
         <Button 
           type="submit" 
           variant="contained" 
-          sx={{ 
-            backgroundColor: '#0d47a1', 
-            '&:hover': { backgroundColor: '#0b3c91' },
-            height: '50%',
-            width: 'auto',
-          }}
+          color="primary"
+          size="large"
+          sx={{ px: 3 }}
         >
-          <SearchIcon />
+          検索
         </Button>
       </Box>
     </Paper>

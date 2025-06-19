@@ -2,13 +2,15 @@
 import React from 'react';
 import './App.css';
 import { Route, Routes, Navigate } from 'react-router-dom';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
+import { CssBaseline } from '@mui/material';
 // インポートしたコンポーネント
 import Header from './components/Header/Header';
 import Register from './components/Accounts/Register/Register';
 import TopPage from './components/TopPage/TopPage';
 import Login from './components/Accounts/Login/Login';
 import ForgotPassword from './components/Accounts/Login/ForgotPassword';
+import ResetPassword from './components/Accounts/Login/ResetPassword';
 import Search from './components/Search/Search';
 import SendEmail from './components/Accounts/Register/SendEmail';
 import UserActivate from './components/Accounts/Register/UserActivate';
@@ -21,69 +23,22 @@ import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import ThreadsView from './components/Board/Threads/ThreadsView';
 import Policy from './components/Policy/Policy';
 import { Box } from '@mui/material';
-
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#2196f3',
-      light: '#21cbf3',
-      dark: '#1976d2',
-    },
-    background: {
-      default: '#ffffff', // 通常の背景色
-      paper: '#ffffff',
-    },
-    text: {
-      primary: '#333333',
-      secondary: '#666666',
-    },
-  },
-  typography: {
-    fontFamily: 'Roboto, Arial, sans-serif',
-    h4: { fontWeight: 'bold' },
-    h5: { fontWeight: 'bold' },
-    h6: { fontWeight: 'bold' },
-    body1: { fontWeight: 500 },
-    body2: { fontWeight: 400 },
-  },
-  components: {
-    MuiButton: {
-      styleOverrides: {
-        contained: {
-          borderRadius: '8px',
-          padding: '10px 20px',
-        },
-      },
-    },
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          borderRadius: '12px',
-        },
-      },
-    },
-    MuiDrawer: {
-      styleOverrides: {
-        paper: {
-          background: 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)',
-        },
-      },
-    },
-  },
-});
+import theme from './theme';
 
 const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
+      <CssBaseline />
       <AuthProvider>
         <Header>
-          <Box component="main" sx={{ flexGrow: 1 }}>
+          <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default' }}>
             <Routes>
               {/* １．公開ルート */}
               <Route path="/" element={<TopPage />} />
               <Route path="/register_form" element={<Register />} />
               <Route path="/login" element={<Login />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/user-search" element={<Search />} />
               <Route path="/send-mail" element={<SendEmail />} />
               <Route path="/verify" element={<UserActivate />} />
