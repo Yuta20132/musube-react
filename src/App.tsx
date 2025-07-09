@@ -16,6 +16,8 @@ import UserActivate from './components/Accounts/Register/UserActivate';
 import LoginSuccess from './components/Accounts/Login/LoginSuccess';
 import ThreadsPage from './components/Board/Threads/ThreadsPage';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { NotificationProvider } from './contexts/NotificationContext';
+import NotificationSnackbar from './components/Notification/NotificationSnackbar';
 import Logout from './components/Accounts/Login/Logout';
 import UserProfile from './components/Accounts/UserProfile/UserProfile';
 import ThreadsView from './components/Board/Threads/ThreadsView';
@@ -54,6 +56,7 @@ const AppRoutes: React.FC = () => {
               <Route path="/logout" element={<Logout />} />
               <Route path="/policy" element={<Policy />} />
               <Route path="*" element={<Navigate to="/" replace />} />
+              <Route path="/user-search" element={<Search />} />
             </>
           ) : (
             // ゲストユーザー用ルート
@@ -63,7 +66,6 @@ const AppRoutes: React.FC = () => {
               <Route path="/login" element={<Login />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/user-search" element={<Search />} />
               <Route path="/send-mail" element={<SendEmail />} />
               <Route path="/verify" element={<UserActivate />} />
               <Route path="/login-success" element={<LoginSuccess />} />
@@ -81,9 +83,12 @@ const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
+      <NotificationProvider>
+        <AuthProvider>
+          <AppRoutes />
+          <NotificationSnackbar />
+        </AuthProvider>
+      </NotificationProvider>
     </ThemeProvider>
   );
 };

@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { useAuth } from '../../../contexts/AuthContext';
+import { useNotification } from '../../../contexts/NotificationContext';
 import { 
     Box, 
     Container, 
@@ -19,6 +20,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
 import LoginIcon from '@mui/icons-material/Login';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import { validateEmail } from '../../../utils/validation';
 
 
 interface FormData {
@@ -28,6 +30,7 @@ interface FormData {
 
 const Login = () => {
     const { login } = useAuth();
+    const { showNotification } = useNotification();
     const [formData, setFormData] = useState<FormData>({
         email: "",
         password: ""
@@ -57,11 +60,25 @@ const Login = () => {
         setError(null);
         setLoading(true);
         
+        // 入力値検証
+        if (!validateEmail(email)) {
+            setError("正しいメールアドレスを入力してください。");
+            setLoading(false);
+            return;
+        }
+        
+        if (password.length < 1) {
+            setError("パスワードを入力してください。");
+            setLoading(false);
+            return;
+        }
+        
         try {
-            await login(email, password);
+            await login(email.trim(), password);
+            showNotification('ログインしました', 'success');
             navigate('/login-success');
         } catch (error) {
-            console.error(error);
+            // セキュリティのため詳細なエラー情報は表示しない
             setError("ログインに失敗しました。メールアドレスまたはパスワードが正しくありません。");
         } finally {
             setLoading(false);
@@ -111,9 +128,11 @@ const Login = () => {
                                             id="email"
                                             label="Email"
                                             name="email"
+                                            type="email"
                                             autoComplete="email"
                                             value={formData.email}
                                             onChange={handleChange}
+                                            inputProps={{ maxLength: 254 }}
                                             InputProps={{
                                                 startAdornment: (
                                                     <InputAdornment position="start">
@@ -135,6 +154,7 @@ const Login = () => {
                                             autoComplete="current-password"
                                             value={formData.password}
                                             onChange={handleChange}
+                                            inputProps={{ maxLength: 128 }}
                                             InputProps={{
                                                 startAdornment: (
                                                     <InputAdornment position="start">

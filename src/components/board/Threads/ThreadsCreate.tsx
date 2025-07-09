@@ -18,6 +18,7 @@ import {
 } from '@mui/icons-material';
 import axios from 'axios';
 import { SelectChangeEvent } from '@mui/material/Select';
+import { useNotification } from '../../../contexts/NotificationContext';
 
 interface ThreadsCreateForm {
   onThreadSuccess?: () => void;
@@ -26,6 +27,7 @@ interface ThreadsCreateForm {
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const ThreadsCreate: React.FC<ThreadsCreateForm> = ({onThreadSuccess }) => {
+  const { showNotification } = useNotification();
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [memberType, setMemberType] = useState<string>('1');
@@ -50,6 +52,7 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({onThreadSuccess }) => {
          }
          
          );
+        showNotification('スレッドを作成しました', 'success');
         if (onThreadSuccess) {
           onThreadSuccess();
         }
@@ -58,6 +61,7 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({onThreadSuccess }) => {
         setMemberType('1');
       } catch (error) {
         console.error('スレッド作成時のエラー:', error);
+        showNotification('スレッドの作成に失敗しました', 'error');
       } finally {
         setLoading(false);
       }
@@ -69,24 +73,23 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({onThreadSuccess }) => {
   };
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-      <Paper 
-        elevation={1} 
-        sx={{ 
-          p: 4, 
-          maxWidth: 600, 
-          width: '100%'
-        }}
+    <Paper 
+      elevation={1} 
+      sx={{ 
+        p: 4, 
+        maxWidth: 800, 
+        mx: 'auto',
+        mb: 4
+      }}
+    >
+      <Typography 
+        variant="h5" 
+        gutterBottom 
+        sx={{ fontWeight: 600, color: 'primary.main', mb: 3 }}
       >
-        <Typography 
-          variant="h5" 
-          align="center" 
-          gutterBottom 
-          sx={{ fontWeight: 600, color: 'primary.main', mb: 3 }}
-        >
-          スレッドの作成
-        </Typography>
-        <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+        新しいスレッドを作成
+      </Typography>
+      <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
           <TextField
             label="タイトル"
             value={title}
@@ -136,7 +139,7 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({onThreadSuccess }) => {
               <MenuItem value={'3'}>モデレーター</MenuItem>
             </Select>
           </FormControl>
-          <Box sx={{ textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
             <Button
               type="submit"
               variant="contained"
@@ -145,12 +148,11 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({onThreadSuccess }) => {
               size="large"
               sx={{ px: 4, py: 1.5 }}
             >
-              {loading ? '作成中...' : '作成'}
+              {loading ? '作成中...' : 'スレッドを作成'}
             </Button>
           </Box>
         </Box>
-      </Paper>
-    </Box>
+    </Paper>
   );
 };
 

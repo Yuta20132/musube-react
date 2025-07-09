@@ -159,13 +159,14 @@ const UserProfile: React.FC = () => {
           },
           withCredentials: true,
         });
+        console.log(response.data);
         setUserProfile({
           username: response.data.user_name,
           firstName: response.data.first_name,
           lastName: response.data.last_name,
           memberType: response.data.category,
           email: response.data.email,
-          organization: response.data.organization || '',
+          organization: response.data.institution || '',
           description: response.data.description || '',
         });
       } catch (error) {

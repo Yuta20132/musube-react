@@ -4,6 +4,7 @@ import { Box, Typography } from '@mui/material';
 import axios from 'axios';
 import CommentForm from './CommentForm';
 import CommentList, { IComment } from './CommentList';
+import { useNotification } from '../../../contexts/NotificationContext';
 
 interface CommentProps {
   postId: number;
@@ -12,6 +13,7 @@ interface CommentProps {
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const Comment: React.FC<CommentProps> = ({ postId }) => {
+  const { showNotification } = useNotification();
   const [comments, setComments] = useState<IComment[]>([]);
   const [currentUserId, setCurrentUserId] = useState<string>('');
 
@@ -76,11 +78,12 @@ const Comment: React.FC<CommentProps> = ({ postId }) => {
         },
       });
       
+      showNotification('コメントを削除しました', 'success');
       // 削除成功したら最新のコメント一覧を再取得
       await fetchComments();
     } catch (error) {
       console.error('Error deleting comment:', error);
-      alert('コメントの削除に失敗しました');
+      showNotification('コメントの削除に失敗しました', 'error');
     }
   };
 
