@@ -13,6 +13,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Comment from "../Comment/Comment";
 import PostSearch from "./PostSearch";
+import { useNotification } from '../../../contexts/NotificationContext';
 
 export interface Post  {
   post_id: number;
@@ -38,6 +39,7 @@ const apiUrl = process.env.REACT_APP_API_URL;
 const PostView = forwardRef<PostViewHandle, Props>(
   ({ threadId, limit = 5, offset = 0 }, ref) => {
 
+  const { showNotification } = useNotification();
   const [allPosts, setAllPosts] = useState<Post[]>([]);
   const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -89,7 +91,7 @@ const PostView = forwardRef<PostViewHandle, Props>(
         }
       });
       
-      // 削除成功後、投稿リストを更新
+      showNotification('投稿を削除しました', 'success');
       setAllPosts(prevPosts => prevPosts.filter(post => post.post_id !== postId));
       setFilteredPosts(prevPosts => prevPosts.filter(post => post.post_id !== postId));
     } catch (error) {

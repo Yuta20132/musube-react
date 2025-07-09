@@ -13,7 +13,7 @@ import {
     Card, 
     CardContent, 
     InputAdornment, 
-    IconButton 
+    Paper 
 } from '@mui/material';
 import { Search as SearchIcon, School as SchoolIcon, Business as BusinessIcon, LocalHospital as LocalHospitalIcon, Person as PersonIcon } from '@mui/icons-material';
 import { SearchResult } from './SearchTypes';
@@ -80,29 +80,32 @@ const SearchForm: React.FC = () => {
     const getInstitutionIcon = (type: string) => {
         switch(type) {
             case '大学・研究所':
-                return <SchoolIcon />;
+                return <SchoolIcon color="primary" />;
             case '企業':
-                return <BusinessIcon />;
+                return <BusinessIcon color="primary" />;
             case '医者':
-                return <LocalHospitalIcon />;
+                return <LocalHospitalIcon color="primary" />;
             case '一般':
             default:
-                return <PersonIcon />;
+                return <PersonIcon color="primary" />;
         }
     };
 
     return (
         <Container component="main" maxWidth="sm">
-            <Card 
+            <Paper 
+                elevation={1}
                 sx={{ 
                     p: 4, 
-                    mt: 4, 
-                    boxShadow: 3, 
-                    borderRadius: 3, 
-                    background: 'linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%)' 
+                    mt: 4
                 }}
             >
-                <Typography variant="h5" align="center" gutterBottom sx={{ fontWeight: 'bold', mb: 3 }}>
+                <Typography 
+                    variant="h5" 
+                    align="center" 
+                    gutterBottom 
+                    sx={{ fontWeight: 600, color: 'primary.main', mb: 3 }}
+                >
                     ユーザー検索
                 </Typography>
                 <Box
@@ -124,13 +127,9 @@ const SearchForm: React.FC = () => {
                         InputProps={{
                             startAdornment: (
                                 <InputAdornment position="start">
-                                    <PersonIcon color="action" />
+                                    <PersonIcon color="primary" />
                                 </InputAdornment>
                             ),
-                        }}
-                        sx={{
-                            borderRadius: 2,
-                            backgroundColor: '#ffffff',
                         }}
                     />
                     <TextField
@@ -143,13 +142,9 @@ const SearchForm: React.FC = () => {
                         InputProps={{
                             startAdornment: (
                                 <InputAdornment position="start">
-                                    <SchoolIcon color="action" />
+                                    <SchoolIcon color="primary" />
                                 </InputAdornment>
                             ),
-                        }}
-                        sx={{
-                            borderRadius: 2,
-                            backgroundColor: '#ffffff',
                         }}
                     />
                     <FormControl variant="outlined" fullWidth>
@@ -163,10 +158,6 @@ const SearchForm: React.FC = () => {
                                     {getInstitutionIcon(searchData.institutionType)}
                                 </InputAdornment>
                             }
-                            sx={{
-                                borderRadius: 2,
-                                backgroundColor: '#ffffff',
-                            }}
                         >
                             <MenuItem value="">
                                 <em>すべて</em>
@@ -183,20 +174,12 @@ const SearchForm: React.FC = () => {
                         color="primary"
                         size="large"
                         startIcon={<SearchIcon />}
-                        sx={{ 
-                            mt: 2, 
-                            borderRadius: 2, 
-                            background: 'linear-gradient(45deg, #2196f3 30%, #21cbf3 90%)',
-                            boxShadow: '0 3px 5px 2px rgba(33, 203, 243, .3)',
-                            '&:hover': {
-                                background: 'linear-gradient(45deg, #21cbf3 30%, #2196f3 90%)',
-                            }
-                        }}
+                        sx={{ mt: 2 }}
                     >
                         検索
                     </Button>
                 </Box>
-            </Card>
+            </Paper>
 
             <Box sx={{ mt: 4 }}>
                 {results.map(result => (
@@ -204,33 +187,24 @@ const SearchForm: React.FC = () => {
                         key={result.id} 
                         sx={{ 
                             mb: 2, 
-                            background: 'linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%)', // 薄いブルーのグラデーション
-                            cursor: 'pointer',
-                            transition: 'transform 0.2s, box-shadow 0.2s',
-                            '&:hover': {
-                                transform: 'scale(1.02)',
-                                boxShadow: 6,
-                            },
-                            borderRadius: 2,
+                            cursor: 'pointer'
                         }} 
                         onClick={() => handleOpenModal(result)} 
                     >
                         <CardContent>
                             <Typography 
                                 variant="h6" 
-                                sx={{ fontWeight: 'bold' }}
+                                sx={{ fontWeight: 600 }}
                             >
                                 {result.lastName} {result.firstName}
                             </Typography>
                             <Typography 
-                                color="text.secondary" 
-                                sx={{ fontWeight: 'bold' }}
+                                color="text.secondary"
                             >
                                 {result.institution}
                             </Typography>
                             <Typography 
-                                variant="body2" 
-                                sx={{ fontWeight: 'bold' }}
+                                variant="body2"
                             >
                                 種類: {result.institutionType}
                             </Typography>

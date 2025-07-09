@@ -1,6 +1,7 @@
 import React, { useState, useEffect} from 'react';
 import axios from 'axios';
 import { TextField, Button, Box } from '@mui/material';
+import { useNotification } from '../../../contexts/NotificationContext';
 
 interface CommentFormProps {
   postId: number;
@@ -17,6 +18,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
   userId,
   onCommentSuccess, 
 }) => {
+  const { showNotification } = useNotification();
   const [content, setContent] = useState('');
 
 
@@ -40,6 +42,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
           withCredentials: true,
         }
       );
+      showNotification('コメントを投稿しました', 'success');
       setContent('');
       if (onCommentSuccess) {
         onCommentSuccess();

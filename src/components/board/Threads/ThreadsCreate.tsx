@@ -18,6 +18,7 @@ import {
 } from '@mui/icons-material';
 import axios from 'axios';
 import { SelectChangeEvent } from '@mui/material/Select';
+import { useNotification } from '../../../contexts/NotificationContext';
 
 interface ThreadsCreateForm {
   onThreadSuccess?: () => void;
@@ -26,6 +27,7 @@ interface ThreadsCreateForm {
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const ThreadsCreate: React.FC<ThreadsCreateForm> = ({onThreadSuccess }) => {
+  const { showNotification } = useNotification();
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [memberType, setMemberType] = useState<string>('1');
@@ -50,6 +52,7 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({onThreadSuccess }) => {
          }
          
          );
+        showNotification('スレッドを作成しました', 'success');
         if (onThreadSuccess) {
           onThreadSuccess();
         }
@@ -58,6 +61,7 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({onThreadSuccess }) => {
         setMemberType('1');
       } catch (error) {
         console.error('スレッド作成時のエラー:', error);
+        showNotification('スレッドの作成に失敗しました', 'error');
       } finally {
         setLoading(false);
       }
@@ -69,26 +73,23 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({onThreadSuccess }) => {
   };
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
-      <Paper 
-        elevation={3} 
-        sx={{ 
-          p: 4, 
-          maxWidth: 600, 
-          width: '100%', 
-          background: 'linear-gradient(135deg, #F0F4F8 0%, #D9E2EC 100%)', 
-          borderRadius: 3 
-        }}
+    <Paper 
+      elevation={1} 
+      sx={{ 
+        p: 4, 
+        maxWidth: 800, 
+        mx: 'auto',
+        mb: 4
+      }}
+    >
+      <Typography 
+        variant="h5" 
+        gutterBottom 
+        sx={{ fontWeight: 600, color: 'primary.main', mb: 3 }}
       >
-        <Typography 
-          variant="h5" 
-          align="center" 
-          gutterBottom 
-          sx={{ fontWeight: 'bold', color: 'primary.main', mb: 3 }}
-        >
-          スレッドの作成
-        </Typography>
-        <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+        新しいスレッドを作成
+      </Typography>
+      <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
           <TextField
             label="タイトル"
             value={title}
@@ -99,11 +100,10 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({onThreadSuccess }) => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <TitleIcon color="action" />
+                  <TitleIcon color="primary" />
                 </InputAdornment>
               ),
             }}
-            sx={{ backgroundColor: '#ffffff', borderRadius: 2 }}
           />
           <TextField
             label="説明"
@@ -117,13 +117,12 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({onThreadSuccess }) => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <DescriptionIcon color="action" />
+                  <DescriptionIcon color="primary" />
                 </InputAdornment>
               ),
             }}
-            sx={{ backgroundColor: '#ffffff', borderRadius: 2 }}
           />
-          <FormControl variant="outlined" fullWidth sx={{ backgroundColor: '#ffffff', borderRadius: 2 }}>
+          <FormControl variant="outlined" fullWidth>
             <InputLabel>メンバータイプ</InputLabel>
             <Select
               value={memberType}
@@ -131,7 +130,7 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({onThreadSuccess }) => {
               label="メンバータイプ"
               startAdornment={
                 <InputAdornment position="start">
-                  <GroupIcon color="action" />
+                  <GroupIcon color="primary" />
                 </InputAdornment>
               }
             >
@@ -140,31 +139,20 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({onThreadSuccess }) => {
               <MenuItem value={'3'}>モデレーター</MenuItem>
             </Select>
           </FormControl>
-          <Box sx={{ textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
             <Button
               type="submit"
               variant="contained"
               color="primary"
               disabled={loading}
               size="large"
-              sx={{
-                px: 4,
-                py: 1.5,
-                borderRadius: 2,
-                background: 'linear-gradient(45deg, #304FFE 30%, #1E40FF 90%)',
-                boxShadow: '0 3px 5px 2px rgba(48,79,254,0.3)',
-                transition: 'background 0.3s',
-                '&:hover': {
-                  background: 'linear-gradient(45deg, #1E40FF 30%, #304FFE 90%)',
-                },
-              }}
+              sx={{ px: 4, py: 1.5 }}
             >
-              {loading ? '作成中...' : '作成'}
+              {loading ? '作成中...' : 'スレッドを作成'}
             </Button>
           </Box>
         </Box>
-      </Paper>
-    </Box>
+    </Paper>
   );
 };
 

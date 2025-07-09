@@ -1,98 +1,124 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Paper, Typography } from '@mui/material';
-import axios from 'axios';
-import { on } from 'events';
-
-const apiUrl = process.env.REACT_APP_API_URL;
+import { TextField, Button, Box, Paper, Typography, InputAdornment, Alert } from '@mui/material';
+import { Title as TitleIcon, Create as CreateIcon } from '@mui/icons-material';
+import apiClient from '../../../utils/apiClient';
+import { validateAndSanitizePost } from '../../../utils/validation';
+import { useNotification } from '../../../contexts/NotificationContext';
 type Props = {
     getThreadId: number;
     onPostSuccess?: () => void;
 }
 const PostForm: React.FC<Props> = ({getThreadId, onPostSuccess}) => {
+    const { showNotification } = useNotification();
     const [title, setTitle] = useState<string>('');
     const [content, setContent] = useState<string>('');
     const [threadId, setThreadId] = useState<number>(getThreadId);
     const [categoryId, setCategoryId] = useState<string>('1');
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setValidationErrors([]);
+        
+        // 入力値の検証とサニタイズ
+        const validation = validateAndSanitizePost(title, content);
+        
+        if (!validation.isValid) {
+            setValidationErrors(validation.errors);
+            return;
+        }
         
         const payload = {
-            title: title.trim(),
-            content: content.trim(),
+            title: validation.sanitizedTitle,
+            content: validation.sanitizedContent,
             thread_id: threadId,
             category_id: categoryId.trim(),
         };
 
         setIsSubmitting(true);
         try {
-            const response = await axios.post(`${apiUrl}/posts/`, payload, {
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                withCredentials: true,
-            });
+            const response = await apiClient.post('/posts/', payload);
+            showNotification('投稿を作成しました', 'success');
             if (onPostSuccess) {
                 onPostSuccess();
             }
+            setTitle('');
+            setContent('');
+            setValidationErrors([]);
         }catch (error) {
-            console.error('handleSubmit error:', error);
+            // エラーハンドリングはapiClientのインターセプターで処理される
+            setValidationErrors(['投稿に失敗しました。もう一度お試しください。']);
         }finally {
             setIsSubmitting(false);
         }
     }
 
     return (
-        <Paper elevation={3} sx={{ padding: 3, marginTop: 4, maxHeight: 400,maxWidth: 600, marginRight: '4rem', mb: 4, backgroundColor: '#e3f2fd', height: 'auto', borderRadius: 3 }}>
-            <Typography variant="h6" gutterBottom sx={{ color: '#0d47a1' }}>
-                ポストの投稿
-            </Typography>
-            <Box component="form" onSubmit={handleSubmit}>
+        <Box sx={{ maxWidth: 800, mx: 'auto', mb: 4 }}>
+            <Paper elevation={1} sx={{ p: 3, mt: 4 }}>
+                <Typography variant="h6" gutterBottom sx={{ color: 'primary.main', fontWeight: 600, mb: 3 }}>
+                    ポストの投稿
+                </Typography>
+            {validationErrors.length > 0 && (
+                <Alert severity="error" sx={{ mb: 2 }}>
+                    {validationErrors.map((error, index) => (
+                        <div key={index}>{error}</div>
+                    ))}
+                </Alert>
+            )}
+            <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                 <TextField
-                    label="Title"
+                    label="タイトル"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    margin="normal"
                     variant="outlined"
                     required
                     fullWidth
-                    sx={{ backgroundColor: '#ffffff', borderRadius: 1 }}
+                    inputProps={{ maxLength: 100 }}
+                    helperText={`${title.length}/100文字`}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <TitleIcon color="primary" />
+                            </InputAdornment>
+                        ),
+                    }}
                 />
                 <TextField
-                    label="Content"
+                    label="内容"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
-                    margin="normal"
                     variant="outlined"
                     multiline
                     rows={4}
                     required
                     fullWidth
-                    sx={{ backgroundColor: '#ffffff', borderRadius: 1 }}
-                />
-                <Box sx={{ textAlign: 'right', marginTop: 2 }}>
-                <Button
-                    type="submit"
-                    variant="contained"
-                    sx={{
-                    backgroundColor: '#0d47a1',
-                    '&:hover': { backgroundColor: '#0b3c91' },
-                    minWidth: '100px',          
-                    height: '40px',             
-                    borderRadius: 2,           
-                    boxShadow: 1,
-                    fontWeight: 'bold',         
-                    fontSize: '1.05rem',       
-                    letterSpacing: 1,
+                    inputProps={{ maxLength: 1000 }}
+                    helperText={`${content.length}/1000文字`}
+                    InputProps={{
+                        startAdornment: (
+                            <InputAdornment position="start">
+                                <CreateIcon color="primary" />
+                            </InputAdornment>
+                        ),
                     }}
-                    disabled={isSubmitting}
-                >
-                    Post
-                </Button>
+                />
+                <Box sx={{ textAlign: 'right', mt: 1 }}>
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        disabled={isSubmitting}
+                        size="large"
+                        sx={{ px: 4 }}
+                    >
+                        {isSubmitting ? '投稿中...' : '投稿'}
+                    </Button>
                 </Box>
             </Box>
-        </Paper>
+            </Paper>
+        </Box>
     );
 };
 

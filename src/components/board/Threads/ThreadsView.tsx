@@ -29,39 +29,35 @@ const ThreadsView: React.FC = () => {
         }}
       />
       <Card 
+        elevation={1}
         sx={{ 
           width: '80%', 
-          maxWidth: 1000, 
-          
-          background: 'linear-gradient(135deg, #f0f4f8 0%, #d9e2ec 100%)', 
-          boxShadow: 3, 
-          borderRadius: 3 
+          maxWidth: 1000
         }}
       >
-        
         <CardHeader
           sx={{ 
-            background: 'linear-gradient(135deg, #2196f3 0%, #21cbf3 100%)', 
+            bgcolor: 'primary.main',
             color: 'common.white',
             display: 'flex', 
             justifyContent: 'space-between', 
-            alignItems: 'center',
-            borderTopLeftRadius: 8,
-            borderTopRightRadius: 8,
+            alignItems: 'center'
           }}
           title={
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+            <Typography variant="h5" sx={{ fontWeight: 600 }}>
               {thread ? thread.title : 'スレッドを選択してください'}
             </Typography>
           }
           action={
             <Button 
               onClick={() => navigate('/threads_page')}
+              variant="outlined"
               sx={{ 
-                color: 'common.white', 
-                background: 'rgba(255, 255, 255, 0.2)',
+                color: 'common.white',
+                borderColor: 'common.white',
                 '&:hover': {
-                  background: 'rgba(255, 255, 255, 0.3)',
+                  bgcolor: 'rgba(255, 255, 255, 0.1)',
+                  borderColor: 'common.white'
                 },
               }}
               startIcon={<ArrowBackIcon />}
@@ -74,8 +70,8 @@ const ThreadsView: React.FC = () => {
           {thread ? (
             <>
               <Typography 
-                variant="body2" 
-                sx={{ color: 'text.secondary', mb: 3, fontWeight: 'bold' }}
+                variant="body1" 
+                sx={{ color: 'text.secondary', mb: 3 }}
               >
                 {thread.description}
               </Typography>

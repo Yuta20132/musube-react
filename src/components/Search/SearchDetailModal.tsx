@@ -17,8 +17,7 @@ const SearchDetailModal: React.FC<SearchDetailModalProps> = ({ open, content, on
       onClose={onClose}
       BackdropProps={{
         sx: {
-          backgroundColor: 'rgba(173, 216, 230, 0.5)', // 薄いブルーの背景を設定
-          opacity: 1, // 背景の透明度を設定
+          backgroundColor: 'rgba(100, 116, 139, 0.5)', // テーマのgrey.500を使用
         },
       }}
     >
@@ -32,12 +31,11 @@ const SearchDetailModal: React.FC<SearchDetailModalProps> = ({ open, content, on
           maxWidth: '90%',
           height: '80vh', // 縦長に設定
           bgcolor: 'background.paper',
-          borderRadius: 4, // 角を少し丸める
-          boxShadow: 24,
+          borderRadius: 1,
+          boxShadow: 2,
           p: 6,
           outline: 'none',
           textAlign: 'center',
-          background: 'linear-gradient(to bottom, #e0f7fa, #ffffff)', // 薄いブルーのグラデーション背景
         }}
       >
         <IconButton
@@ -47,26 +45,26 @@ const SearchDetailModal: React.FC<SearchDetailModalProps> = ({ open, content, on
             position: 'absolute',
             right: 16,
             top: 16,
-            color: '#007bb2', // クローズボタンの色をブルーに設定
+            color: 'primary.main',
           }}
         >
           <CloseIcon />
         </IconButton>
         {content && (
           <Box sx={{ mt: 4 }}>
-            <Typography variant="h3" component="div" sx={{ fontWeight: 'bold', color: '#007bb2', fontFamily: 'Arial, sans-serif', fontSize: '3rem' }}>
+            <Typography variant="h3" component="div" sx={{ fontWeight: 700, color: 'primary.main' }}>
               {content.lastName} {content.firstName}
             </Typography>
-            <Typography variant="subtitle1" sx={{ color: 'text.secondary', mt: 2, fontFamily: 'Arial, sans-serif', fontSize: '1.8rem' }}>
+            <Typography variant="subtitle1" sx={{ color: 'text.secondary', mt: 2 }}>
               {content.email}
             </Typography>
-            <Typography variant="body1" sx={{ mt: 3, fontFamily: 'Arial, sans-serif', fontSize: '1.5rem' }}>
+            <Typography variant="body1" sx={{ mt: 3 }}>
               <strong>所属:</strong> {content.institution}
             </Typography>
-            <Typography variant="body1" sx={{ mt: 2, fontFamily: 'Arial, sans-serif', fontSize: '1.5rem' }}>
+            <Typography variant="body1" sx={{ mt: 2 }}>
               <strong>種類:</strong> {content.institutionType}
             </Typography>
-            <Button variant="contained" color="primary" sx={{ mt: 6, fontSize: '1.2rem' }} onClick={() => alert('詳細ボタンがクリックされました')}>詳細</Button>
+            <Button variant="contained" color="primary" sx={{ mt: 6 }} onClick={() => alert('詳細ボタンがクリックされました')}>詳細</Button>
           </Box>
         )}
       </Box>

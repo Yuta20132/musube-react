@@ -1,5 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { useAuth } from '../../../contexts/AuthContext';
+import { useNotification } from '../../../contexts/NotificationContext';
 import { 
     Box, 
     Container, 
@@ -19,6 +20,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
 import LoginIcon from '@mui/icons-material/Login';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import { validateEmail } from '../../../utils/validation';
 
 
 interface FormData {
@@ -28,6 +30,7 @@ interface FormData {
 
 const Login = () => {
     const { login } = useAuth();
+    const { showNotification } = useNotification();
     const [formData, setFormData] = useState<FormData>({
         email: "",
         password: ""
@@ -57,11 +60,25 @@ const Login = () => {
         setError(null);
         setLoading(true);
         
+        // 入力値検証
+        if (!validateEmail(email)) {
+            setError("正しいメールアドレスを入力してください。");
+            setLoading(false);
+            return;
+        }
+        
+        if (password.length < 1) {
+            setError("パスワードを入力してください。");
+            setLoading(false);
+            return;
+        }
+        
         try {
-            await login(email, password);
+            await login(email.trim(), password);
+            showNotification('ログインしました', 'success');
             navigate('/login-success');
         } catch (error) {
-            console.error(error);
+            // セキュリティのため詳細なエラー情報は表示しない
             setError("ログインに失敗しました。メールアドレスまたはパスワードが正しくありません。");
         } finally {
             setLoading(false);
@@ -75,7 +92,7 @@ const Login = () => {
     return (
         <Box 
             sx={{
-                background: 'linear-gradient(135deg, #1976d2 0%, #64b5f6 100%)',
+                background: 'linear-gradient(135deg, #304FFE 0%, #64b5f6 100%)',
                 minHeight: '100vh',
                 display: 'flex',
                 alignItems: 'center',
@@ -83,15 +100,7 @@ const Login = () => {
             }}
         >
                 <Container component="main" maxWidth="sm">
-                    <Card 
-                        elevation={10} 
-                        sx={{ 
-                            borderRadius: 4, 
-                            overflow: 'hidden',
-                            backdropFilter: 'blur(20px)',
-                            bgcolor: 'rgba(255, 255, 255, 0.95)'
-                        }}
-                    >
+                    <Card elevation={2}>
                         <CardContent sx={{ p: 4 }}>
                             <Box
                                 display="flex"
@@ -99,8 +108,8 @@ const Login = () => {
                                 alignItems="center"
                                 sx={{ mb: 4 }}
                             >
-                                <LoginIcon sx={{ fontSize: 40, color: '#1976d2' }} />
-                                <Typography component="h1" variant="h5" sx={{ ml: 2 }}>
+                                <LoginIcon sx={{ fontSize: 40, color: 'primary.main' }} />
+                                <Typography component="h1" variant="h4" sx={{ ml: 2, color: 'primary.main' }}>
                                     ログイン
                                 </Typography>
                             </Box>
@@ -110,7 +119,7 @@ const Login = () => {
                                 </Alert>
                             )}
                             <form onSubmit={handleSubmit} noValidate>
-                                <Grid container spacing={2}>
+                                <Grid container spacing={3}>
                                     <Grid item xs={12}>
                                         <TextField
                                             variant="outlined"
@@ -119,13 +128,15 @@ const Login = () => {
                                             id="email"
                                             label="Email"
                                             name="email"
+                                            type="email"
                                             autoComplete="email"
                                             value={formData.email}
                                             onChange={handleChange}
+                                            inputProps={{ maxLength: 254 }}
                                             InputProps={{
                                                 startAdornment: (
                                                     <InputAdornment position="start">
-                                                        <EmailIcon />
+                                                        <EmailIcon color="primary" />
                                                     </InputAdornment>
                                                 ),
                                             }}
@@ -143,10 +154,11 @@ const Login = () => {
                                             autoComplete="current-password"
                                             value={formData.password}
                                             onChange={handleChange}
+                                            inputProps={{ maxLength: 128 }}
                                             InputProps={{
                                                 startAdornment: (
                                                     <InputAdornment position="start">
-                                                        <LockIcon />
+                                                        <LockIcon color="primary" />
                                                     </InputAdornment>
                                                 ),
                                                 endAdornment: (
@@ -154,6 +166,7 @@ const Login = () => {
                                                         <IconButton
                                                             onClick={handleTogglePasswordVisibility}
                                                             edge="end"
+                                                            color="primary"
                                                         >
                                                             <VisibilityIcon />
                                                         </IconButton>
@@ -170,6 +183,7 @@ const Login = () => {
                                             color="primary"
                                             disabled={loading}
                                             startIcon={<LoginIcon />}
+                                            size="large"
                                         >
                                             {loading ? 'ログイン中...' : 'ログイン'}
                                         </Button>
@@ -179,6 +193,7 @@ const Login = () => {
                                             component="button"
                                             variant="body2"
                                             onClick={handleForgotPassword}
+                                            sx={{ color: 'primary.main' }}
                                         >
                                             パスワードを忘れた場合はこちら
                                         </Link>
