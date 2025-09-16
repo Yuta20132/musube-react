@@ -117,12 +117,6 @@ export const getPasswordStrength = (password: string): {
     feedback.push('数字を含めてください');
   }
   
-  if (/[^a-zA-Z0-9]/.test(password)) {
-    score++;
-  } else {
-    feedback.push('記号を含めてください');
-  }
-  
   return { score: Math.min(score, 4), feedback };
 };
 

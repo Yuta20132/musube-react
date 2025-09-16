@@ -162,40 +162,6 @@ const ThreadsList: React.FC<ThreadsListProps> = ({ threads, loading }) => {
 
                 <Divider sx={{ my: 2 }} />
 
-                {/* 統計情報 */}
-                <Stack direction="row" spacing={3} sx={{ mb: 2 }}>
-                  <Stack direction="row" alignItems="center" spacing={0.5}>
-                    <ChatIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
-                    <Typography variant="caption" color="text.secondary">
-                      {stats.posts}
-                    </Typography>
-                  </Stack>
-                  <Stack direction="row" alignItems="center" spacing={0.5}>
-                    <ViewIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
-                    <Typography variant="caption" color="text.secondary">
-                      {stats.views}
-                    </Typography>
-                  </Stack>
-                  <Stack direction="row" alignItems="center" spacing={0.5}>
-                    <PersonIcon sx={{ fontSize: 16, color: 'text.secondary' }} />
-                    <Typography variant="caption" color="text.secondary">
-                      {stats.participants}
-                    </Typography>
-                  </Stack>
-                </Stack>
-
-                {/* 最終更新 */}
-                <Stack direction="row" alignItems="center" spacing={1}>
-                  <Avatar sx={{ width: 20, height: 20, bgcolor: 'primary.main', fontSize: '0.75rem' }}>
-                    U
-                  </Avatar>
-                  <Stack direction="row" alignItems="center" spacing={0.5}>
-                    <TimeIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
-                    <Typography variant="caption" color="text.secondary">
-                      {formatDate(thread.created_at)}
-                    </Typography>
-                  </Stack>
-                </Stack>
               </CardContent>
 
               <CardActions sx={{ p: 2, pt: 0 }}>

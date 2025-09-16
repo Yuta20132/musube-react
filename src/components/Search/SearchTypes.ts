@@ -1,6 +1,6 @@
 //ユーザーコンポーネントを定義
 export interface SearchResult {
-    id: number;
+    id: string;
     firstName: string;
     lastName: string;
     userName: string;

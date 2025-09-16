@@ -309,7 +309,7 @@ const UserProfile: React.FC = () => {
                     margin="dense"
                     onChange={handleInputChange('organization')}
                     InputProps={{ 
-                      readOnly: !editing.organization,
+                      //readOnly: !editing.organization,
                       endAdornment: (
                         <Tooltip title={editing.organization ? "編集中" : "編集する"}>
                           <IconButton 
@@ -339,7 +339,7 @@ const UserProfile: React.FC = () => {
                     margin="dense"
                     onChange={handleInputChange('description')}
                     InputProps={{ 
-                      readOnly: !editing.description,
+                      //readOnly: !editing.description,
                       endAdornment: (
                         <Tooltip title={editing.description ? "編集中" : "編集する"}>
                           <IconButton 
@@ -364,7 +364,7 @@ const UserProfile: React.FC = () => {
                 size="large"
                 onClick={handleSaveChanges}
                 startIcon={<Save />}
-                disabled={!editing.organization && !editing.description}
+                //disabled={!editing.organization && !editing.description}
               >
                 保存
               </SaveButton>
