@@ -1,48 +1,7 @@
 // セキュリティ関連のユーティリティ関数
 
-// Content Security Policy (CSP) の設定
+// CSPのクライアント側設定は行わない（サーバー側で設定してください）
 export const setSecurityHeaders = (): void => {
-  // CSPメタタグが存在しない場合のみ追加
-  if (!document.querySelector('meta[http-equiv="Content-Security-Policy"]')) {
-    const cspMeta = document.createElement('meta');
-    cspMeta.httpEquiv = 'Content-Security-Policy';
-    cspMeta.content = [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline'", // React開発時に必要
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "font-src 'self' https://fonts.gstatic.com",
-      "img-src 'self' data: https:",
-      "connect-src 'self' " + (process.env.REACT_APP_API_URL || ''),
-      "frame-ancestors 'none'",
-      "base-uri 'self'",
-      "form-action 'self'"
-    ].join('; ');
-    document.head.appendChild(cspMeta);
-  }
-
-  // X-Frame-Options の設定
-  if (!document.querySelector('meta[http-equiv="X-Frame-Options"]')) {
-    const frameMeta = document.createElement('meta');
-    frameMeta.httpEquiv = 'X-Frame-Options';
-    frameMeta.content = 'DENY';
-    document.head.appendChild(frameMeta);
-  }
-
-  // X-Content-Type-Options の設定
-  if (!document.querySelector('meta[http-equiv="X-Content-Type-Options"]')) {
-    const contentTypeMeta = document.createElement('meta');
-    contentTypeMeta.httpEquiv = 'X-Content-Type-Options';
-    contentTypeMeta.content = 'nosniff';
-    document.head.appendChild(contentTypeMeta);
-  }
-
-  // Referrer-Policy の設定
-  if (!document.querySelector('meta[name="referrer"]')) {
-    const referrerMeta = document.createElement('meta');
-    referrerMeta.name = 'referrer';
-    referrerMeta.content = 'strict-origin-when-cross-origin';
-    document.head.appendChild(referrerMeta);
-  }
 };
 
 // セッションタイムアウトの管理
@@ -156,12 +115,6 @@ export const getPasswordStrength = (password: string): {
     score++;
   } else {
     feedback.push('数字を含めてください');
-  }
-  
-  if (/[^a-zA-Z0-9]/.test(password)) {
-    score++;
-  } else {
-    feedback.push('記号を含めてください');
   }
   
   return { score: Math.min(score, 4), feedback };

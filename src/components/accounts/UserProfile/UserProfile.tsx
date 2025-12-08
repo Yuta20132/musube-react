@@ -36,6 +36,7 @@ import {
   Edit
 } from '@mui/icons-material';
 import axios from 'axios';
+import { getCsrfToken } from '../../../utils/apiClient';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
@@ -159,7 +160,6 @@ const UserProfile: React.FC = () => {
           },
           withCredentials: true,
         });
-        console.log(response.data);
         setUserProfile({
           username: response.data.user_name,
           firstName: response.data.first_name,
@@ -178,12 +178,28 @@ const UserProfile: React.FC = () => {
     fetchData();
   }, []);
 
-  const handleSaveChanges = () => {
-    alert('プロフィールを更新しました');
-    setEditing({
-      organization: false,
-      description: false
-    });
+  const handleSaveChanges = async () => {
+    try {
+      const csrfToken = getCsrfToken();
+      await axios.put(`${apiUrl}/users`, {
+        institution: userProfile.organization,
+        description: userProfile.description,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+          ...(csrfToken ? { 'X-CSRFToken': csrfToken } : {}),
+        },
+        withCredentials: true,
+      });
+      alert('プロフィールを更新しました');
+      setEditing({
+        organization: false,
+        description: false
+      });
+    } catch (error) {
+      console.error('handleSaveChanges error:', error);
+      alert('プロフィールの更新に失敗しました。時間をおいて再度お試しください。');
+    }
   };
 
   const handleInputChange = (field: keyof UserProfileProps) => (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -309,7 +325,7 @@ const UserProfile: React.FC = () => {
                     margin="dense"
                     onChange={handleInputChange('organization')}
                     InputProps={{ 
-                      readOnly: !editing.organization,
+                      //readOnly: !editing.organization,
                       endAdornment: (
                         <Tooltip title={editing.organization ? "編集中" : "編集する"}>
                           <IconButton 
@@ -339,7 +355,7 @@ const UserProfile: React.FC = () => {
                     margin="dense"
                     onChange={handleInputChange('description')}
                     InputProps={{ 
-                      readOnly: !editing.description,
+                      //readOnly: !editing.description,
                       endAdornment: (
                         <Tooltip title={editing.description ? "編集中" : "編集する"}>
                           <IconButton 
@@ -364,7 +380,7 @@ const UserProfile: React.FC = () => {
                 size="large"
                 onClick={handleSaveChanges}
                 startIcon={<Save />}
-                disabled={!editing.organization && !editing.description}
+                //disabled={!editing.organization && !editing.description}
               >
                 保存
               </SaveButton>

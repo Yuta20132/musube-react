@@ -39,7 +39,6 @@ const SideBar: React.FC<SideBarProps> = ({ open, onClose }) => {
     { text: '企業掲示板', path: '/threads_page', icon: <BusinessIcon /> },
     { text: 'ユーザ検索', path: '/user-search', icon: <SearchIcon /> },
     { text: 'ポリシー', path: '/policy', icon: <GavelIcon /> },
-    { text: '設定', path: '/', icon: <SettingsIcon /> },
   ];
 
   return (

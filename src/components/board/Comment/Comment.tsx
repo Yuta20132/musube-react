@@ -68,10 +68,11 @@ const Comment: React.FC<CommentProps> = ({ postId }) => {
     }
     
     try {
-      await axios.post(`${apiUrl}/comments/delete`, {
-        comment_id: commentId,
-        user_id: currentUserId
-      }, {
+      await axios.delete(`${apiUrl}/comments`, {
+        data: {
+          comment_id: commentId,
+          user_id: currentUserId
+        },
         withCredentials: true,
         headers: {
           'Content-Type': 'application/json',

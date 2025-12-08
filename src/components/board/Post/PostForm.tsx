@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Paper, Typography, InputAdornment, Alert } from '@mui/material';
 import { Title as TitleIcon, Create as CreateIcon } from '@mui/icons-material';
-import apiClient from '../../../utils/apiClient';
+import axios from 'axios';
 import { validateAndSanitizePost } from '../../../utils/validation';
 import { useNotification } from '../../../contexts/NotificationContext';
 type Props = {
@@ -9,6 +9,7 @@ type Props = {
     onPostSuccess?: () => void;
 }
 const PostForm: React.FC<Props> = ({getThreadId, onPostSuccess}) => {
+    const apiUrl = process.env.REACT_APP_API_URL;
     const { showNotification } = useNotification();
     const [title, setTitle] = useState<string>('');
     const [content, setContent] = useState<string>('');
@@ -38,7 +39,10 @@ const PostForm: React.FC<Props> = ({getThreadId, onPostSuccess}) => {
 
         setIsSubmitting(true);
         try {
-            const response = await apiClient.post('/posts/', payload);
+            const response = await axios.post(`${apiUrl}/posts/`, payload, {
+                withCredentials: true,
+                headers: { 'Content-Type': 'application/json' },
+            });
             showNotification('投稿を作成しました', 'success');
             if (onPostSuccess) {
                 onPostSuccess();
@@ -47,7 +51,6 @@ const PostForm: React.FC<Props> = ({getThreadId, onPostSuccess}) => {
             setContent('');
             setValidationErrors([]);
         }catch (error) {
-            // エラーハンドリングはapiClientのインターセプターで処理される
             setValidationErrors(['投稿に失敗しました。もう一度お試しください。']);
         }finally {
             setIsSubmitting(false);

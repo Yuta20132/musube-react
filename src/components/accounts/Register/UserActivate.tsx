@@ -26,7 +26,9 @@ const UserActivate: React.FC = () => {
 
     const activateUser = async () => {
       try {
-        await axios.post(`${apiUrl}/users/verify/`, { token });
+        await axios.post(`${apiUrl}/users/verify/`, null, {
+          params: { token },
+        });
         setActivationStatus('success');
       } catch (error) {
         console.error(error);

@@ -38,15 +38,22 @@ const ThreadsPage: React.FC = () => {
   const [showCreateForm, setShowCreateForm] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<'newest' | 'popular' | 'alphabetical'>('newest');
 
+
   const fetchThreads = async () => {
     setLoading(true);
     try {
       const response = await axios.get(`${apiUrl}/threads/1`, {
+        params: {
+          limit: 10,
+          offset: 0,
+        },
+        headers: {
+            'Content-Type': 'application/json',
+          },
         withCredentials: true,
       });
       setAllThreads(response.data);
       setThreads(response.data);
-      console.log(response.data);
     } catch (error) {
       console.error('Error fetching threads:', error);
     } finally {
@@ -149,10 +156,6 @@ const ThreadsPage: React.FC = () => {
                   <Stack direction="row" alignItems="center" spacing={1}>
                     <PeopleIcon sx={{ fontSize: 20 }} />
                     <Typography variant="body2">{allThreads.length} スレッド</Typography>
-                  </Stack>
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <TrendingUpIcon sx={{ fontSize: 20 }} />
-                    <Typography variant="body2">アクティブ</Typography>
                   </Stack>
                 </Stack>
               </Box>
