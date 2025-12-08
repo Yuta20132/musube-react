@@ -135,13 +135,7 @@ const ThreadsList: React.FC<ThreadsListProps> = ({ threads, loading }) => {
                   >
                     {thread.title}
                   </Typography>
-                  <Chip 
-                    size="small" 
-                    label="アクティブ" 
-                    color="success" 
-                    variant="outlined"
-                    sx={{ ml: 1, flexShrink: 0 }}
-                  />
+                  
                 </Stack>
 
                 {/* 説明文 */}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FormEvent, ChangeEvent } from 'react';
+import React, { useState, useEffect, FormEvent, ChangeEvent, MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { 
@@ -60,7 +60,7 @@ const Register: React.FC = () => {
     const [activeStep, setActiveStep] = useState(0);
     const steps = ['基本情報', '個人情報', '認証情報'];
     const [showPasswords, setShowPasswords] = useState<boolean>(false);
-
+    console.log(error)
     // フォームの入力値が変更された時に呼び出されるハンドラー。
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFormData({
@@ -79,10 +79,12 @@ const Register: React.FC = () => {
     const navigate = useNavigate();
 
     const handleNext = () => {
+        if (!validateStep()) return;
         setActiveStep((prevStep) => prevStep + 1);
     };
 
     const handleBack = () => {
+        setError(null)
         setActiveStep((prevStep) => prevStep - 1);
     };
 
@@ -122,7 +124,7 @@ const Register: React.FC = () => {
     };
 
     // フォーム送信時に呼び出される非同期関数。
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement> | MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         setError(null);
 
@@ -130,7 +132,10 @@ const Register: React.FC = () => {
 
         // デストラクチャリングを使用してformDataから値を取得。
         const { username, email, firstName, lastName, password, passwordConfirm, memberType, institution } = formData;
-        
+        if (!formData.password || !formData.passwordConfirm) {
+            setError('パスワードを入力してください');
+            return false;
+        }
         //パスワードと確認パスワードが一致しているかチェック
         if (password !== passwordConfirm) {
             setError('パスワードが一致していません');
@@ -160,8 +165,8 @@ const Register: React.FC = () => {
                     'Content-Type': 'application/json'
                 }
             });
-            //ページ遷移
-            navigate('/send-mail')
+            //ページ遷移（メールアドレスを状態として渡す）
+            navigate('/send-mail', { state: { email } })
         } catch (error) {
             console.error('登録エラー:', error);
             setError('登録中にエラーが発生しました。もう一度お試しください。');
@@ -224,7 +229,7 @@ const Register: React.FC = () => {
                                 ))}
                             </Stepper>
 
-                            <form onSubmit={handleSubmit} noValidate>
+                            
                                 {activeStep === 0 && (
                                     <Grid container spacing={3}>
                                         <Grid item xs={12}>
@@ -421,6 +426,7 @@ const Register: React.FC = () => {
                                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
                                     <Button
                                         disabled={activeStep === 0}
+                                        type="button"
                                         onClick={handleBack}
                                         variant="outlined"
                                     >
@@ -428,7 +434,8 @@ const Register: React.FC = () => {
                                     </Button>
                                     {activeStep === steps.length - 1 ? (
                                         <Button
-                                            type="submit"
+                                            type="button"
+                                            onClick={handleSubmit}
                                             variant="contained"
                                             color="primary"
                                         >
@@ -436,6 +443,7 @@ const Register: React.FC = () => {
                                         </Button>
                                     ) : (
                                         <Button
+                                            type="button"
                                             onClick={handleNext}
                                             variant="contained"
                                             color="primary"
@@ -444,7 +452,7 @@ const Register: React.FC = () => {
                                         </Button>
                                     )}
                                 </Box>
-                            </form>
+                            
                         </CardContent>
                     </Card>
                 </Container>
@@ -453,4 +461,3 @@ const Register: React.FC = () => {
 };
 
 export default Register;
-

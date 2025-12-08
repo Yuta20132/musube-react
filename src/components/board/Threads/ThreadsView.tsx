@@ -98,22 +98,6 @@ const ThreadsView: React.FC = () => {
                 <Typography variant="h6" sx={{ opacity: 0.9, mb: 2 }}>
                   {thread.description}
                 </Typography>
-                <Stack
-                  direction={{ xs: 'column', sm: 'row' }}
-                  spacing={3}
-                  sx={{ justifyContent: { xs: 'center', md: 'flex-start' } }}
-                >
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <ScheduleIcon sx={{ fontSize: 20 }} />
-                    <Typography variant="body2">
-                      {thread.created_at ? formatDate(thread.created_at) : '不明'}
-                    </Typography>
-                  </Stack>
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <TrendingUpIcon sx={{ fontSize: 20 }} />
-                    <Typography variant="body2">アクティブ</Typography>
-                  </Stack>
-                </Stack>
               </Box>
 
               <Button

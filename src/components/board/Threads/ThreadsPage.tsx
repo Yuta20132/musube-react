@@ -157,10 +157,6 @@ const ThreadsPage: React.FC = () => {
                     <PeopleIcon sx={{ fontSize: 20 }} />
                     <Typography variant="body2">{allThreads.length} スレッド</Typography>
                   </Stack>
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <TrendingUpIcon sx={{ fontSize: 20 }} />
-                    <Typography variant="body2">アクティブ</Typography>
-                  </Stack>
                 </Stack>
               </Box>
               
