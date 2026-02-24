@@ -3,29 +3,29 @@ import { createTheme } from '@mui/material/styles';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#2563eb', // より洗練された青
-      light: '#60a5fa',
-      dark: '#1d4ed8',
+      main: '#39adb5', // MusuBeロゴ由来のティール
+      light: '#6ad0d6',
+      dark: '#1f7f86',
       contrastText: '#ffffff',
     },
     secondary: {
-      main: '#dc2626',
-      light: '#f87171',
-      dark: '#b91c1c',
+      main: '#90c457',
+      light: '#b6dd87',
+      dark: '#6fa83a',
       contrastText: '#ffffff',
     },
     background: {
-      default: '#f8fafc',
+      default: '#f3fbfb',
       paper: '#ffffff',
     },
     text: {
-      primary: '#1e293b',
-      secondary: '#64748b',
+      primary: '#153b40',
+      secondary: '#4f6b70',
     },
     success: {
-      main: '#059669',
-      light: '#34d399',
-      dark: '#047857',
+      main: '#6fbf4a',
+      light: '#9fdb78',
+      dark: '#4f8e2d',
     },
     error: {
       main: '#dc2626',
@@ -126,7 +126,7 @@ const theme = createTheme({
           borderWidth: '1px',
           '&:hover': {
             borderWidth: '1px',
-            backgroundColor: 'rgba(37, 99, 235, 0.04)',
+            backgroundColor: 'rgba(57, 173, 181, 0.08)',
           },
         },
       },
@@ -157,7 +157,7 @@ const theme = createTheme({
               borderColor: '#cbd5e1',
             },
             '&.Mui-focused fieldset': {
-              borderColor: '#2563eb',
+              borderColor: '#39adb5',
               borderWidth: '2px',
             },
           },
@@ -193,12 +193,12 @@ const theme = createTheme({
           backgroundColor: '#fffbeb',
         },
         standardInfo: {
-          borderColor: '#bfdbfe',
-          backgroundColor: '#eff6ff',
+          borderColor: '#bfe6ea',
+          backgroundColor: '#edf9fa',
         },
         standardSuccess: {
-          borderColor: '#bbf7d0',
-          backgroundColor: '#f0fdf4',
+          borderColor: '#cdecc0',
+          backgroundColor: '#f3fbef',
         },
       },
     },
@@ -212,8 +212,8 @@ const theme = createTheme({
     MuiDrawer: {
       styleOverrides: {
         paper: {
-          background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-          borderRight: '1px solid #e2e8f0',
+          background: 'linear-gradient(135deg, #f3fbfb 0%, #e1f3f4 100%)',
+          borderRight: '1px solid #d7ecee',
         },
       },
     },

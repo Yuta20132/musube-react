@@ -22,14 +22,14 @@ const LoginSuccess: React.FC = () => {
     
     return (
         <Box
-            sx={{
-                background: 'linear-gradient(135deg, #4caf50 0%, #81c784 100%)',
+            sx={(theme) => ({
+                background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
                 minHeight: '100vh',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 py: 8
-            }}
+            })}
         >
      
                 <Container maxWidth="sm">
@@ -46,7 +46,7 @@ const LoginSuccess: React.FC = () => {
                             boxShadow: '0 20px 60px rgba(0, 0, 0, 0.1)'
                         }}
                     >
-                        <CheckCircleIcon sx={{ fontSize: 80, color: '#4caf50', mb: 2 }} />
+                        <CheckCircleIcon sx={{ fontSize: 80, color: 'success.main', mb: 2 }} />
                         
                         <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', mb: 2 }}>
                             ログイン成功！
@@ -57,7 +57,7 @@ const LoginSuccess: React.FC = () => {
                         </Typography>
                         
                         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
-                            <CircularProgress size={24} sx={{ color: '#4caf50' }} />
+                            <CircularProgress size={24} sx={{ color: 'success.main' }} />
                         </Box>
                         
                         <Button

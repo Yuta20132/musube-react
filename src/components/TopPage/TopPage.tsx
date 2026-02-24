@@ -12,6 +12,7 @@ import {
     Zoom,
     Divider
 } from '@mui/material';
+import { alpha } from '@mui/material/styles';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import LoginIcon from '@mui/icons-material/Login';
 import ExploreIcon from '@mui/icons-material/Explore';
@@ -67,15 +68,15 @@ const TopPage = () => {
     
     return (
         <Box 
-            sx={{
-                background: 'linear-gradient(135deg, #1976d2 0%, #64b5f6 100%)',
+            sx={(theme) => ({
+                background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
                 minHeight: '100vh',
                 display: 'flex',
                 alignItems: 'center',
                 py: 8,
                 position: 'relative',
                 overflow: 'hidden'
-            }}
+            })}
         >
             {/* 背景デザイン要素 */}
             <Box
@@ -261,13 +262,13 @@ const TopPage = () => {
 
                                     <Paper 
                                         elevation={0} 
-                                        sx={{ 
+                                        sx={(theme) => ({ 
                                             p: 2, 
                                             mb: 4, 
                                             borderRadius: '16px', 
-                                            background: 'rgba(25, 118, 210, 0.08)',
+                                            background: alpha(theme.palette.primary.main, 0.1),
                                             width: '100%'
-                                        }}
+                                        })}
                                     >
                                         <Typography variant="body1" color="text.secondary">
                                             アカウントを作成して、すべての機能にアクセスしましょう

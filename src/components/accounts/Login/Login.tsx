@@ -91,13 +91,13 @@ const Login = () => {
 
     return (
         <Box 
-            sx={{
-                background: 'linear-gradient(135deg, #304FFE 0%, #64b5f6 100%)',
+            sx={(theme) => ({
+                background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
                 minHeight: '100vh',
                 display: 'flex',
                 alignItems: 'center',
                 py: 8
-            }}
+            })}
         >
                 <Container component="main" maxWidth="sm">
                     <Card elevation={2}>
