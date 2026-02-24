@@ -7,14 +7,14 @@ import {
   Toolbar, 
   Button, 
   IconButton, 
+  ButtonBase,
   Avatar, 
   Menu, 
   MenuItem, 
   Tooltip, 
   Zoom,
   useScrollTrigger,
-  Slide,
-  Typography
+  Slide
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
@@ -22,7 +22,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import PersonIcon from '@mui/icons-material/Person';
 import SideBar from '../SideBar/SideBar';
 import { useAuth } from '../../contexts/AuthContext';  // ← ここを追加
-import { styled } from '@mui/material/styles';
+import { alpha } from '@mui/material/styles';
 
 // スクロール時にヘッダーを隠す関数
 function HideOnScroll(props: { children: React.ReactElement }) {
@@ -34,18 +34,6 @@ function HideOnScroll(props: { children: React.ReactElement }) {
     </Slide>
   );
 }
-
-// スタイル付きのロゴタイポグラフィ
-const LogoTypography = styled('div')({
-  fontWeight: 800,
-  letterSpacing: 1,
-  background: 'linear-gradient(90deg, #2196f3 0%, #64b5f6 100%)',
-  WebkitBackgroundClip: 'text',
-  WebkitTextFillColor: 'transparent',
-  display: 'flex',
-  alignItems: 'center',
-  cursor: 'pointer'
-});
 
 interface HeaderProps {
   children?: React.ReactNode;
@@ -110,9 +98,18 @@ const Header: React.FC<HeaderProps> = ({ children }) => {
               <MenuIcon />
             </IconButton>
 
-            <LogoTypography onClick={handleLogoClick}>
-              <Typography variant="h5" component="span">musuBe</Typography>
-            </LogoTypography>
+            <ButtonBase
+              onClick={handleLogoClick}
+              sx={{ display: 'flex', alignItems: 'center' }}
+              aria-label="musuBe ホーム"
+            >
+              <Box
+                component="img"
+                src={`${process.env.PUBLIC_URL}/musube_logo.png`}
+                alt="musuBe"
+                sx={{ height: { xs: 28, sm: 34 }, width: 'auto' }}
+              />
+            </ButtonBase>
 
             <Box sx={{ flexGrow: 1 }} />
 
@@ -123,7 +120,7 @@ const Header: React.FC<HeaderProps> = ({ children }) => {
                     onClick={handleMenuOpen}
                     sx={{
                       p: 0,
-                      '&:hover': { backgroundColor: 'rgba(33,150,243,0.1)' }
+                      '&:hover': { backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.12) }
                     }}
                   >
                     <Avatar sx={{ bgcolor: 'primary.main', width:40, height:40 }}>

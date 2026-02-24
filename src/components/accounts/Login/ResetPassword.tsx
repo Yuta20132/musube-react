@@ -109,13 +109,13 @@ const ResetPassword: React.FC = () => {
 
     return (
         <Box 
-            sx={{
-                background: 'linear-gradient(135deg, #1976d2 0%, #64b5f6 100%)',
+            sx={(theme) => ({
+                background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
                 minHeight: '100vh',
                 display: 'flex',
                 alignItems: 'center',
                 py: 8
-            }}
+            })}
         >
             <Container component="main" maxWidth="sm">
                 <Card 
@@ -134,7 +134,7 @@ const ResetPassword: React.FC = () => {
                             alignItems="center"
                             sx={{ mb: 4 }}
                         >
-                            <LockResetIcon sx={{ fontSize: 40, color: '#1976d2' }} />
+                            <LockResetIcon sx={{ fontSize: 40, color: 'primary.main' }} />
                             <Typography component="h1" variant="h5" sx={{ ml: 2 }}>
                                 パスワード再設定
                             </Typography>

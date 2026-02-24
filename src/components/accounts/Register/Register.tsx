@@ -180,11 +180,11 @@ const Register: React.FC = () => {
 
     return (
         <Box 
-            sx={{
-                background: 'linear-gradient(135deg, #1976d2 0%, #64b5f6 100%)',
+            sx={(theme) => ({
+                background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
                 minHeight: '100vh',
                 py: 6
-            }}
+            })}
         >
                 <Container component="main" maxWidth="md">
                     <Card 

@@ -63,8 +63,8 @@ const ThreadsView: React.FC = () => {
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
       {/* Thread Header Section */}
       <Box
-        sx={{
-          background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+        sx={(theme) => ({
+          background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
           color: 'white',
           py: { xs: 4, md: 6 },
           position: 'relative',
@@ -78,7 +78,7 @@ const ThreadsView: React.FC = () => {
             bottom: 0,
             background: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="4"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
           },
-        }}
+        })}
       >
         <Container maxWidth="lg">
           <Box sx={{ position: 'relative', zIndex: 1 }}>

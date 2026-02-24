@@ -106,11 +106,11 @@ interface UserProfileProps {
 
 const getMemberTypeColor = (memberType: string) => {
   switch (memberType) {
-    case '一般': return { bg: '#e3f2fd', color: '#304FFE' };
+    case '一般': return { bg: '#e6f6f7', color: '#1f7f86' };
     case 'Academic': return { bg: '#e8f5e9', color: '#087f23' };  
     case 'Corporate': return { bg: '#fff3e0', color: '#c60055' };
     case 'Medical': return { bg: '#f3e5f5', color: '#ba000d' };
-    default: return { bg: '#e3f2fd', color: '#304FFE' };
+    default: return { bg: '#e6f6f7', color: '#1f7f86' };
   }
 };
 
