@@ -12,19 +12,25 @@ import {
     Alert,
     IconButton
 } from '@mui/material';
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from 'axios';
 import LockResetIcon from '@mui/icons-material/LockReset';
 import LockIcon from '@mui/icons-material/Lock';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 
 interface FormData {
+    email: string;
     password: string;
     confirmPassword: string;
 }
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 const ResetPassword: React.FC = () => {
+    const location = useLocation();
     const [formData, setFormData] = useState<FormData>({
+        email: "",
         password: "",
         confirmPassword: ""
     });
@@ -35,6 +41,7 @@ const ResetPassword: React.FC = () => {
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
     const navigate = useNavigate();
+    const token = new URLSearchParams(location.search).get('token');
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFormData({
@@ -45,10 +52,10 @@ const ResetPassword: React.FC = () => {
         setMessage(null);
     };
     
-    const { password, confirmPassword } = formData;
+    const { email, password, confirmPassword } = formData;
     
     const validateForm = (): boolean => {
-        if (!password || !confirmPassword) {
+        if (!email || !password || !confirmPassword) {
             setMessage({ type: 'error', text: 'すべてのフィールドを入力してください。' });
             return false;
         }
@@ -63,6 +70,11 @@ const ResetPassword: React.FC = () => {
             return false;
         }
         
+        if (!token) {
+            setMessage({ type: 'error', text: '無効なリセットリンクです。' });
+            return false;
+        }
+
         return true;
     };
     
@@ -77,13 +89,11 @@ const ResetPassword: React.FC = () => {
         setLoading(true);
         
         try {
-            // TODO: ここでパスワード再設定のAPI呼び出しを行う
-            // const response = await axios.post(`${apiUrl}/users/reset-password-confirm`, {
-            //     password: password
-            // });
-            
-            // 仮の成功処理
-            await new Promise(resolve => setTimeout(resolve, 1000)); // 1秒待機（デモ用）
+            await axios.post(
+                `${apiUrl}/users/reset-password/res`,
+                { email, token, password },
+                { headers: { "Content-Type": "application/json" } }
+            );
             setMessage({ type: 'success', text: 'パスワードが正常に再設定されました。' });
             
             // 3秒後にログインページに遷移
@@ -91,9 +101,9 @@ const ResetPassword: React.FC = () => {
                 navigate('/login');
             }, 3000);
             
-        } catch (error) {
+        } catch (error: any) {
             console.error(error);
-            setMessage({ type: 'error', text: 'パスワードの再設定に失敗しました。再度お試しください。' });
+            setMessage({ type: 'error', text: error.response?.data?.message || 'パスワードの再設定に失敗しました。再度お試しください。' });
         } finally {
             setLoading(false);
         }
@@ -148,6 +158,20 @@ const ResetPassword: React.FC = () => {
                         
                         <form onSubmit={handleSubmit} noValidate>
                             <Grid container spacing={2}>
+                                <Grid item xs={12}>
+                                    <TextField
+                                        variant="outlined"
+                                        required
+                                        fullWidth
+                                        name="email"
+                                        label="Email"
+                                        type="email"
+                                        id="email"
+                                        autoComplete="email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                    />
+                                </Grid>
                                 <Grid item xs={12}>
                                     <TextField
                                         variant="outlined"
