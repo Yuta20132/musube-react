@@ -13,8 +13,8 @@ const ForgotPassword: React.FC = () => {
     setMessage(null)
     try {
       // パスワードリセットリンクのリクエスト
-      const response = await axios.post(
-        `${apiUrl}/users/reset-password`,
+        await axios.post(
+        `${apiUrl}/users/reset-password/req`,
         { email: email },
         {
           headers: { 'Content-Type': 'application/json' },
