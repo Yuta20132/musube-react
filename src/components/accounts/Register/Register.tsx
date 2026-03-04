@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FormEvent, ChangeEvent, MouseEvent } from 'react';
+import React, { useState, FormEvent, ChangeEvent, MouseEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { 
@@ -152,7 +152,7 @@ const Register: React.FC = () => {
         }
         try {
             // axiosを使用してサーバーにPOSTリクエストを送信。
-            const response = await axios.post(`${apiUrl}/users/register/`, {
+            await axios.post(`${apiUrl}/users/register/`, {
                 name : username,
                 email,
                 first_name: firstName,

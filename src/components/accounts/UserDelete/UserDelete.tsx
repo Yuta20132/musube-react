@@ -20,7 +20,7 @@ const DeleteUser: React.FC = () => {
         try {
             // axios.deleteを使用してユーザー削除リクエストを送信。
             // usernameをリクエストボディとしてサーバに送ります。
-            const response = await axios.delete("http://127.0.0.1:8000/api/users/delete_user/", {
+            await axios.delete("http://127.0.0.1:8000/api/users/delete_user/", {
                 data: { username },
                 headers: {
                     'Content-Type': 'application/json',

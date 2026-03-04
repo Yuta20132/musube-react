@@ -39,7 +39,7 @@ const PostForm: React.FC<Props> = ({getThreadId, onPostSuccess}) => {
 
         setIsSubmitting(true);
         try {
-            const response = await axios.post(`${apiUrl}/posts/`, payload, {
+            await axios.post(`${apiUrl}/posts/`, payload, {
                 withCredentials: true,
                 headers: { 'Content-Type': 'application/json' },
             });

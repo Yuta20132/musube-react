@@ -4,21 +4,15 @@ import {
   Typography, 
   TextField, 
   Grid, 
-  FormControl, 
-  InputLabel, 
-  Select, 
-  MenuItem, 
   Button, 
   Box, 
   Paper, 
-  Avatar, 
   Divider,
   Card,
   CardContent,
   Chip,
   Fade,
   CircularProgress,
-  useTheme,
   Tooltip,
   IconButton
 } from '@mui/material';
@@ -134,7 +128,6 @@ const getMemberTypeLabel = (memberType: string) => {
 };
 
 const UserProfile: React.FC = () => {
-  const theme = useTheme();
   const [userProfile, setUserProfile] = useState<UserProfileProps>({
     username: '',
     firstName: '',
@@ -218,8 +211,6 @@ const UserProfile: React.FC = () => {
 
   const memberTypeStyle = getMemberTypeColor(userProfile.memberType || '');
   const fullName = `${userProfile.lastName || ''} ${userProfile.firstName || ''}`.trim();
-  const initials = fullName ? 
-    `${userProfile.lastName?.charAt(0) || ''}${userProfile.firstName?.charAt(0) || ''}`.toUpperCase() : '?';
 
   return (
     <Container component="main" maxWidth="sm" sx={{ py: 4 }}>
