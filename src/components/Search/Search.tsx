@@ -47,6 +47,7 @@ const SearchForm: React.FC = () => {
             case 2: return '大学・研究所';
             case 3: return '企業';
             case 4: return '医者';
+            case 5: return '管理者';
             case 1:
             default: return '一般';
         }

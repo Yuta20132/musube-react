@@ -2,9 +2,11 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import apiClient from '../utils/apiClient';
 import { SessionManager, setSecurityHeaders, checkBrowserSecurity } from '../utils/security';
+import { CategoryId, resolveUserCategoryId } from '../utils/categoryAccess';
 type AuthContextType = {
   isLoggedIn: boolean;
   loading: boolean;
+  userCategoryId: CategoryId | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   securityWarnings: string[];
@@ -13,6 +15,7 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType>({
   isLoggedIn: false,
   loading: true,
+  userCategoryId: null,
   login: async () => {},
   logout: async () => {},
   securityWarnings: [],
@@ -21,6 +24,7 @@ const AuthContext = createContext<AuthContextType>({
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [userCategoryId, setUserCategoryId] = useState<CategoryId | null>(null);
   const [securityWarnings, setSecurityWarnings] = useState<string[]>([]);
 
   useEffect(() => {
@@ -33,8 +37,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     (async () => {
       try {
-        await apiClient.get('/users/me');
+        const response = await apiClient.get('/users/me');
         setIsLoggedIn(true);
+        setUserCategoryId(resolveUserCategoryId(response.data as Record<string, unknown>));
         
         // ログイン状態の場合、セッション管理を開始
         const sessionManager = SessionManager.getInstance();
@@ -45,6 +50,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
       } catch {
         setIsLoggedIn(false);
+        setUserCategoryId(null);
       } finally {
         setLoading(false);
       }
@@ -57,6 +63,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       password: password
     });
     setIsLoggedIn(true);
+    try {
+      const response = await apiClient.get('/users/me');
+      setUserCategoryId(resolveUserCategoryId(response.data as Record<string, unknown>));
+    } catch {
+      setUserCategoryId(null);
+    }
     
     // ログイン成功時にセッション管理を開始
     const sessionManager = SessionManager.getInstance();
@@ -74,6 +86,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.warn('Logout request failed, but proceeding with local logout');
     } finally {
       setIsLoggedIn(false);
+      setUserCategoryId(null);
       
       // セッション管理をクリア
       const sessionManager = SessionManager.getInstance();
@@ -82,7 +95,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, loading, login, logout, securityWarnings }}>
+    <AuthContext.Provider value={{ isLoggedIn, loading, userCategoryId, login, logout, securityWarnings }}>
       {children}
     </AuthContext.Provider>
   );

@@ -104,7 +104,7 @@ const ThreadsView: React.FC = () => {
                 variant="contained"
                 size="large"
                 startIcon={<ArrowBackIcon />}
-                onClick={() => navigate('/threads_page')}
+                onClick={() => navigate(`/threads_page/${thread.category_id ?? 1}`)}
                 sx={{
                   bgcolor: 'white',
                   color: 'primary.main',
@@ -166,6 +166,7 @@ const ThreadsView: React.FC = () => {
           <Box sx={{ mb: 4 }}>
             <PostForm
               getThreadId={thread.id}
+              categoryId={thread.category_id ?? 1}
               onPostSuccess={handlePostSuccess}
             />
           </Box>

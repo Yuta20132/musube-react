@@ -49,9 +49,10 @@ const AppRoutes: React.FC = () => {
           {isLoggedIn ? (
             // ログイン済みユーザー用ルート
             <>
-              <Route path="/" element={<ThreadsPage />} />
+              <Route path="/" element={<Navigate to="/threads_page/1" replace />} />
               <Route path="/profile" element={<UserProfile />} />
-              <Route path="/threads_page" element={<ThreadsPage />} />
+              <Route path="/threads_page" element={<Navigate to="/threads_page/1" replace />} />
+              <Route path="/threads_page/:categoryId" element={<ThreadsPage />} />
               <Route path="/threads/view" element={<ThreadsView />} />
               <Route path="/logout" element={<Logout />} />
               <Route path="/policy" element={<Policy />} />
