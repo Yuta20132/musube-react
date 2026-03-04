@@ -5,6 +5,7 @@ import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
+import { Link as RouterLink } from 'react-router-dom';
 import { 
   Person as PersonIcon, 
   Forum as ForumIcon, 
@@ -13,9 +14,11 @@ import {
   Business as BusinessIcon, 
   Search as SearchIcon, 
   Gavel as GavelIcon, 
-  Settings as SettingsIcon 
+  Settings as SettingsIcon,
 } from '@mui/icons-material';
 import { Typography } from '@mui/material';
+import { useAuth } from '../../contexts/AuthContext';
+import { BOARD_LABELS, CategoryId, getAccessibleCategoryIds } from '../../utils/categoryAccess';
 
 // Define the types for the props
 interface SideBarProps {
@@ -31,15 +34,33 @@ interface ListItem {
 }
 
 const SideBar: React.FC<SideBarProps> = ({ open, onClose }) => {
-  const listItems: ListItem[] = [
-    { text: 'プロフィール', path: '/profile', icon: <PersonIcon /> },
-    { text: '掲示板(仮)', path: '/threads_page', icon: <ForumIcon /> },
-    { text: '研究者専用掲示板', path: '/threads_page', icon: <SchoolIcon /> },
-    { text: '医者掲示板', path: '/threads_page', icon: <LocalHospitalIcon /> },
-    { text: '企業掲示板', path: '/threads_page', icon: <BusinessIcon /> },
-    { text: 'ユーザ検索', path: '/user-search', icon: <SearchIcon /> },
-    { text: 'ポリシー', path: '/policy', icon: <GavelIcon /> },
-  ];
+  const { isLoggedIn, userCategoryId } = useAuth();
+
+  const boardIconMap: Record<CategoryId, React.ReactElement> = {
+    1: <ForumIcon />,
+    2: <SchoolIcon />,
+    3: <BusinessIcon />,
+    4: <LocalHospitalIcon />,
+    5: <SettingsIcon />,
+  };
+
+  const boardItems: ListItem[] = isLoggedIn
+    ? getAccessibleCategoryIds(userCategoryId).map((categoryId) => ({
+        text: BOARD_LABELS[categoryId],
+        path: `/threads_page/${categoryId}`,
+        icon: boardIconMap[categoryId],
+      }))
+    : [];
+
+  const fixedItems: ListItem[] = isLoggedIn
+    ? [
+        { text: 'プロフィール', path: '/profile', icon: <PersonIcon /> },
+        { text: 'ユーザ検索', path: '/user-search', icon: <SearchIcon /> },
+        { text: 'ポリシー', path: '/policy', icon: <GavelIcon /> },
+      ]
+    : [{ text: 'ポリシー', path: '/policy', icon: <GavelIcon /> }];
+
+  const listItems: ListItem[] = [...fixedItems.slice(0, 1), ...boardItems, ...fixedItems.slice(1)];
 
   return (
     <Drawer
@@ -56,8 +77,8 @@ const SideBar: React.FC<SideBarProps> = ({ open, onClose }) => {
         <List sx={{ pt: 0 }}>
           {listItems.map((item) => (
             <ListItemButton
-              component="a"
-              href={item.path}
+              component={RouterLink}
+              to={item.path}
               key={item.text}
               sx={{
                 display: 'flex',

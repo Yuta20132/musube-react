@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { 
     TextField, 
     Button, 
@@ -19,36 +19,52 @@ import {
 import axios from 'axios';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { useNotification } from '../../../contexts/NotificationContext';
+import { BOARD_LABELS, CategoryId } from '../../../utils/categoryAccess';
 
 interface ThreadsCreateForm {
   onThreadSuccess?: () => void;
+  accessibleCategoryIds: CategoryId[];
+  initialCategoryId: CategoryId;
 }
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
-const ThreadsCreate: React.FC<ThreadsCreateForm> = ({onThreadSuccess }) => {
+const ThreadsCreate: React.FC<ThreadsCreateForm> = ({
+  onThreadSuccess,
+  accessibleCategoryIds,
+  initialCategoryId,
+}) => {
   const { showNotification } = useNotification();
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-  const [memberType, setMemberType] = useState<string>('1');
+  const availableCategoryIds = useMemo<CategoryId[]>(
+    () => (accessibleCategoryIds.length > 0 ? accessibleCategoryIds : [1 as CategoryId]),
+    [accessibleCategoryIds]
+  );
+  const [memberType, setMemberType] = useState<string>(String(initialCategoryId));
   const [loading, setLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    const defaultCategory = availableCategoryIds.includes(initialCategoryId)
+      ? initialCategoryId
+      : availableCategoryIds[0];
+    setMemberType(String(defaultCategory));
+  }, [availableCategoryIds, initialCategoryId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (title.trim() && description.trim()) {
-      const token = localStorage.getItem("access_token");
       setLoading(true);
       try {
-        const response = await axios.post(`${apiUrl}/threads/`, 
+        await axios.post(`${apiUrl}/threads/`, 
         { 
           title: title, 
           description: description, 
-          category_id:memberType
+          category_id: Number(memberType),
          },{
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },withCredentials: true,
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true,
          }
          
          );
@@ -58,7 +74,6 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({onThreadSuccess }) => {
         }
         setTitle('');
         setDescription('');
-        setMemberType('1');
       } catch (error) {
         console.error('スレッド作成時のエラー:', error);
         showNotification('スレッドの作成に失敗しました', 'error');
@@ -68,7 +83,7 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({onThreadSuccess }) => {
     }
   };
 
-  const handleMemberTypeChange = (event: SelectChangeEvent<String>) => {
+  const handleMemberTypeChange = (event: SelectChangeEvent<string>) => {
     setMemberType(String(event.target.value));
   };
 
@@ -123,20 +138,23 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({onThreadSuccess }) => {
             }}
           />
           <FormControl variant="outlined" fullWidth>
-            <InputLabel>メンバータイプ</InputLabel>
+            <InputLabel>掲示板カテゴリ</InputLabel>
             <Select
               value={memberType}
               onChange={handleMemberTypeChange}
-              label="メンバータイプ"
+              label="掲示板カテゴリ"
+              disabled={availableCategoryIds.length === 1}
               startAdornment={
                 <InputAdornment position="start">
                   <GroupIcon color="primary" />
                 </InputAdornment>
               }
             >
-              <MenuItem value={'1'}>一般</MenuItem>
-              <MenuItem value={'2'}>管理者</MenuItem>
-              <MenuItem value={'3'}>モデレーター</MenuItem>
+              {availableCategoryIds.map((categoryId) => (
+                <MenuItem key={categoryId} value={String(categoryId)}>
+                  {BOARD_LABELS[categoryId]}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
           <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>

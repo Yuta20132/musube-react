@@ -6,15 +6,14 @@ import { validateAndSanitizePost } from '../../../utils/validation';
 import { useNotification } from '../../../contexts/NotificationContext';
 type Props = {
     getThreadId: number;
+    categoryId?: number;
     onPostSuccess?: () => void;
 }
-const PostForm: React.FC<Props> = ({getThreadId, onPostSuccess}) => {
+const PostForm: React.FC<Props> = ({ getThreadId, categoryId = 1, onPostSuccess }) => {
     const apiUrl = process.env.REACT_APP_API_URL;
     const { showNotification } = useNotification();
     const [title, setTitle] = useState<string>('');
     const [content, setContent] = useState<string>('');
-    const [threadId, setThreadId] = useState<number>(getThreadId);
-    const [categoryId, setCategoryId] = useState<string>('1');
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
@@ -33,8 +32,8 @@ const PostForm: React.FC<Props> = ({getThreadId, onPostSuccess}) => {
         const payload = {
             title: validation.sanitizedTitle,
             content: validation.sanitizedContent,
-            thread_id: threadId,
-            category_id: categoryId.trim(),
+            thread_id: getThreadId,
+            category_id: categoryId,
         };
 
         setIsSubmitting(true);

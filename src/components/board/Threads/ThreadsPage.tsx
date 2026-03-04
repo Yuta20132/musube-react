@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import ThreadsList from './ThreadsList';
 import ThreadsCreate from './ThreadsCreate';
 import { 
@@ -11,25 +11,25 @@ import {
   InputAdornment,
   Chip,
   Stack,
-  Fade,
-  useTheme,
-  useMediaQuery
+  Fade
 } from '@mui/material';
 import { 
   Add as AddIcon, 
   Search as SearchIcon,
   Forum as ForumIcon,
-  TrendingUp as TrendingUpIcon,
   People as PeopleIcon
 } from '@mui/icons-material';
 import axios from 'axios';
 import { Thread } from '../typeThreads';
+import { Navigate, useParams } from 'react-router-dom';
+import { useAuth } from '../../../contexts/AuthContext';
+import { BOARD_LABELS, canAccessCategory, CategoryId, getAccessibleCategoryIds, parseCategoryId } from '../../../utils/categoryAccess';
 
 const apiUrl = process.env.REACT_APP_API_URL;
 
 const ThreadsPage: React.FC = () => {
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const { categoryId } = useParams<{ categoryId: string }>();
+  const { userCategoryId } = useAuth();
   
   const [allThreads, setAllThreads] = useState<Thread[]>([]);
   const [threads, setThreads] = useState<Thread[]>([]);
@@ -37,12 +37,18 @@ const ThreadsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [showCreateForm, setShowCreateForm] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<'newest' | 'popular' | 'alphabetical'>('newest');
+  const selectedCategoryId = parseCategoryId(categoryId);
+  const shouldRedirect = !selectedCategoryId || !canAccessCategory(selectedCategoryId, userCategoryId);
+  const currentCategoryId: CategoryId = selectedCategoryId ?? 1;
+  const accessibleCategoryIds = useMemo(
+    () => getAccessibleCategoryIds(userCategoryId),
+    [userCategoryId]
+  );
 
-
-  const fetchThreads = async () => {
+  const fetchThreads = async (targetCategoryId: CategoryId) => {
     setLoading(true);
     try {
-      const response = await axios.get(`${apiUrl}/threads/1`, {
+      const response = await axios.get(`${apiUrl}/threads/${targetCategoryId}`, {
         params: {
           limit: 10,
           offset: 0,
@@ -52,18 +58,22 @@ const ThreadsPage: React.FC = () => {
           },
         withCredentials: true,
       });
-      setAllThreads(response.data);
-      setThreads(response.data);
+      const rows = Array.isArray(response.data) ? (response.data as Thread[]) : [];
+      setAllThreads(rows);
+      setThreads(rows);
     } catch (error) {
       console.error('Error fetching threads:', error);
+      setAllThreads([]);
+      setThreads([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchThreads();
-  }, []);
+    if (shouldRedirect) return;
+    void fetchThreads(currentCategoryId);
+  }, [currentCategoryId, shouldRedirect]);
 
   // 検索とソートの処理
   useEffect(() => {
@@ -96,7 +106,8 @@ const ThreadsPage: React.FC = () => {
   }, [allThreads, searchTerm, sortBy]);
 
   const handleCreateSuccess = () => {
-    fetchThreads();
+    if (shouldRedirect) return;
+    void fetchThreads(currentCategoryId);
     setShowCreateForm(false);
   };
 
@@ -112,6 +123,10 @@ const ThreadsPage: React.FC = () => {
       default: return '新着順';
     }
   };
+
+  if (shouldRedirect) {
+    return <Navigate to="/threads_page/1" replace />;
+  }
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
@@ -146,7 +161,7 @@ const ThreadsPage: React.FC = () => {
                 <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2, justifyContent: { xs: 'center', md: 'flex-start' } }}>
                   <ForumIcon sx={{ fontSize: 40 }} />
                   <Typography variant="h3" component="h1" sx={{ fontWeight: 800 }}>
-                    掲示板
+                    {BOARD_LABELS[currentCategoryId]}
                   </Typography>
                 </Stack>
                 <Typography variant="h6" sx={{ opacity: 0.9, mb: 1 }}>
@@ -188,7 +203,11 @@ const ThreadsPage: React.FC = () => {
         {showCreateForm && (
           <Fade in={showCreateForm}>
             <Box sx={{ mb: 4 }}>
-              <ThreadsCreate onThreadSuccess={handleCreateSuccess} />
+              <ThreadsCreate
+                onThreadSuccess={handleCreateSuccess}
+                accessibleCategoryIds={accessibleCategoryIds}
+                initialCategoryId={currentCategoryId}
+              />
             </Box>
           </Fade>
         )}
