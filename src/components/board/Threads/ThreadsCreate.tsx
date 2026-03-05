@@ -17,6 +17,7 @@ import {
     Group as GroupIcon, 
 } from '@mui/icons-material';
 import axios from 'axios';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { SelectChangeEvent } from '@mui/material/Select';
 import { useNotification } from '../../../contexts/NotificationContext';
 import { BOARD_LABELS, CategoryId } from '../../../utils/categoryAccess';
@@ -35,6 +36,7 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({
   initialCategoryId,
 }) => {
   const { showNotification } = useNotification();
+  const queryClient = useQueryClient();
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const availableCategoryIds = useMemo<CategoryId[]>(
@@ -42,7 +44,34 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({
     [accessibleCategoryIds]
   );
   const [memberType, setMemberType] = useState<string>(String(initialCategoryId));
-  const [loading, setLoading] = useState<boolean>(false);
+
+  const createThreadMutation = useMutation({
+    mutationFn: async (payload: {
+      title: string;
+      description: string;
+      category_id: number;
+    }) => {
+      await axios.post(
+        `${apiUrl}/threads/`,
+        payload,
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true,
+        }
+      );
+    },
+    onSuccess: async () => {
+      showNotification('スレッドを作成しました', 'success');
+      setTitle('');
+      setDescription('');
+      await queryClient.invalidateQueries({ queryKey: ['threads'] });
+      onThreadSuccess?.();
+    },
+    onError: (error) => {
+      console.error('スレッド作成時のエラー:', error);
+      showNotification('スレッドの作成に失敗しました', 'error');
+    },
+  });
 
   useEffect(() => {
     const defaultCategory = availableCategoryIds.includes(initialCategoryId)
@@ -55,31 +84,11 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({
     e.preventDefault();
 
     if (title.trim() && description.trim()) {
-      setLoading(true);
-      try {
-        await axios.post(`${apiUrl}/threads/`, 
-        { 
-          title: title, 
-          description: description, 
-          category_id: Number(memberType),
-         },{
-          headers: { 'Content-Type': 'application/json' },
-          withCredentials: true,
-         }
-         
-         );
-        showNotification('スレッドを作成しました', 'success');
-        if (onThreadSuccess) {
-          onThreadSuccess();
-        }
-        setTitle('');
-        setDescription('');
-      } catch (error) {
-        console.error('スレッド作成時のエラー:', error);
-        showNotification('スレッドの作成に失敗しました', 'error');
-      } finally {
-        setLoading(false);
-      }
+      createThreadMutation.mutate({
+        title: title,
+        description: description,
+        category_id: Number(memberType),
+      });
     }
   };
 
@@ -162,11 +171,11 @@ const ThreadsCreate: React.FC<ThreadsCreateForm> = ({
               type="submit"
               variant="contained"
               color="primary"
-              disabled={loading}
+              disabled={createThreadMutation.isPending}
               size="large"
               sx={{ px: 4, py: 1.5 }}
             >
-              {loading ? '作成中...' : 'スレッドを作成'}
+              {createThreadMutation.isPending ? '作成中...' : 'スレッドを作成'}
             </Button>
           </Box>
         </Box>

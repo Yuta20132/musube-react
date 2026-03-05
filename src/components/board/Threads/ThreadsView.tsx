@@ -1,54 +1,34 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import {
-  Card,
-  CardContent,
   Typography,
   Button,
   Box,
   Container,
   Paper,
   Stack,
-  Fade,
-  useTheme,
-  useMediaQuery,
   Collapse
 } from '@mui/material';
 import {
   ArrowBack as ArrowBackIcon,
   Forum as ForumIcon,
-  TrendingUp as TrendingUpIcon,
-  People as PeopleIcon,
   Add as AddIcon,
-  Schedule as ScheduleIcon
 } from '@mui/icons-material';
 import PostForm from '../Post/PostForm';
 import { Thread } from '../typeThreads';
 import { useLocation, useNavigate } from 'react-router-dom';
-import PostView, { PostViewHandle } from '../Post/PostView';
+import PostView from '../Post/PostView';
 
 const ThreadsView: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-
-  const postViewRef = useRef<PostViewHandle | null>(null);
   const [showPostForm, setShowPostForm] = useState<boolean>(false);
 
   const thread = (location.state as { thread: Thread })?.thread;
 
   const handlePostSuccess = () => {
-    postViewRef.current?.fetchPosts?.();
     setShowPostForm(false);
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('ja-JP', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-  };
   if (!thread) {
     return (
       <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -174,7 +154,7 @@ const ThreadsView: React.FC = () => {
 
         {/* Posts Display */}
         <Box>
-          <PostView ref={postViewRef} threadId={thread.id} />
+          <PostView threadId={thread.id} />
         </Box>
       </Container>
     </Box>

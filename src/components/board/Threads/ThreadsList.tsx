@@ -8,17 +8,9 @@ import {
   Button,
   Grid,
   Skeleton,
-  Chip,
   Stack,
-  Avatar,
   Divider,
 } from '@mui/material';
-import { 
-  ChatBubbleOutline as ChatIcon,
-  Person as PersonIcon,
-  AccessTime as TimeIcon,
-  Visibility as ViewIcon,
-} from '@mui/icons-material';
 import { Thread } from '../typeThreads';
 import { useNavigate } from 'react-router-dom';
 
@@ -33,25 +25,6 @@ const ThreadsList: React.FC<ThreadsListProps> = ({ threads, loading }) => {
   const handleSelectThread = (thread: Thread) => {
     navigate('/threads/view', { state: { thread } });
   };
-
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return '不明';
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffTime = Math.abs(now.getTime() - date.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 1) return '今日';
-    if (diffDays === 2) return '昨日';
-    if (diffDays <= 7) return `${diffDays - 1}日前`;
-    return date.toLocaleDateString('ja-JP');
-  };
-
-  const getRandomStats = () => ({
-    posts: Math.floor(Math.random() * 50) + 1,
-    views: Math.floor(Math.random() * 500) + 10,
-    participants: Math.floor(Math.random() * 20) + 1,
-  });
 
   if (loading) {
     return (
@@ -99,7 +72,6 @@ const ThreadsList: React.FC<ThreadsListProps> = ({ threads, loading }) => {
   return (
     <Grid container spacing={3}>
       {threads.map((thread) => {
-        const stats = getRandomStats();
         return (
           <Grid item xs={12} sm={6} lg={4} key={thread.id}>
             <Card

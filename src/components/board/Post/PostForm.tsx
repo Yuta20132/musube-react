@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { TextField, Button, Box, Paper, Typography, InputAdornment, Alert } from '@mui/material';
 import { Title as TitleIcon, Create as CreateIcon } from '@mui/icons-material';
 import axios from 'axios';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { validateAndSanitizePost } from '../../../utils/validation';
 import { useNotification } from '../../../contexts/NotificationContext';
 type Props = {
@@ -12,10 +13,35 @@ type Props = {
 const PostForm: React.FC<Props> = ({ getThreadId, categoryId = 1, onPostSuccess }) => {
     const apiUrl = process.env.REACT_APP_API_URL;
     const { showNotification } = useNotification();
+    const queryClient = useQueryClient();
     const [title, setTitle] = useState<string>('');
     const [content, setContent] = useState<string>('');
-    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
     const [validationErrors, setValidationErrors] = useState<string[]>([]);
+
+    const createPostMutation = useMutation({
+        mutationFn: async (payload: {
+            title: string;
+            content: string;
+            thread_id: number;
+            category_id: number;
+        }) => {
+            await axios.post(`${apiUrl}/posts/`, payload, {
+                withCredentials: true,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        },
+        onSuccess: async () => {
+            showNotification('投稿を作成しました', 'success');
+            setTitle('');
+            setContent('');
+            setValidationErrors([]);
+            await queryClient.invalidateQueries({ queryKey: ['posts', getThreadId] });
+            onPostSuccess?.();
+        },
+        onError: () => {
+            setValidationErrors(['投稿に失敗しました。もう一度お試しください。']);
+        },
+    });
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -36,24 +62,7 @@ const PostForm: React.FC<Props> = ({ getThreadId, categoryId = 1, onPostSuccess 
             category_id: categoryId,
         };
 
-        setIsSubmitting(true);
-        try {
-            await axios.post(`${apiUrl}/posts/`, payload, {
-                withCredentials: true,
-                headers: { 'Content-Type': 'application/json' },
-            });
-            showNotification('投稿を作成しました', 'success');
-            if (onPostSuccess) {
-                onPostSuccess();
-            }
-            setTitle('');
-            setContent('');
-            setValidationErrors([]);
-        }catch (error) {
-            setValidationErrors(['投稿に失敗しました。もう一度お試しください。']);
-        }finally {
-            setIsSubmitting(false);
-        }
+        createPostMutation.mutate(payload);
     }
 
     return (
@@ -111,11 +120,11 @@ const PostForm: React.FC<Props> = ({ getThreadId, categoryId = 1, onPostSuccess 
                         type="submit"
                         variant="contained"
                         color="primary"
-                        disabled={isSubmitting}
+                        disabled={createPostMutation.isPending}
                         size="large"
                         sx={{ px: 4 }}
                     >
-                        {isSubmitting ? '投稿中...' : '投稿'}
+                        {createPostMutation.isPending ? '投稿中...' : '投稿'}
                     </Button>
                 </Box>
             </Box>
