@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import ThreadsList from './ThreadsList';
 import ThreadsCreate from './ThreadsCreate';
 import { 
@@ -20,6 +20,7 @@ import {
   People as PeopleIcon
 } from '@mui/icons-material';
 import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 import { Thread } from '../typeThreads';
 import { Navigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -31,9 +32,6 @@ const ThreadsPage: React.FC = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
   const { userCategoryId } = useAuth();
   
-  const [allThreads, setAllThreads] = useState<Thread[]>([]);
-  const [threads, setThreads] = useState<Thread[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [showCreateForm, setShowCreateForm] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<'newest' | 'popular' | 'alphabetical'>('newest');
@@ -45,69 +43,61 @@ const ThreadsPage: React.FC = () => {
     [userCategoryId]
   );
 
-  const fetchThreads = async (targetCategoryId: CategoryId) => {
-    setLoading(true);
-    try {
-      const response = await axios.get(`${apiUrl}/threads/${targetCategoryId}`, {
+  const {
+    data: allThreads = [],
+    isLoading: loading,
+    isError: isThreadsError,
+  } = useQuery({
+    queryKey: ['threads', currentCategoryId],
+    queryFn: async () => {
+      const response = await axios.get(`${apiUrl}/threads/${currentCategoryId}`, {
         params: {
           limit: 10,
           offset: 0,
         },
         headers: {
-            'Content-Type': 'application/json',
-          },
+          'Content-Type': 'application/json',
+        },
         withCredentials: true,
       });
-      const rows = Array.isArray(response.data) ? (response.data as Thread[]) : [];
-      setAllThreads(rows);
-      setThreads(rows);
-    } catch (error) {
-      console.error('Error fetching threads:', error);
-      setAllThreads([]);
-      setThreads([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+      return Array.isArray(response.data) ? (response.data as Thread[]) : [];
+    },
+    enabled: !shouldRedirect,
+  });
 
-  useEffect(() => {
-    if (shouldRedirect) return;
-    void fetchThreads(currentCategoryId);
-  }, [currentCategoryId, shouldRedirect]);
-
-  // 検索とソートの処理
-  useEffect(() => {
+  const threads = useMemo(() => {
     let filteredThreads = [...allThreads];
-    
-    // 検索フィルタリング
+
     if (searchTerm.trim()) {
       const trimmedSearchTerm = searchTerm.trim().toLowerCase();
-      filteredThreads = filteredThreads.filter(thread =>
-        thread.title.toLowerCase().includes(trimmedSearchTerm) ||
-        thread.description.toLowerCase().includes(trimmedSearchTerm)
+      filteredThreads = filteredThreads.filter(
+        (thread) =>
+          thread.title.toLowerCase().includes(trimmedSearchTerm) ||
+          thread.description.toLowerCase().includes(trimmedSearchTerm)
       );
     }
-    
-    // ソート
+
     switch (sortBy) {
       case 'newest':
-        filteredThreads.sort((a, b) => new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime());
+        filteredThreads.sort(
+          (a, b) =>
+            new Date(b.created_at || '').getTime() -
+            new Date(a.created_at || '').getTime()
+        );
         break;
       case 'alphabetical':
         filteredThreads.sort((a, b) => a.title.localeCompare(b.title));
         break;
       case 'popular':
-        // 投稿数でソート（仮実装）
         filteredThreads.sort((a, b) => (b.id || 0) - (a.id || 0));
         break;
     }
-    
-    setThreads(filteredThreads);
+
+    return filteredThreads;
   }, [allThreads, searchTerm, sortBy]);
 
   const handleCreateSuccess = () => {
     if (shouldRedirect) return;
-    void fetchThreads(currentCategoryId);
     setShowCreateForm(false);
   };
 
@@ -274,6 +264,12 @@ const ThreadsPage: React.FC = () => {
             </Box>
           )}
         </Paper>
+
+        {isThreadsError && (
+          <Typography color="error" sx={{ mb: 3 }}>
+            スレッドの取得に失敗しました
+          </Typography>
+        )}
 
         {/* スレッド一覧 */}
         <ThreadsList threads={threads} loading={loading} />
