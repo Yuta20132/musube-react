@@ -20,6 +20,7 @@ import { NotificationProvider } from './contexts/NotificationContext';
 import NotificationSnackbar from './components/Notification/NotificationSnackbar';
 import Logout from './components/Accounts/Login/Logout';
 import UserProfile from './components/Accounts/UserProfile/UserProfile';
+import VerifyProfileUpdate from './components/Accounts/UserProfile/VerifyProfileUpdate';
 import ThreadsView from './components/Board/Threads/ThreadsView';
 import Policy from './components/Policy/Policy';
 import theme from './theme';
@@ -55,6 +56,7 @@ const AppRoutes: React.FC = () => {
               <Route path="/threads_page/:categoryId" element={<ThreadsPage />} />
               <Route path="/threads/view" element={<ThreadsView />} />
               <Route path="/logout" element={<Logout />} />
+              <Route path="/verify-profile" element={<VerifyProfileUpdate />} />
               <Route path="/policy" element={<Policy />} />
               <Route path="*" element={<Navigate to="/" replace />} />
               <Route path="/user-search" element={<Search />} />
@@ -69,6 +71,7 @@ const AppRoutes: React.FC = () => {
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/send-mail" element={<SendEmail />} />
               <Route path="/verify" element={<UserActivate />} />
+              <Route path="/verify-profile" element={<VerifyProfileUpdate />} />
               <Route path="/login-success" element={<LoginSuccess />} />
               <Route path="/policy" element={<Policy />} />
               <Route path="*" element={<Navigate to="/" replace />} />
