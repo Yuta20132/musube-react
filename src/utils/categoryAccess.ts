@@ -54,7 +54,7 @@ export const getAccessibleCategoryIds = (userCategoryId: CategoryId | null | und
     return [...ALL_CATEGORY_IDS];
   }
   if (userCategoryId === 2 || userCategoryId === 3 || userCategoryId === 4) {
-    return [1, userCategoryId];
+    return [userCategoryId];
   }
   return [1];
 };
