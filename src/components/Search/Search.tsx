@@ -1,400 +1,392 @@
 import React, { useMemo, useState } from 'react';
-import { 
-    Container, 
-    TextField, 
-    Button, 
-    Box, 
-    Typography, 
-    MenuItem, 
-    Select, 
-    FormControl, 
-    InputLabel, 
-    SelectChangeEvent, 
-    Card, 
-    CardContent, 
-    InputAdornment, 
-    Paper,
-    Avatar,
-    Chip,
-    Stack,
-    Divider,
-    CircularProgress,
-    IconButton
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  CircularProgress,
+  Container,
+  Grid,
+  InputAdornment,
+  Paper,
+  Stack,
+  TextField,
+  Typography,
 } from '@mui/material';
-import { Search as SearchIcon, School as SchoolIcon, Business as BusinessIcon, LocalHospital as LocalHospitalIcon, Person as PersonIcon, Email as EmailIcon, ChevronRight as ChevronRightIcon, SearchOff as SearchOffIcon } from '@mui/icons-material';
-import { SearchResult } from './SearchTypes';
-import SearchDetailModal from './SearchDetailModal';
+import {
+  AdminPanelSettings as AdminPanelSettingsIcon,
+  Business as BusinessIcon,
+  ChevronRight as ChevronRightIcon,
+  LocalHospital as LocalHospitalIcon,
+  Person as PersonIcon,
+  School as SchoolIcon,
+  Search as SearchIcon,
+} from '@mui/icons-material';
 import apiClient from '../../utils/apiClient';
+import SearchDetailModal from './SearchDetailModal';
+import { SearchResult } from './SearchTypes';
 
-const SearchForm: React.FC = () => {
-    const [searchData, setSearchData] = useState({
-        name: '',
-        institution: '',
-        institutionType: '',
-    });
+interface SearchApiRow {
+  id?: unknown;
+  user_name?: unknown;
+  category?: unknown;
+  first_name?: unknown;
+  last_name?: unknown;
+  institution?: unknown;
+  description?: unknown;
+}
 
-    const [results, setResults] = useState<SearchResult[]>([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [sortKey, setSortKey] = useState<'name' | 'institution' | 'type'>('name');
-    const [openModal, setOpenModal] = useState(false);
-    const [modalContent, setModalContent] = useState<SearchResult | null>(null);
+interface SearchApiResponse {
+  rowCount?: unknown;
+  rows?: SearchApiRow[];
+}
 
-    // category_id -> 表示ラベル
-    const categoryIdToLabel = (id?: string | number | null): string => {
-        const n = Number(id);
-        switch (n) {
-            case 2: return '大学・研究所';
-            case 3: return '企業';
-            case 4: return '医者';
-            case 5: return '管理者';
-            case 1:
-            default: return '一般';
-        }
-    };
-
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target;
-        setSearchData({
-            ...searchData,
-            [name]: value,
-        });
-    };
-
-    const handleSelectChange = (event: SelectChangeEvent<string>) => {
-        setSearchData({
-            ...searchData,
-            institutionType: event.target.value as string,
-        });
-    };
-
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        setError(null);
-        setLoading(true);
-        try {
-            // username のみを送信（他のフォームはダミー）
-            const res = await apiClient.get('/users/search', {
-                params: { username: searchData.name?.trim() || '' },
-                // Cookie(bulletin_token)送信用
-                withCredentials: true,
-            });
-            const data = res.data || {};
-            const users = Array.isArray(data.users)
-                ? data.users
-                : Array.isArray(data.rows)
-                    ? data.rows
-                    : [];
-
-            const mapped: SearchResult[] = users.map((u: any) => ({
-                id: String(u.id ?? ''),
-                firstName: String(u.first_name ?? ''),
-                lastName: String(u.last_name ?? ''),
-                userName: String(u.user_name ?? ''),
-                email: String(u.email ?? ''),
-                institution: String(u.institution ?? ''),
-                institutionType: categoryIdToLabel(u.category_id),
-            }));
-            setResults(mapped);
-        } catch (e: any) {
-            // 認証やネットワークエラー時
-            const status = e?.response?.status;
-            if (status === 401) {
-                setError('認証が必要です。ログイン状態を確認してください。');
-            } else {
-                setError('検索中にエラーが発生しました。時間をおいて再試行してください。');
-            }
-            setResults([]);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleOpenModal = (result: SearchResult) => {
-        setModalContent(result);
-        setOpenModal(true);
-    };
-
-    const handleCloseModal = () => {
-        setOpenModal(false);
-    };
-
-    // アイコンを種類に応じて変更
-    const getInstitutionIcon = (type: string) => {
-        switch(type) {
-            case '大学・研究所':
-                return <SchoolIcon color="primary" />;
-            case '企業':
-                return <BusinessIcon color="primary" />;
-            case '医者':
-                return <LocalHospitalIcon color="primary" />;
-            case '一般':
-            default:
-                return <PersonIcon color="primary" />;
-        }
-    };
-
-    const handleClearFilter = (key: keyof typeof searchData) => {
-        // API連携では username 以外はダミー。結果は変更しない。
-        setSearchData(prev => ({ ...prev, [key]: '' }));
-    };
-
-    const handleClearAll = () => {
-        setSearchData({ name: '', institution: '', institutionType: '' });
-    };
-
-    const escapeRegExp = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const highlight = (text: string, query: string) => {
-        if (!query) return text;
-        const parts = text.split(new RegExp(`(${escapeRegExp(query)})`, 'gi'));
-        return (
-            <>
-                {parts.map((part, i) => (
-                    part.toLowerCase() === query.toLowerCase() ?
-                        <Box key={i} component="mark" sx={{ backgroundColor: 'transparent', color: 'primary.main', fontWeight: 700 }}>{part}</Box> :
-                        <React.Fragment key={i}>{part}</React.Fragment>
-                ))}
-            </>
-        );
-    };
-
-    const getInitials = (lastName: string, firstName: string) => {
-        const l = lastName?.[0] ?? '';
-        const f = firstName?.[0] ?? '';
-        return `${l}${f}`;
-    };
-
-    const sortedResults = useMemo(() => {
-        const list = [...results];
-        switch (sortKey) {
-            case 'institution':
-                list.sort((a, b) => a.institution.localeCompare(b.institution, 'ja'));
-                break;
-            case 'type':
-                list.sort((a, b) => a.institutionType.localeCompare(b.institutionType, 'ja'));
-                break;
-            case 'name':
-            default:
-                list.sort((a, b) => (`${a.lastName}${a.firstName}`).localeCompare(`${b.lastName}${b.firstName}`, 'ja'));
-        }
-        return list;
-    }, [results, sortKey]);
-
-    return (
-        <Container component="main" maxWidth="sm">
-            <Paper 
-                elevation={1}
-                sx={{ 
-                    p: 4, 
-                    mt: 4
-                }}
-            >
-                <Typography 
-                    variant="h5" 
-                    align="center" 
-                    gutterBottom 
-                    sx={{ fontWeight: 600, color: 'primary.main', mb: 3 }}
-                >
-                    ユーザー検索
-                </Typography>
-                <Box
-                    component="form"
-                    onSubmit={handleSubmit}
-                    sx={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        gap: 2,
-                    }}
-                >
-                    <TextField
-                        label="名前"
-                        name="name"
-                        value={searchData.name}
-                        onChange={handleInputChange}
-                        variant="outlined"
-                        fullWidth
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <PersonIcon color="primary" />
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
-                    <TextField
-                        label="所属機関"
-                        name="institution"
-                        value={searchData.institution}
-                        onChange={handleInputChange}
-                        variant="outlined"
-                        fullWidth
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <SchoolIcon color="primary" />
-                                </InputAdornment>
-                            ),
-                        }}
-                    />
-                    <FormControl variant="outlined" fullWidth>
-                        <InputLabel>所属機関の種類</InputLabel>
-                        <Select
-                            value={searchData.institutionType}
-                            onChange={handleSelectChange}
-                            label="所属機関の種類"
-                            startAdornment={
-                                <InputAdornment position="start">
-                                    {getInstitutionIcon(searchData.institutionType)}
-                                </InputAdornment>
-                            }
-                        >
-                            <MenuItem value="">
-                                <em>すべて</em>
-                            </MenuItem>
-                            <MenuItem value="一般">一般</MenuItem>
-                            <MenuItem value="大学・研究所">大学・研究所</MenuItem>
-                            <MenuItem value="企業">企業</MenuItem>
-                            <MenuItem value="医者">医者</MenuItem>
-                        </Select>
-                    </FormControl>
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        size="large"
-                        startIcon={<SearchIcon />}
-                        sx={{ mt: 2 }}
-                    >
-                        検索
-                    </Button>
-                </Box>
-            </Paper>
-
-            {/* 結果表示領域 */}
-            <Box sx={{ mt: 4 }}>
-                {/* エラー表示 */}
-                {error && (
-                    <Paper variant="outlined" sx={{ p: 2, mb: 2, borderColor: 'error.light' }}>
-                        <Typography color="error" variant="body2">{error}</Typography>
-                    </Paper>
-                )}
-                {/* アクティブなフィルタ */}
-                {(searchData.name || searchData.institution || searchData.institutionType) && (
-                    <Stack direction="row" spacing={1} sx={{ mb: 2, flexWrap: 'wrap' }}>
-                        {searchData.name && (
-                            <Chip label={`名前: ${searchData.name}`} onDelete={() => handleClearFilter('name')} />
-                        )}
-                        {searchData.institution && (
-                            <Chip label={`所属: ${searchData.institution}`} onDelete={() => handleClearFilter('institution')} />
-                        )}
-                        {searchData.institutionType && (
-                            <Chip label={`種類: ${searchData.institutionType}`} onDelete={() => handleClearFilter('institutionType')} />
-                        )}
-                        <Box sx={{ flexGrow: 1 }} />
-                        <Button size="small" variant="text" onClick={handleClearAll}>条件をクリア</Button>
-                    </Stack>
-                )}
-                {/* ヘッダー（件数 / 並び替え） */}
-                <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ mb: 2 }}>
-                    <Typography variant="subtitle2" color="text.secondary">
-                        検索結果: {results.length}件
-                    </Typography>
-                    <FormControl size="small" sx={{ minWidth: 140 }}>
-                        <InputLabel>並び替え</InputLabel>
-                        <Select
-                            label="並び替え"
-                            value={sortKey}
-                            onChange={(e: SelectChangeEvent<'name' | 'institution' | 'type'>) => setSortKey(e.target.value as any)}
-                        >
-                            <MenuItem value="name">氏名</MenuItem>
-                            <MenuItem value="institution">所属</MenuItem>
-                            <MenuItem value="type">種類</MenuItem>
-                        </Select>
-                    </FormControl>
-                </Stack>
-
-                {/* ローディング */}
-                {loading && (
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', py: 6 }}>
-                        <CircularProgress size={28} />
-                        <Typography sx={{ ml: 2 }} color="text.secondary">検索中…</Typography>
-                    </Box>
-                )}
-
-                {/* 空状態 */}
-                {!loading && results.length === 0 && (
-                    <Paper variant="outlined" sx={{ p: 4, textAlign: 'center' }}>
-                        <SearchOffIcon color="disabled" sx={{ fontSize: 40, mb: 1 }} />
-                        <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>該当する結果がありません</Typography>
-                        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-                            条件を緩めるか、キーワードを見直してください。
-                        </Typography>
-                    </Paper>
-                )}
-
-                {/* リスト */}
-                {!loading && sortedResults.map(result => (
-                    <Card
-                        key={result.id}
-                        role="button"
-                        tabIndex={0}
-                        aria-label={`${result.lastName} ${result.firstName} の詳細を開く`}
-                        sx={{ mb: 2, cursor: 'pointer' }}
-                        onClick={() => handleOpenModal(result)}
-                        onKeyDown={(e: React.KeyboardEvent) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                                e.preventDefault();
-                                handleOpenModal(result);
-                            }
-                        }}
-                    >
-                        <CardContent>
-                            <Stack direction="row" alignItems="center" justifyContent="space-between" spacing={2}>
-                                <Stack direction="row" alignItems="center" spacing={2}>
-                                    <Avatar sx={{ bgcolor: 'primary.light', color: 'primary.contrastText' }}>
-                                        {getInitials(result.lastName, result.firstName)}
-                                    </Avatar>
-                                    <Box>
-                                        <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-                                            {highlight(`${result.lastName} ${result.firstName}`, searchData.name)}
-                                        </Typography>
-                                        <Stack direction="row" alignItems="center" spacing={1} sx={{ color: 'text.secondary' }}>
-                                            <EmailIcon sx={{ fontSize: 16 }} />
-                                            <Typography variant="body2">{result.email}</Typography>
-                                        </Stack>
-                                        <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 0.5 }}>
-                                            {getInstitutionIcon(result.institutionType)}
-                                            <Typography variant="body2">
-                                                {highlight(result.institution, searchData.institution)}
-                                            </Typography>
-                                        </Stack>
-                                    </Box>
-                                </Stack>
-                                <Stack direction="row" alignItems="center" spacing={1}>
-                                    <Chip
-                                        variant="outlined"
-                                        size="small"
-                                        label={result.institutionType}
-                                        icon={getInstitutionIcon(result.institutionType)}
-                                        sx={{ fontWeight: 500 }}
-                                    />
-                                    <Divider orientation="vertical" flexItem sx={{ mx: 0.5 }} />
-                                    <IconButton aria-label="詳細" size="small">
-                                        <ChevronRightIcon />
-                                    </IconButton>
-                                </Stack>
-                            </Stack>
-                        </CardContent>
-                    </Card>
-                ))}
-            </Box>
-            <SearchDetailModal
-                open={openModal}
-                content={modalContent}
-                onClose={handleCloseModal}
-            />
-        </Container>
-    );
+const normalizeCategory = (category: string): string => {
+  const value = category.trim();
+  if (!value) return '一般';
+  if (value.includes('大学') || value.includes('研究') || value === 'Academic') return '大学・研究所';
+  if (value.includes('企業') || value === 'Corporate') return '企業';
+  if (value.includes('医') || value === 'Medical') return '医者';
+  if (value.includes('管理') || value === 'Admin' || value === 'Administrator') return '管理者';
+  if (value === 'General') return '一般';
+  return value;
 };
 
-export default SearchForm;
+const getCategoryIcon = (category: string) => {
+  if (category.includes('大学') || category.includes('研究')) return <SchoolIcon fontSize="small" />;
+  if (category.includes('企業')) return <BusinessIcon fontSize="small" />;
+  if (category.includes('医')) return <LocalHospitalIcon fontSize="small" />;
+  if (category.includes('管理')) return <AdminPanelSettingsIcon fontSize="small" />;
+  return <PersonIcon fontSize="small" />;
+};
+
+const toSearchResult = (row: SearchApiRow, index: number): SearchResult => {
+  const userName = String(row.user_name ?? '').trim();
+  const firstName = String(row.first_name ?? '').trim();
+  const lastName = String(row.last_name ?? '').trim();
+  const category = normalizeCategory(String(row.category ?? ''));
+  const fallbackId = `${userName || 'user'}-${index}`;
+
+  return {
+    id: String(row.id ?? fallbackId),
+    userName,
+    firstName,
+    lastName,
+    category,
+    institution: String(row.institution ?? '').trim(),
+    description: String(row.description ?? '').trim(),
+  };
+};
+
+const getDisplayName = (result: SearchResult): string =>
+  `${result.lastName} ${result.firstName}`.trim() || result.userName || '未設定ユーザー';
+
+const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+const highlightText = (text: string, query: string) => {
+  const normalizedQuery = query.trim();
+  if (!normalizedQuery || !text) return text;
+  const chunks = text.split(new RegExp(`(${escapeRegExp(normalizedQuery)})`, 'gi'));
+  return (
+    <>
+      {chunks.map((chunk, idx) =>
+        chunk.toLowerCase() === normalizedQuery.toLowerCase() ? (
+          <Box
+            key={`${chunk}-${idx}`}
+            component="mark"
+            sx={{ backgroundColor: 'transparent', color: 'primary.main', fontWeight: 700 }}
+          >
+            {chunk}
+          </Box>
+        ) : (
+          <React.Fragment key={`${chunk}-${idx}`}>{chunk}</React.Fragment>
+        )
+      )}
+    </>
+  );
+};
+
+const Search: React.FC = () => {
+  const [username, setUsername] = useState('');
+  const [submittedQuery, setSubmittedQuery] = useState('');
+  const [results, setResults] = useState<SearchResult[]>([]);
+  const [rowCount, setRowCount] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState<SearchResult | null>(null);
+
+  const hasSearched = submittedQuery.length > 0;
+  const resultCount = rowCount ?? results.length;
+
+  const sortedResults = useMemo(
+    () =>
+      [...results].sort((a, b) => {
+        const aName = `${a.lastName}${a.firstName}${a.userName}`;
+        const bName = `${b.lastName}${b.firstName}${b.userName}`;
+        return aName.localeCompare(bName, 'ja');
+      }),
+    [results]
+  );
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const trimmed = username.trim();
+
+    if (!trimmed) {
+      setError('usernameがありません');
+      setResults([]);
+      setRowCount(0);
+      setSubmittedQuery('');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await apiClient.get<SearchApiResponse>('/users/search', {
+        params: { username: trimmed },
+        // bulletin_token Cookie を送るために明示
+        withCredentials: true,
+      });
+
+      const payload = response.data ?? {};
+      const rows = Array.isArray(payload.rows) ? payload.rows : [];
+      const mapped = rows.map(toSearchResult);
+      const parsedCount = Number(payload.rowCount);
+
+      setResults(mapped);
+      setRowCount(Number.isFinite(parsedCount) ? parsedCount : mapped.length);
+      setSubmittedQuery(trimmed);
+    } catch (requestError: any) {
+      const responseData = requestError?.response?.data;
+      const backendMessage =
+        typeof responseData === 'string'
+          ? responseData
+          : typeof responseData?.message === 'string'
+            ? responseData.message
+            : typeof responseData?.detail === 'string'
+              ? responseData.detail
+              : '';
+
+      setError(backendMessage || '検索中にエラーが発生しました。');
+      setResults([]);
+      setRowCount(0);
+      setSubmittedQuery(trimmed);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleOpenModal = (result: SearchResult) => {
+    setSelectedUser(result);
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
+
+  return (
+    <Container maxWidth="md" sx={{ py: 4 }}>
+      <Paper
+        elevation={0}
+        sx={{
+          p: { xs: 2.5, sm: 3.5 },
+          borderRadius: 3,
+          border: '1px solid',
+          borderColor: 'divider',
+          background: (theme) =>
+            `linear-gradient(145deg, ${theme.palette.background.paper} 0%, ${theme.palette.primary.light}12 100%)`,
+        }}
+      >
+        <Typography variant="h5" sx={{ fontWeight: 700 }}>
+          ユーザー検索
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+          `username` を部分一致で検索します。ログイン状態の Cookie を利用するため、`credentials:
+          "include"` で送信されます。
+        </Typography>
+
+        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2.5 }}>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5}>
+            <TextField
+              fullWidth
+              required
+              label="ユーザー名"
+              name="username"
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
+              placeholder="例: johndoe"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <PersonIcon color="primary" />
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <Button
+              type="submit"
+              variant="contained"
+              startIcon={loading ? <CircularProgress size={16} color="inherit" /> : <SearchIcon />}
+              disabled={loading}
+              sx={{ minWidth: { xs: '100%', sm: 140 }, fontWeight: 700 }}
+            >
+              検索
+            </Button>
+          </Stack>
+        </Box>
+      </Paper>
+
+      <Box sx={{ mt: 3 }}>
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+
+        {hasSearched && !loading && !error && (
+          <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" sx={{ mb: 2 }}>
+            <Typography variant="subtitle2" color="text.secondary">
+              「{submittedQuery}」の検索結果: {resultCount} 件
+            </Typography>
+          </Stack>
+        )}
+
+        {loading && (
+          <Paper
+            variant="outlined"
+            sx={{ p: 4, borderRadius: 3, textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 1 }}
+          >
+            <CircularProgress size={28} sx={{ mx: 'auto' }} />
+            <Typography variant="body2" color="text.secondary">
+              ユーザーを検索しています...
+            </Typography>
+          </Paper>
+        )}
+
+        {!loading && hasSearched && sortedResults.length === 0 && !error && (
+          <Paper variant="outlined" sx={{ p: 4, borderRadius: 3, textAlign: 'center' }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
+              一致するユーザーが見つかりませんでした
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+              キーワードを変えて再検索してください。
+            </Typography>
+          </Paper>
+        )}
+
+        {!loading && sortedResults.length > 0 && (
+          <Grid container spacing={2}>
+            {sortedResults.map((result) => (
+              <Grid item xs={12} sm={6} key={result.id}>
+                <Card
+                  variant="outlined"
+                  sx={{
+                    height: '100%',
+                    borderRadius: 3,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease',
+                    '&:hover': {
+                      transform: 'translateY(-2px)',
+                      borderColor: 'primary.main',
+                      boxShadow: (theme) => `0 8px 20px ${theme.palette.primary.light}40`,
+                    },
+                  }}
+                  onClick={() => handleOpenModal(result)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      handleOpenModal(result);
+                    }
+                  }}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`${getDisplayName(result)} の詳細を表示`}
+                >
+                  <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 1.5, height: '100%' }}>
+                    <Stack direction="row" spacing={1.5} alignItems="center">
+                      <Box
+                        sx={{
+                          width: 40,
+                          height: 40,
+                          borderRadius: '50%',
+                          display: 'grid',
+                          placeItems: 'center',
+                          bgcolor: 'primary.light',
+                          color: 'primary.main',
+                          flexShrink: 0,
+                        }}
+                      >
+                        {getCategoryIcon(result.category)}
+                      </Box>
+                      <Box sx={{ minWidth: 0 }}>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 700 }} noWrap>
+                          {getDisplayName(result)}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary" noWrap>
+                          {highlightText(result.userName, submittedQuery)}
+                        </Typography>
+                      </Box>
+                    </Stack>
+
+                    <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
+                      <Chip
+                        size="small"
+                        variant="outlined"
+                        icon={getCategoryIcon(result.category)}
+                        label={result.category}
+                      />
+                      <Chip
+                        size="small"
+                        variant="outlined"
+                        label={result.institution || '所属機関未設定'}
+                        sx={{ maxWidth: '100%' }}
+                      />
+                    </Stack>
+
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      sx={{
+                        mt: 0.5,
+                        display: '-webkit-box',
+                        overflow: 'hidden',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                      }}
+                    >
+                      {result.description || '自己紹介は登録されていません。'}
+                    </Typography>
+
+                    <Box
+                      sx={{
+                        mt: 'auto',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'flex-end',
+                        color: 'primary.main',
+                        fontWeight: 700,
+                      }}
+                    >
+                      <Typography variant="body2">詳細を見る</Typography>
+                      <ChevronRightIcon fontSize="small" />
+                    </Box>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        )}
+      </Box>
+
+      <SearchDetailModal open={openModal} content={selectedUser} onClose={handleCloseModal} />
+    </Container>
+  );
+};
+
+export default Search;
