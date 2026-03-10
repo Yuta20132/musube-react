@@ -1,26 +1,20 @@
 import React from 'react';
 import {
   Box,
-  Modal,
-  Typography,
   Button,
-  IconButton,
-  Avatar,
   Chip,
-  Stack,
   Divider,
-  Tooltip,
-  Grid,
-  Skeleton,
+  IconButton,
+  Modal,
+  Stack,
+  Typography,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import EmailIcon from '@mui/icons-material/Email';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import BusinessIcon from '@mui/icons-material/Business';
 import SchoolIcon from '@mui/icons-material/School';
 import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
 import PersonIcon from '@mui/icons-material/Person';
-import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { SearchResult } from './SearchTypes';
 
 interface SearchDetailModalProps {
@@ -30,37 +24,20 @@ interface SearchDetailModalProps {
 }
 
 const SearchDetailModal: React.FC<SearchDetailModalProps> = ({ open, content, onClose }) => {
-  const [copied, setCopied] = React.useState(false);
-
-  const getInstitutionIcon = (type: string) => {
-    switch (type) {
-      case '大学・研究所':
-        return <SchoolIcon color="primary" />;
-      case '企業':
-        return <BusinessIcon color="primary" />;
-      case '医者':
-        return <LocalHospitalIcon color="primary" />;
-      case '一般':
-      default:
-        return <PersonIcon color="primary" />;
+  const getCategoryIcon = (category: string) => {
+    if (category.includes('大学') || category.includes('研究')) {
+      return <SchoolIcon color="primary" />;
     }
-  };
-
-  const getInitials = (lastName?: string, firstName?: string) => {
-    const l = lastName?.[0] ?? '';
-    const f = firstName?.[0] ?? '';
-    return `${l}${f}`;
-  };
-
-  const handleCopyEmail = async (email?: string) => {
-    if (!email) return;
-    try {
-      await navigator.clipboard?.writeText(email);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1200);
-    } catch (e) {
-      // クリップボード未対応環境は無視
+    if (category.includes('企業')) {
+      return <BusinessIcon color="primary" />;
     }
+    if (category.includes('医')) {
+      return <LocalHospitalIcon color="primary" />;
+    }
+    if (category.includes('管理')) {
+      return <AdminPanelSettingsIcon color="primary" />;
+    }
+    return <PersonIcon color="primary" />;
   };
 
   return (
@@ -102,28 +79,38 @@ const SearchDetailModal: React.FC<SearchDetailModalProps> = ({ open, content, on
         >
           <CloseIcon />
         </IconButton>
-        {/* コンテンツ */}
-        {content ? (
+        {!content ? null : (
           <Box sx={{ mt: 2 }}>
-            {/* ヘッダー */}
             <Stack direction="row" spacing={2} alignItems="center">
-              <Avatar sx={{ bgcolor: 'primary.light', color: 'primary.contrastText', width: 56, height: 56 }}>
-                {getInitials(content.lastName, content.firstName)}
-              </Avatar>
-              <Box>
+              <Box
+                sx={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: 2,
+                  display: 'grid',
+                  placeItems: 'center',
+                  bgcolor: 'primary.light',
+                  color: 'primary.main',
+                  flexShrink: 0,
+                }}
+              >
+                {getCategoryIcon(content.category)}
+              </Box>
+              <Box sx={{ minWidth: 0 }}>
                 <Typography variant="h5" sx={{ fontWeight: 700, color: 'primary.main' }}>
-                  {content.lastName} {content.firstName}
+                  {content.lastName || content.firstName
+                    ? `${content.lastName} ${content.firstName}`.trim()
+                    : content.userName}
                 </Typography>
                 <Stack direction="row" alignItems="center" spacing={1} sx={{ color: 'text.secondary' }}>
-                  <AlternateEmailIcon sx={{ fontSize: 16 }} />
-                  <Typography variant="body2">@{content.userName}</Typography>
+                  <Typography variant="body2">{content.userName}</Typography>
                 </Stack>
-                <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+                <Stack direction="row" spacing={1} sx={{ mt: 1, flexWrap: 'wrap' }}>
                   <Chip
                     variant="outlined"
                     size="small"
-                    label={content.institutionType}
-                    icon={getInstitutionIcon(content.institutionType)}
+                    label={content.category}
+                    icon={getCategoryIcon(content.category)}
                   />
                 </Stack>
               </Box>
@@ -131,58 +118,41 @@ const SearchDetailModal: React.FC<SearchDetailModalProps> = ({ open, content, on
 
             <Divider sx={{ my: 3 }} />
 
-            {/* 詳細 */}
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <Stack direction="row" alignItems="center" spacing={1}>
-                  <EmailIcon color="primary" sx={{ fontSize: 20 }} />
-                  <Typography variant="body1">{content.email}</Typography>
-                  <Tooltip title={copied ? 'コピーしました' : 'コピー'}>
-                    <IconButton size="small" onClick={() => handleCopyEmail(content.email)} aria-label="メールをコピー">
-                      <ContentCopyIcon fontSize="inherit" />
-                    </IconButton>
-                  </Tooltip>
+            <Stack spacing={2}>
+              <Box>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                  所属機関
+                </Typography>
+                <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 0.5 }}>
+                  {getCategoryIcon(content.category)}
+                  <Typography variant="body1">
+                    {content.institution || '未設定'}
+                  </Typography>
                 </Stack>
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Stack direction="row" alignItems="center" spacing={1}>
-                  {getInstitutionIcon(content.institutionType)}
-                  <Typography variant="body1">{content.institution}</Typography>
-                </Stack>
-              </Grid>
-            </Grid>
-
-            {/* アクション */}
-            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} justifyContent="flex-end" sx={{ mt: 4 }}>
-              <Button variant="outlined" onClick={onClose}>閉じる</Button>
-              <Button variant="contained" color="primary" onClick={() => alert('プロフィールへ移動')}>
-                プロフィールを見る
-              </Button>
-            </Stack>
-          </Box>
-        ) : (
-          // フォールバック（contentが無い場合のスケルトン）
-          <Box sx={{ mt: 2 }}>
-            <Stack direction="row" spacing={2} alignItems="center">
-              <Skeleton variant="circular" width={56} height={56} />
-              <Box sx={{ flex: 1 }}>
-                <Skeleton variant="text" width={220} height={32} />
-                <Skeleton variant="text" width={140} />
+              </Box>
+              <Box>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                  自己紹介
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{
+                    mt: 0.5,
+                    whiteSpace: 'pre-wrap',
+                    lineHeight: 1.7,
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    borderRadius: 1,
+                    p: 1.5,
+                  }}
+                >
+                  {content.description || '自己紹介は登録されていません。'}
+                </Typography>
               </Box>
             </Stack>
-            <Divider sx={{ my: 3 }} />
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={6}>
-                <Skeleton variant="text" width={240} height={28} />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <Skeleton variant="text" width={240} height={28} />
-              </Grid>
-            </Grid>
+
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} justifyContent="flex-end" sx={{ mt: 4 }}>
-              <Skeleton variant="rectangular" width={100} height={36} />
-              <Skeleton variant="rectangular" width={160} height={36} />
-              <Skeleton variant="rectangular" width={120} height={36} />
+              <Button variant="outlined" onClick={onClose}>閉じる</Button>
             </Stack>
           </Box>
         )}
