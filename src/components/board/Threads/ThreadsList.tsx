@@ -23,7 +23,7 @@ const ThreadsList: React.FC<ThreadsListProps> = ({ threads, loading }) => {
   const navigate = useNavigate();
 
   const handleSelectThread = (thread: Thread) => {
-    navigate('/threads/view', { state: { thread } });
+    navigate(`/threads/${thread.id}/view`, { state: { thread } });
   };
 
   if (loading) {

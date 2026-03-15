@@ -54,7 +54,7 @@ const AppRoutes: React.FC = () => {
               <Route path="/profile" element={<UserProfile />} />
               <Route path="/threads_page" element={<Navigate to="/threads_page/1" replace />} />
               <Route path="/threads_page/:categoryId" element={<ThreadsPage />} />
-              <Route path="/threads/view" element={<ThreadsView />} />
+              <Route path="/threads/:id/view" element={<ThreadsView />} />
               <Route path="/logout" element={<Logout />} />
               <Route path="/verify-profile" element={<VerifyProfileUpdate />} />
               <Route path="/policy" element={<Policy />} />
