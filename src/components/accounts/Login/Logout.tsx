@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { 
+  Alert,
   Button, 
   Box, 
   Container, 
@@ -14,16 +15,21 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from '../../../contexts/AuthContext';
 
 const Logout = () => {
+  const [error, setError] = useState(false);
+  const [busy, setBusy] = useState(false);
   const { logout } = useAuth();
   const navigate = useNavigate();
   const theme = useTheme();
   
   const handleLogout = async () => {
+    setBusy(true); setError(false);
     try {
       await logout();
       navigate("/login");
     } catch (error) {
-      console.error(error);
+      setError(true);
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -78,7 +84,9 @@ const Logout = () => {
               アカウントからログアウトしますか？
             </Typography>
             
+            {error && <Alert severity="error">ログアウトできませんでした。接続を確認して再試行してください。</Alert>}
             <Button
+              disabled={busy}
               variant="contained"
               color="primary"
               size="large"

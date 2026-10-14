@@ -1,5 +1,6 @@
 
 import React, { createContext, useState, useEffect, useContext } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import apiClient from '../utils/apiClient';
 import { SessionManager, setSecurityHeaders, checkBrowserSecurity } from '../utils/security';
 import { CategoryId, resolveUserCategoryId } from '../utils/categoryAccess';
@@ -22,6 +23,7 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const queryClient = useQueryClient();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
   const [userCategoryId, setUserCategoryId] = useState<CategoryId | null>(null);
@@ -45,7 +47,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const sessionManager = SessionManager.getInstance();
         sessionManager.startSession(() => {
           // セッションタイムアウト時の処理
-          logout();
+          void logout().catch(() => alert("ログアウトに失敗しました。接続を確認して再試行してください。"));
           alert('セッションがタイムアウトしました。再度ログインしてください。');
         });
       } catch {
@@ -73,25 +75,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // ログイン成功時にセッション管理を開始
     const sessionManager = SessionManager.getInstance();
     sessionManager.startSession(() => {
-      logout();
+      void logout().catch(() => alert("ログアウトに失敗しました。接続を確認して再試行してください。"));
       alert('セッションがタイムアウトしました。再度ログインしてください。');
     });
   };
 
   const logout = async () => {
-    try {
-      await apiClient.post('/users/logout/', {});
-    } catch (error) {
-      // ログアウト時のエラーは無視（ネットワークエラーなど）
-      console.warn('Logout request failed, but proceeding with local logout');
-    } finally {
-      setIsLoggedIn(false);
-      setUserCategoryId(null);
-      
-      // セッション管理をクリア
-      const sessionManager = SessionManager.getInstance();
-      sessionManager.clearSession();
-    }
+    // Do not claim logout succeeded while the server cookie is still valid.
+    await apiClient.post('/users/logout/', {});
+    queryClient.clear();
+    setIsLoggedIn(false);
+    setUserCategoryId(null);
+    SessionManager.getInstance().clearSession();
   };
 
   return (

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {
@@ -19,6 +19,7 @@ type VerifyStatus = 'pending' | 'success' | 'error' | 'invalid';
 
 const VerifyProfileUpdate: React.FC = () => {
   const location = useLocation();
+  const requestedToken = useRef<string | null>(null);
   const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
   const [status, setStatus] = useState<VerifyStatus>('pending');
@@ -26,6 +27,8 @@ const VerifyProfileUpdate: React.FC = () => {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const token = params.get('token');
+    if (token && requestedToken.current === token) return;
+    requestedToken.current = token;
 
     if (!token) {
       setStatus('invalid');

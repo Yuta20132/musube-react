@@ -10,6 +10,8 @@ export class SessionManager {
   private timeoutId: NodeJS.Timeout | null = null;
   private readonly TIMEOUT_DURATION = 30 * 60 * 1000; // 30分
 
+  private cleanupListeners: (() => void) | null = null;
+
   private constructor() {}
 
   public static getInstance(): SessionManager {
@@ -20,6 +22,7 @@ export class SessionManager {
   }
 
   public startSession(onTimeout: () => void): void {
+    this.clearSession();
     this.resetTimeout(onTimeout);
     
     // ユーザーアクティビティを監視
@@ -29,6 +32,7 @@ export class SessionManager {
     events.forEach(event => {
       document.addEventListener(event, resetTimer, true);
     });
+    this.cleanupListeners = () => events.forEach(event => document.removeEventListener(event, resetTimer, true));
   }
 
   private resetTimeout(onTimeout: () => void): void {
@@ -42,6 +46,8 @@ export class SessionManager {
   }
 
   public clearSession(): void {
+    this.cleanupListeners?.();
+    this.cleanupListeners = null;
     if (this.timeoutId) {
       clearTimeout(this.timeoutId);
       this.timeoutId = null;
@@ -93,10 +99,10 @@ export const getPasswordStrength = (password: string): {
   const feedback: string[] = [];
   let score = 0;
   
-  if (password.length >= 8) {
+  if (password.length >= 10) {
     score++;
   } else {
-    feedback.push('8文字以上にしてください');
+    feedback.push('10文字以上にしてください');
   }
   
   if (/[a-z]/.test(password)) {

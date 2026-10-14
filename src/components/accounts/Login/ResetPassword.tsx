@@ -60,8 +60,8 @@ const ResetPassword: React.FC = () => {
             return false;
         }
         
-        if (password.length < 8) {
-            setMessage({ type: 'error', text: 'パスワードは8文字以上で入力してください。' });
+        if (password.length < 10) {
+            setMessage({ type: 'error', text: 'パスワードは10文字以上で入力してください。' });
             return false;
         }
         

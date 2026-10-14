@@ -31,8 +31,8 @@ export const validatePassword = (password: string): {
 } => {
   const errors: string[] = [];
   
-  if (password.length < 8) {
-    errors.push('パスワードは8文字以上である必要があります');
+  if (password.length < 10) {
+    errors.push('パスワードは10文字以上である必要があります');
   }
   
   if (!/[A-Z]/.test(password)) {

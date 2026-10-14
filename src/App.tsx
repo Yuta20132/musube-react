@@ -5,25 +5,26 @@ import { Route, Routes, Navigate } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline, CircularProgress, Box } from '@mui/material';
 import Header from './components/Header/Header';
-import Register from './components/Accounts/Register/Register';
+import Register from './components/accounts/Register/Register';
 import TopPage from './components/TopPage/TopPage';
-import Login from './components/Accounts/Login/Login';
-import ForgotPassword from './components/Accounts/Login/ForgotPassword';
-import ResetPassword from './components/Accounts/Login/ResetPassword';
+import Login from './components/accounts/Login/Login';
+import ForgotPassword from './components/accounts/Login/ForgotPassword';
+import ResetPassword from './components/accounts/Login/ResetPassword';
 import Search from './components/Search/Search';
-import SendEmail from './components/Accounts/Register/SendEmail';
-import UserActivate from './components/Accounts/Register/UserActivate';
-import LoginSuccess from './components/Accounts/Login/LoginSuccess';
-import ThreadsPage from './components/Board/Threads/ThreadsPage';
+import SendEmail from './components/accounts/Register/SendEmail';
+import UserActivate from './components/accounts/Register/UserActivate';
+import LoginSuccess from './components/accounts/Login/LoginSuccess';
+import ThreadsPage from './components/board/Threads/ThreadsPage';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import NotificationSnackbar from './components/Notification/NotificationSnackbar';
-import Logout from './components/Accounts/Login/Logout';
-import UserProfile from './components/Accounts/UserProfile/UserProfile';
-import VerifyProfileUpdate from './components/Accounts/UserProfile/VerifyProfileUpdate';
-import ThreadsView from './components/Board/Threads/ThreadsView';
+import Logout from './components/accounts/Login/Logout';
+import UserProfile from './components/accounts/UserProfile/UserProfile';
+import VerifyProfileUpdate from './components/accounts/UserProfile/VerifyProfileUpdate';
+import ThreadsView from './components/board/Threads/ThreadsView';
 import Policy from './components/Policy/Policy';
 import theme from './theme';
+import AdminDashboard from './components/Admin/AdminDashboard';
 const LoadingSpinner: React.FC = () => (
   <Box
     display="flex"
@@ -51,6 +52,9 @@ const AppRoutes: React.FC = () => {
             // ログイン済みユーザー用ルート
             <>
               <Route path="/" element={<Navigate to="/threads_page/1" replace />} />
+              <Route path="/verify" element={<UserActivate />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/profile" element={<UserProfile />} />
               <Route path="/threads_page" element={<Navigate to="/threads_page/1" replace />} />
               <Route path="/threads_page/:categoryId" element={<ThreadsPage />} />

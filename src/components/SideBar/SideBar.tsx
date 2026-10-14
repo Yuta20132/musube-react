@@ -60,7 +60,7 @@ const SideBar: React.FC<SideBarProps> = ({ open, onClose }) => {
       ]
     : [{ text: 'ポリシー', path: '/policy', icon: <GavelIcon /> }];
 
-  const listItems: ListItem[] = [...fixedItems.slice(0, 1), ...boardItems, ...fixedItems.slice(1)];
+  const listItems: ListItem[] = [...(isLoggedIn && userCategoryId === 5 ? [{ text: "管理者画面", path: "/admin", icon: <SettingsIcon /> }] : []), ...fixedItems.slice(0, 1), ...boardItems, ...fixedItems.slice(1)];
 
   return (
     <Drawer

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {
@@ -16,6 +16,7 @@ const apiUrl = process.env.REACT_APP_API_URL;
 
 const UserActivate: React.FC = () => {
   const location = useLocation();
+  const requestedToken = useRef<string | null>(null);
   const navigate = useNavigate();
 
   const [activationStatus, setActivationStatus] = useState<'pending' | 'success' | 'error'>('pending');
@@ -23,6 +24,8 @@ const UserActivate: React.FC = () => {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const token = params.get('token');
+    if (token && requestedToken.current === token) return;
+    requestedToken.current = token;
 
     const activateUser = async () => {
       try {
