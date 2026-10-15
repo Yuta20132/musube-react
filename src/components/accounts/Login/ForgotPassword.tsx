@@ -20,7 +20,7 @@ const ForgotPassword: React.FC = () => {
           headers: { 'Content-Type': 'application/json' },
         }
       )
-      setMessage({ type: 'success', text: 'リセットリンクを送信しました。メールをご確認ください。' })
+      setMessage({ type: 'success', text: 'パスワード再設定用のメールを送信しました。メール内のリンクから、新しいパスワードを設定してください。' })
     } catch (error: any) {
       console.error(error)
       setMessage({ type: 'error', text: error.response?.data?.message || '送信に失敗しました。再度お試しください。' })
@@ -40,7 +40,11 @@ const ForgotPassword: React.FC = () => {
         sx={{ mt: 4, mb: 4, p: 2 }}
       >
         <Typography component="h1" variant="h5">
-          パスワードを忘れた場合
+          パスワードの再設定
+        </Typography>
+
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+          登録したメールアドレスを入力してください。パスワード再設定用のリンクをお送りします。
         </Typography>
 
         {message && (
@@ -57,7 +61,7 @@ const ForgotPassword: React.FC = () => {
                 required
                 fullWidth
                 id="email"
-                label="Email"
+                label="メールアドレス"
                 name="email"
                 autoComplete="email"
                 value={email}
@@ -66,7 +70,7 @@ const ForgotPassword: React.FC = () => {
             </Grid>
             <Grid item xs={12}>
               <Button type="submit" fullWidth variant="contained" color="primary">
-                リセットリンクを送信
+                再設定メールを送信
               </Button>
             </Grid>
           </Grid>

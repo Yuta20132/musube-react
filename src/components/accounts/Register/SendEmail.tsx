@@ -29,7 +29,7 @@ const SendEmail = () => {
         { email },
         { headers: { 'Content-Type': 'application/json' } }
       );
-      setMessage({ type: 'success', text: '確認メールを再送しました。メールをご確認ください。' });
+      setMessage({ type: 'success', text: '確認メールを再送しました。メール内のリンクを開いて、登録を完了してください。' });
     } catch (error: any) {
       console.error(error);
       setMessage({ type: 'error', text: error?.response?.data?.message || '再送に失敗しました。時間をおいて再度お試しください。' });
@@ -42,10 +42,10 @@ const SendEmail = () => {
     <Container maxWidth="sm" style={{ textAlign: 'center', marginTop: '50px' }}>
       <Box>
         <Typography variant="h4" gutterBottom>
-          仮登録が完了しました。
+          確認メールを送信しました
         </Typography>
         <Typography variant="body1" gutterBottom>
-          登録されたメールアドレスをご確認ください
+          登録したメールアドレスに届いた確認メールを開き、メール内のリンクから登録を完了してください。
         </Typography>
         <Typography variant="body2" color="textSecondary" paragraph>
           メールが届かない場合は、迷惑メールフォルダをご確認ください。
@@ -58,7 +58,7 @@ const SendEmail = () => {
         )}
 
         <Button variant="contained" color="primary" onClick={handleResend} disabled={loading}>
-          {loading ? '送信中...' : 'メールがこない場合はこちら'}
+          {loading ? '送信中…' : '確認メールを再送信'}
         </Button>
       </Box>
     </Container>

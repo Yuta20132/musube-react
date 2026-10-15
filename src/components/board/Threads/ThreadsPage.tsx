@@ -1,281 +1,83 @@
 import React, { useMemo, useState } from 'react';
 import ThreadsList from './ThreadsList';
 import ThreadsCreate from './ThreadsCreate';
-import { 
-  Box, 
-  Typography, 
-  Container, 
-  Paper, 
-  Button, 
-  TextField, 
-  InputAdornment,
-  Chip,
-  Stack,
-  Fade
-} from '@mui/material';
-import { 
-  Add as AddIcon, 
-  Search as SearchIcon,
-  Forum as ForumIcon,
-  People as PeopleIcon
-} from '@mui/icons-material';
+import { Box, Typography, Container, Paper, Button, TextField, InputAdornment, Stack, Alert, MenuItem, IconButton, Tabs, Tab } from '@mui/material';
+import { Add, Search, Close, ForumOutlined } from '@mui/icons-material';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import { Thread } from '../typeThreads';
-import { Navigate, useParams } from 'react-router-dom';
+import { Link as RouterLink, Navigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../../contexts/AuthContext';
 import { BOARD_LABELS, canAccessCategory, CategoryId, getAccessibleCategoryIds, parseCategoryId } from '../../../utils/categoryAccess';
 
 const apiUrl = process.env.REACT_APP_API_URL;
-
 const ThreadsPage: React.FC = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
   const { userCategoryId } = useAuth();
-  
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [showCreateForm, setShowCreateForm] = useState<boolean>(false);
-  const [sortBy, setSortBy] = useState<'newest' | 'popular' | 'alphabetical'>('newest');
   const selectedCategoryId = parseCategoryId(categoryId);
   const shouldRedirect = !selectedCategoryId || !canAccessCategory(selectedCategoryId, userCategoryId);
   const currentCategoryId: CategoryId = selectedCategoryId ?? 1;
-  const accessibleCategoryIds = useMemo(
-    () => getAccessibleCategoryIds(userCategoryId),
-    [userCategoryId]
-  );
-
-  const {
-    data: allThreads = [],
-    isLoading: loading,
-    isError: isThreadsError,
-  } = useQuery({
+  const accessibleCategoryIds = useMemo(() => getAccessibleCategoryIds(userCategoryId), [userCategoryId]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [sortBy, setSortBy] = useState<'newest' | 'alphabetical'>('newest');
+  const { data: allThreads = [], isLoading, isError, isFetching, refetch } = useQuery({
     queryKey: ['threads', currentCategoryId],
     queryFn: async () => {
       const response = await axios.get(`${apiUrl}/threads/${currentCategoryId}`, {
-        params: {
-          limit: 10,
-          offset: 0,
-        },
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        withCredentials: true,
+        params: { limit: 10, offset: 0 },
+        headers: { 'Content-Type': 'application/json' }, withCredentials: true,
       });
-      return Array.isArray(response.data) ? (response.data as Thread[]) : [];
+      return Array.isArray(response.data) ? response.data as Thread[] : [];
     },
     enabled: !shouldRedirect,
   });
-
   const threads = useMemo(() => {
-    let filteredThreads = [...allThreads];
-
-    if (searchTerm.trim()) {
-      const trimmedSearchTerm = searchTerm.trim().toLowerCase();
-      filteredThreads = filteredThreads.filter(
-        (thread) =>
-          thread.title.toLowerCase().includes(trimmedSearchTerm) ||
-          thread.description.toLowerCase().includes(trimmedSearchTerm)
-      );
-    }
-
-    switch (sortBy) {
-      case 'newest':
-        filteredThreads.sort(
-          (a, b) =>
-            new Date(b.created_at || '').getTime() -
-            new Date(a.created_at || '').getTime()
-        );
-        break;
-      case 'alphabetical':
-        filteredThreads.sort((a, b) => a.title.localeCompare(b.title));
-        break;
-      case 'popular':
-        filteredThreads.sort((a, b) => (b.id || 0) - (a.id || 0));
-        break;
-    }
-
-    return filteredThreads;
+    const term = searchTerm.trim().toLocaleLowerCase('ja');
+    return allThreads.filter(thread => `${thread.title}\n${thread.description}`.toLocaleLowerCase('ja').includes(term))
+      .sort((a, b) => sortBy === 'alphabetical' ? a.title.localeCompare(b.title, 'ja') : (Date.parse(b.created_at || '') || 0) - (Date.parse(a.created_at || '') || 0));
   }, [allThreads, searchTerm, sortBy]);
 
-  const handleCreateSuccess = () => {
-    if (shouldRedirect) return;
-    setShowCreateForm(false);
-  };
-
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(event.target.value);
-  };
-
-  const getSortLabel = (sort: string) => {
-    switch (sort) {
-      case 'newest': return '新着順';
-      case 'popular': return '人気順';
-      case 'alphabetical': return 'あいうえお順';
-      default: return '新着順';
-    }
-  };
-
-  if (shouldRedirect) {
-    return <Navigate to="/threads_page/1" replace />;
-  }
-
+  if (shouldRedirect) return <Navigate to="/threads_page/1" replace />;
   return (
-    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
-      {/* ヘッダーセクション */}
-      <Box
-        sx={(theme) => ({
-          background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
-          color: 'white',
-          py: { xs: 4, md: 6 },
-          position: 'relative',
-          overflow: 'hidden',
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.05"%3E%3Ccircle cx="30" cy="30" r="4"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
-          },
-        })}
-      >
-        <Container maxWidth="lg">
-          <Box sx={{ position: 'relative', zIndex: 1 }}>
-            <Stack 
-              direction={{ xs: 'column', md: 'row' }} 
-              justifyContent="space-between" 
-              alignItems={{ xs: 'center', md: 'flex-start' }}
-              spacing={3}
-            >
-              <Box sx={{ textAlign: { xs: 'center', md: 'left' } }}>
-                <Stack direction="row" alignItems="center" spacing={2} sx={{ mb: 2, justifyContent: { xs: 'center', md: 'flex-start' } }}>
-                  <ForumIcon sx={{ fontSize: 40 }} />
-                  <Typography variant="h3" component="h1" sx={{ fontWeight: 800 }}>
-                    {BOARD_LABELS[currentCategoryId]}
-                  </Typography>
-                </Stack>
-                <Typography variant="h6" sx={{ opacity: 0.9, mb: 1 }}>
-                  コミュニティで情報を共有しよう
-                </Typography>
-                <Stack direction="row" spacing={3} sx={{ justifyContent: { xs: 'center', md: 'flex-start' } }}>
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <PeopleIcon sx={{ fontSize: 20 }} />
-                    <Typography variant="body2">{allThreads.length} スレッド</Typography>
-                  </Stack>
-                </Stack>
-              </Box>
-              
-              <Button
-                variant="contained"
-                size="large"
-                startIcon={<AddIcon />}
-                onClick={() => setShowCreateForm(!showCreateForm)}
-                sx={{
-                  bgcolor: 'white',
-                  color: 'primary.main',
-                  px: 4,
-                  py: 1.5,
-                  '&:hover': {
-                    bgcolor: 'grey.100',
-                    transform: 'translateY(-2px)',
-                  },
-                }}
-              >
-                新規スレッド作成
-              </Button>
-            </Stack>
-          </Box>
-        </Container>
-      </Box>
-
-      <Container maxWidth="lg" sx={{ py: 4 }}>
-        {/* スレッド作成フォーム */}
-        {showCreateForm && (
-          <Fade in={showCreateForm}>
-            <Box sx={{ mb: 4 }}>
-              <ThreadsCreate
-                onThreadSuccess={handleCreateSuccess}
-                accessibleCategoryIds={accessibleCategoryIds}
-                initialCategoryId={currentCategoryId}
-              />
-            </Box>
-          </Fade>
-        )}
-
-        {/* アクションバー */}
-        <Paper 
-          elevation={1} 
-          sx={{ 
-            p: 3, 
-            mb: 4,
-            position: 'sticky',
-            top: 0,
-            zIndex: 10,
-            backdropFilter: 'blur(10px)',
-            bgcolor: 'rgba(255, 255, 255, 0.95)',
-          }}
-        >
-          <Stack 
-            direction={{ xs: 'column', md: 'row' }} 
-            spacing={3} 
-            alignItems={{ xs: 'stretch', md: 'center' }}
-          >
-            {/* 検索バー */}
-            <TextField
-              placeholder="スレッドを検索..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-              variant="outlined"
-              size="medium"
-              sx={{ flex: 1 }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <SearchIcon color="primary" />
-                  </InputAdornment>
-                ),
-              }}
-            />
-            
-            {/* ソートオプション */}
-            <Stack direction="row" spacing={1} sx={{ flexShrink: 0 }}>
-              <Typography variant="body2" sx={{ alignSelf: 'center', color: 'text.secondary', mr: 1 }}>
-                並び順:
-              </Typography>
-              {(['newest', 'popular', 'alphabetical'] as const).map((sort) => (
-                <Chip
-                  key={sort}
-                  label={getSortLabel(sort)}
-                  variant={sortBy === sort ? 'filled' : 'outlined'}
-                  color={sortBy === sort ? 'primary' : 'default'}
-                  onClick={() => setSortBy(sort)}
-                  sx={{ cursor: 'pointer' }}
-                />
-              ))}
-            </Stack>
-          </Stack>
-          
-          {/* 検索結果表示 */}
-          {searchTerm && (
-            <Box sx={{ mt: 2, pt: 2, borderTop: 1, borderColor: 'divider' }}>
-              <Typography variant="body2" color="text.secondary">
-                "{searchTerm}" の検索結果: {threads.length} 件
-              </Typography>
-            </Box>
-          )}
-        </Paper>
-
-        {isThreadsError && (
-          <Typography color="error" sx={{ mb: 3 }}>
-            スレッドの取得に失敗しました
-          </Typography>
-        )}
-
-        {/* スレッド一覧 */}
-        <ThreadsList threads={threads} loading={loading} />
-      </Container>
-    </Box>
+    <Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>
+      <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ xs: 'stretch', sm: 'center' }} spacing={2} sx={{ mb: 3 }}>
+        <Box>
+          <Stack direction="row" spacing={1.5} alignItems="center"><ForumOutlined color="primary" /><Typography variant="h4" component="h1">{BOARD_LABELS[currentCategoryId]}</Typography></Stack>
+          <Typography color="text.secondary" variant="body2" sx={{ mt: 1 }}>気になる話題を見つけて、質問やアイデアを共有しましょう。</Typography>
+        </Box>
+        <Button variant="contained" startIcon={showCreateForm ? <Close /> : <Add />} onClick={() => setShowCreateForm(value => !value)} aria-expanded={showCreateForm} aria-controls="thread-create-form" sx={{ flexShrink: 0 }}>
+          {showCreateForm ? '作成フォームを閉じる' : 'スレッドを作成'}
+        </Button>
+      </Stack>
+      <Tabs value={currentCategoryId} variant="scrollable" scrollButtons="auto" allowScrollButtonsMobile aria-label="掲示板を選ぶ" sx={{ mb: 3, borderBottom: '1px solid', borderColor: 'divider' }}>
+        {accessibleCategoryIds.map(id => <Tab key={id} value={id} label={BOARD_LABELS[id]} component={RouterLink} to={`/threads_page/${id}`} />)}
+      </Tabs>
+      {showCreateForm && <Box id="thread-create-form" sx={{ mb: 3 }}>
+        <ThreadsCreate onThreadSuccess={() => setShowCreateForm(false)} onCancel={() => setShowCreateForm(false)} accessibleCategoryIds={accessibleCategoryIds} initialCategoryId={currentCategoryId} />
+      </Box>}
+      <Paper elevation={0} sx={{ p: { xs: 2, sm: 3 }, mb: 3 }}>
+        <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
+          <TextField fullWidth label="スレッドを検索" placeholder="タイトル・説明のキーワード" value={searchTerm} onChange={event => setSearchTerm(event.target.value)} InputProps={{
+            startAdornment: <InputAdornment position="start"><Search color="primary" /></InputAdornment>,
+            endAdornment: searchTerm ? <InputAdornment position="end"><IconButton aria-label="検索条件をクリア" onClick={() => setSearchTerm('')} edge="end"><Close /></IconButton></InputAdornment> : undefined,
+          }} />
+          <TextField select label="並び順" value={sortBy} onChange={event => setSortBy(event.target.value as typeof sortBy)} sx={{ minWidth: 160 }}>
+            <MenuItem value="newest">新着順</MenuItem><MenuItem value="alphabetical">タイトル順</MenuItem>
+          </TextField>
+        </Stack>
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 1.5 }}>表示中のスレッド（最大10件）のタイトル・説明から検索します。</Typography>
+      </Paper>
+      {isError ? <Alert severity="error" action={<Button color="inherit" disabled={isFetching} onClick={() => void refetch()}>{isFetching ? '再取得中…' : '再試行'}</Button>}>スレッドを読み込めませんでした。接続を確認して再試行してください。</Alert> : <>
+        <Typography role="status" variant="body2" color="text.secondary" sx={{ mb: 2 }}>{isLoading ? 'スレッドを読み込んでいます…' : searchTerm.trim() ? `「${searchTerm.trim()}」の検索結果：${threads.length}件` : `${threads.length}件のスレッド`}</Typography>
+        {!isLoading && threads.length === 0 ? <Paper elevation={0} sx={{ p: { xs: 3, sm: 6 }, textAlign: 'center' }}>
+          <ForumOutlined sx={{ color: 'text.secondary', fontSize: 36, mb: 1 }} />
+          <Typography variant="h6" component="h2">{searchTerm.trim() ? '一致するスレッドがありません' : 'まだスレッドがありません'}</Typography>
+          <Typography color="text.secondary" variant="body2" sx={{ mt: 1, mb: 3 }}>{searchTerm.trim() ? '別のキーワードを試すか、検索条件をクリアしてください。' : '最初の質問やアイデアを投稿して、会話を始めましょう。'}</Typography>
+          <Button variant="outlined" onClick={() => searchTerm.trim() ? setSearchTerm('') : setShowCreateForm(true)}>{searchTerm.trim() ? '検索条件をクリア' : 'スレッドを作成'}</Button>
+        </Paper> : <ThreadsList threads={threads} loading={isLoading} />}
+      </>}
+    </Container>
   );
 };
-
 export default ThreadsPage;

@@ -33,7 +33,7 @@ const ThreadsView: React.FC = () => {
     return (
       <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <Typography variant="h6" sx={{ color: 'text.secondary' }}>
-          スレッドを選択してください
+          掲示板の一覧からスレッドを選んでください。
         </Typography>
       </Box>
     );
@@ -136,7 +136,7 @@ const ThreadsView: React.FC = () => {
                 py: 1.5,
               }}
             >
-              {showPostForm ? '投稿をキャンセル' : '新しい投稿を作成'}
+              {showPostForm ? '投稿フォームを閉じる' : '投稿する'}
             </Button>
           </Stack>
         </Paper>

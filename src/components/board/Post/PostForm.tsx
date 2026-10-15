@@ -31,7 +31,7 @@ const PostForm: React.FC<Props> = ({ getThreadId, categoryId = 1, onPostSuccess 
             });
         },
         onSuccess: async () => {
-            showNotification('投稿を作成しました', 'success');
+            showNotification('投稿しました', 'success');
             setTitle('');
             setContent('');
             setValidationErrors([]);
@@ -69,7 +69,7 @@ const PostForm: React.FC<Props> = ({ getThreadId, categoryId = 1, onPostSuccess 
         <Box sx={{ maxWidth: 800, mx: 'auto', mb: 4 }}>
             <Paper elevation={1} sx={{ p: 3, mt: 4 }}>
                 <Typography variant="h6" gutterBottom sx={{ color: 'primary.main', fontWeight: 600, mb: 3 }}>
-                    ポストの投稿
+                    新しい投稿
                 </Typography>
             {validationErrors.length > 0 && (
                 <Alert severity="error" sx={{ mb: 2 }}>
@@ -97,7 +97,7 @@ const PostForm: React.FC<Props> = ({ getThreadId, categoryId = 1, onPostSuccess 
                     }}
                 />
                 <TextField
-                    label="内容"
+                    label="本文"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     variant="outlined"
@@ -124,7 +124,7 @@ const PostForm: React.FC<Props> = ({ getThreadId, categoryId = 1, onPostSuccess 
                         size="large"
                         sx={{ px: 4 }}
                     >
-                        {createPostMutation.isPending ? '投稿中...' : '投稿'}
+                        {createPostMutation.isPending ? '投稿中…' : '投稿する'}
                     </Button>
                 </Box>
             </Box>

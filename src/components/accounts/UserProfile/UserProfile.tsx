@@ -313,7 +313,7 @@ const UserProfile: React.FC = () => {
     }
 
     if (!hasPayload(payload)) {
-      alert('更新内容がありません。');
+      alert('変更した項目がありません。');
       return;
     }
 
@@ -342,7 +342,7 @@ const UserProfile: React.FC = () => {
       return;
     }
     if (nextEmail === initialProfile.email) {
-      alert('更新内容がありません。');
+      alert('変更した項目がありません。');
       return;
     }
 
@@ -350,7 +350,7 @@ const UserProfile: React.FC = () => {
       setSavingEmail(true);
       await sendUpdateRequest({ email: nextEmail });
       await fetchData(false);
-      setEmailUpdateMessage('確認メールを送信しました。メールをご確認ください。');
+      setEmailUpdateMessage('確認メールを送信しました。メール内のリンクを開いて、変更を完了してください。');
     } catch (error) {
       console.error('handleSaveEmailChange error:', error);
       setEmailUpdateMessage(null);
@@ -367,7 +367,7 @@ const UserProfile: React.FC = () => {
       return;
     }
     if (userProfile.categoryId === initialProfile.categoryId) {
-      alert('更新内容がありません。');
+      alert('変更した項目がありません。');
       return;
     }
 
@@ -375,7 +375,7 @@ const UserProfile: React.FC = () => {
       setSavingCategory(true);
       await sendUpdateRequest({ category_id: userProfile.categoryId });
       await fetchData(false);
-      setCategoryUpdateMessage('確認メールを送信しました。メールをご確認ください。');
+      setCategoryUpdateMessage('確認メールを送信しました。メール内のリンクを開いて、変更を完了してください。');
     } catch (error) {
       console.error('handleSaveCategoryChange error:', error);
       setCategoryUpdateMessage(null);
@@ -443,7 +443,7 @@ const UserProfile: React.FC = () => {
                     <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
                       <AccountCircle sx={{ color: 'primary.main', mr: 1, mb: 0.5 }} />
                       <StyledTextField
-                        label="ユーザーネーム"
+                        label="ユーザー名"
                         fullWidth
                         value={userProfile.username}
                         variant="outlined"
@@ -457,7 +457,7 @@ const UserProfile: React.FC = () => {
                     <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
                       <Person sx={{ color: 'primary.main', mr: 1, mb: 0.5 }} />
                       <StyledTextField
-                        label="名字"
+                        label="姓"
                         fullWidth
                         value={userProfile.lastName}
                         variant="outlined"
@@ -471,7 +471,7 @@ const UserProfile: React.FC = () => {
                     <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
                       <Person sx={{ color: 'primary.main', mr: 1, mb: 0.5 }} />
                       <StyledTextField
-                        label="名前"
+                        label="名"
                         fullWidth
                         value={userProfile.firstName}
                         variant="outlined"
@@ -499,7 +499,7 @@ const UserProfile: React.FC = () => {
                     <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
                       <Info sx={{ color: 'primary.main', mr: 1, mt: 2 }} />
                       <StyledTextField
-                        label="説明"
+                        label="自己紹介"
                         fullWidth
                         multiline
                         rows={4}
@@ -520,7 +520,7 @@ const UserProfile: React.FC = () => {
                     startIcon={<Save />}
                     disabled={savingNonVerification}
                   >
-                    {savingNonVerification ? '保存中...' : '保存'}
+                    {savingNonVerification ? '保存中…' : '変更を保存'}
                   </SaveButton>
                 </Box>
               </>
@@ -529,7 +529,7 @@ const UserProfile: React.FC = () => {
             {activeTab === 1 && (
               <>
                 <Alert severity="warning" sx={{ mb: 2 }}>
-                  メールアドレスの変更はメール認証が必要です。
+                  メールアドレスの変更には、確認メール内のリンクからの手続きが必要です。
                 </Alert>
                 {emailUpdateMessage && (
                   <Alert severity="success" sx={{ mb: 2 }}>
@@ -552,7 +552,7 @@ const UserProfile: React.FC = () => {
                     </Box>
                     <Box sx={{ mt: 1 }}>
                       <Button variant="outlined" onClick={handleSaveEmailChange} disabled={savingEmail}>
-                        {savingEmail ? '更新中...' : 'メールアドレスを更新'}
+                        {savingEmail ? '送信中…' : '変更確認メールを送信'}
                       </Button>
                     </Box>
                   </Grid>
@@ -563,7 +563,7 @@ const UserProfile: React.FC = () => {
             {activeTab === 2 && (
               <>
                 <Alert severity="warning" sx={{ mb: 2 }}>
-                  会員種別の変更はメール認証が必要です。
+                  会員種別の変更には、確認メール内のリンクからの手続きが必要です。
                 </Alert>
                 {categoryUpdateMessage && (
                   <Alert severity="success" sx={{ mb: 2 }}>
@@ -590,7 +590,7 @@ const UserProfile: React.FC = () => {
                     </FormControl>
                     <Box sx={{ mt: 1 }}>
                       <Button variant="outlined" onClick={handleSaveCategoryChange} disabled={savingCategory}>
-                        {savingCategory ? '更新中...' : '会員種別を更新'}
+                        {savingCategory ? '送信中…' : '変更確認メールを送信'}
                       </Button>
                     </Box>
                   </Grid>

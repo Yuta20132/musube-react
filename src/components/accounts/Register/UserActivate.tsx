@@ -47,14 +47,14 @@ const UserActivate: React.FC = () => {
       <Card elevation={6} sx={{ borderRadius: 2, overflow: 'hidden' }}>
         <CardContent sx={{ p: 4, textAlign: 'center' }}>
           <Typography variant="h4" gutterBottom>
-            アカウントのアクティベート
+            メールアドレスの確認
           </Typography>
 
           {activationStatus === 'pending' && (
             <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <CircularProgress />
               <Typography variant="body1" sx={{ mt: 2 }}>
-                アカウントをアクティベート中です...
+                メールアドレスを確認しています…
               </Typography>
             </Box>
           )}
@@ -62,10 +62,10 @@ const UserActivate: React.FC = () => {
           {activationStatus === 'success' && (
             <Box sx={{ mt: 2 }}>
               <Alert severity="success" sx={{ mb: 3 }}>
-                アカウントが正常にアクティベートされました。
+                登録が完了しました。ログインしてmusuBeをご利用ください。
               </Alert>
               <Button variant="contained" size="large" onClick={handleLoginForm} fullWidth>
-                ログインページへ
+                ログイン画面へ
               </Button>
             </Box>
           )}
@@ -73,10 +73,10 @@ const UserActivate: React.FC = () => {
           {activationStatus === 'error' && (
             <Box sx={{ mt: 2 }}>
               <Alert severity="error" sx={{ mb: 3 }}>
-                アカウントのアクティベーションに失敗しました。再度お試しください。
+                メールアドレスを確認できませんでした。確認メール内のリンクをもう一度開いてください。
               </Alert>
               <Button variant="outlined" size="large" onClick={() => window.location.reload()} fullWidth>
-                リトライ
+                もう一度確認する
               </Button>
             </Box>
           )}

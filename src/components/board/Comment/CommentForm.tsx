@@ -49,7 +49,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
     },
     onError: (error) => {
       console.error('Error posting comment:', error);
-      showNotification('コメントの投稿に失敗しました', 'error');
+      showNotification('コメントを投稿できませんでした。もう一度お試しください。', 'error');
     },
   });
 
@@ -75,7 +75,7 @@ const CommentForm: React.FC<CommentFormProps> = ({
         disabled={createCommentMutation.isPending}
         sx={{ whiteSpace: 'nowrap' }}
       >
-        {createCommentMutation.isPending ? '投稿中...' : '投稿'}
+        {createCommentMutation.isPending ? '投稿中…' : '投稿する'}
       </Button>
     </Box>
   );

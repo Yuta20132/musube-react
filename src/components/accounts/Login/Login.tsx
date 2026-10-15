@@ -20,6 +20,8 @@ import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
 import LoginIcon from '@mui/icons-material/Login';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import { Link as RouterLink } from 'react-router-dom';
 import { validateEmail } from '../../../utils/validation';
 
 
@@ -42,10 +44,6 @@ const Login = () => {
 
     const navigate = useNavigate();
 
-    const handleForgotPassword = () => {
-        navigate("/forgot-password");
-    };
-
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setFormData({
             ...formData,
@@ -62,7 +60,7 @@ const Login = () => {
         
         // 入力値検証
         if (!validateEmail(email)) {
-            setError("正しいメールアドレスを入力してください。");
+            setError("メールアドレスの形式を確認してください。");
             setLoading(false);
             return;
         }
@@ -76,10 +74,10 @@ const Login = () => {
         try {
             await login(email.trim(), password);
             showNotification('ログインしました', 'success');
-            navigate('/login-success');
+            navigate('/threads_page/1');
         } catch (error) {
             // セキュリティのため詳細なエラー情報は表示しない
-            setError("ログインに失敗しました。メールアドレスまたはパスワードが正しくありません。");
+            setError("ログインできませんでした。メールアドレスとパスワード、通信状況を確認して、もう一度お試しください。");
         } finally {
             setLoading(false);
         }
@@ -92,16 +90,16 @@ const Login = () => {
     return (
         <Box 
             sx={(theme) => ({
-                background: `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.secondary.main} 100%)`,
-                minHeight: '100vh',
+                background: theme.palette.background.default,
+                minHeight: 'calc(100dvh - 72px)',
                 display: 'flex',
                 alignItems: 'center',
-                py: 8
+                py: { xs: 4, sm: 6 }
             })}
         >
-                <Container component="main" maxWidth="sm">
+                <Container maxWidth="sm">
                     <Card elevation={2}>
-                        <CardContent sx={{ p: 4 }}>
+                        <CardContent sx={{ p: { xs: 2.5, sm: 4 } }}>
                             <Box
                                 display="flex"
                                 justifyContent="center"
@@ -126,7 +124,7 @@ const Login = () => {
                                             required
                                             fullWidth
                                             id="email"
-                                            label="Email"
+                                            label="メールアドレス"
                                             name="email"
                                             type="email"
                                             autoComplete="email"
@@ -148,7 +146,7 @@ const Login = () => {
                                             required
                                             fullWidth
                                             name="password"
-                                            label="Password"
+                                            label="パスワード"
                                             type={showPassword ? 'text' : 'password'}
                                             id="password"
                                             autoComplete="current-password"
@@ -164,11 +162,14 @@ const Login = () => {
                                                 endAdornment: (
                                                     <InputAdornment position="end">
                                                         <IconButton
+                                                            aria-label={showPassword ? 'パスワードを隠す' : 'パスワードを表示'}
+                                                            aria-pressed={showPassword}
+                                                            onMouseDown={event => event.preventDefault()}
                                                             onClick={handleTogglePasswordVisibility}
                                                             edge="end"
                                                             color="primary"
                                                         >
-                                                            <VisibilityIcon />
+                                                            {showPassword ? <VisibilityOffIcon /> : <VisibilityIcon />}
                                                         </IconButton>
                                                     </InputAdornment>
                                                 ),
@@ -185,21 +186,24 @@ const Login = () => {
                                             startIcon={<LoginIcon />}
                                             size="large"
                                         >
-                                            {loading ? 'ログイン中...' : 'ログイン'}
+                                            {loading ? 'ログイン中…' : 'ログイン'}
                                         </Button>
                                     </Grid>
                                     <Grid item xs={12} textAlign="center"> 
                                         <Link
-                                            component="button"
+                                            component={RouterLink}
+                                            to="/forgot-password"
                                             variant="body2"
-                                            onClick={handleForgotPassword}
                                             sx={{ color: 'primary.main' }}
                                         >
-                                            パスワードを忘れた場合はこちら
+                                            パスワードを忘れた方
                                         </Link>
                                     </Grid>
                                 </Grid>
                             </form>
+                            <Typography variant="body2" color="text.secondary" sx={{ mt: 3, textAlign: 'center' }}>
+                                初めてご利用の方は <Link component={RouterLink} to="/register_form">新規登録</Link>
+                            </Typography>
                         </CardContent>
                     </Card>
                 </Container>

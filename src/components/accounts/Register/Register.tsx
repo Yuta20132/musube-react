@@ -58,7 +58,7 @@ const Register: React.FC = () => {
 
     const [error, setError] = useState<string | null>(null);
     const [activeStep, setActiveStep] = useState(0);
-    const steps = ['基本情報', '個人情報', '認証情報'];
+    const steps = ['アカウント情報', 'プロフィール', 'パスワード設定'];
     const [showPasswords, setShowPasswords] = useState<boolean>(false);
     console.log(error)
     // フォームの入力値が変更された時に呼び出されるハンドラー。
@@ -94,25 +94,25 @@ const Register: React.FC = () => {
             case 0:
                 // 基本情報のバリデーション
                 if (!formData.username || !formData.email) {
-                    setError('すべての必須項目を入力してください');
+                    setError('必須項目（*）を入力してください。');
                     return false;
                 }
                 break;
             case 1:
                 // 個人情報のバリデーション
                 if (!formData.firstName || !formData.lastName || !formData.institution) {
-                    setError('すべての必須項目を入力してください');
+                    setError('必須項目（*）を入力してください。');
                     return false;
                 }
                 break;
             case 2:
                 // 認証情報のバリデーション
                 if (!formData.password || !formData.passwordConfirm) {
-                    setError('パスワードを入力してください');
+                    setError('パスワードを入力してください。');
                     return false;
                 }
                 if (formData.password !== formData.passwordConfirm) {
-                    setError('パスワードが一致していません');
+                    setError('確認用パスワードが一致しません。同じパスワードを入力してください。');
                     return false;
                 }
                 break;
@@ -133,12 +133,12 @@ const Register: React.FC = () => {
         // デストラクチャリングを使用してformDataから値を取得。
         const { username, email, firstName, lastName, password, passwordConfirm, memberType, institution } = formData;
         if (!formData.password || !formData.passwordConfirm) {
-            setError('パスワードを入力してください');
+            setError('パスワードを入力してください。');
             return false;
         }
         //パスワードと確認パスワードが一致しているかチェック
         if (password !== passwordConfirm) {
-            setError('パスワードが一致していません');
+            setError('確認用パスワードが一致しません。同じパスワードを入力してください。');
             return;
         }
 
@@ -146,7 +146,7 @@ const Register: React.FC = () => {
         if (memberType === 2) {
             const emailDomain = email.split('@')[1];
             if (emailDomain && !emailDomain.endsWith('ac.jp')) {
-                setError('大学・研究所会員は大学または研究所のメールアドレス（ac.jpドメイン）を使用してください');
+                setError('大学・研究所会員は、ac.jpで終わる大学・研究所のメールアドレスを入力してください。');
                 return;
             }
         }
@@ -217,7 +217,7 @@ const Register: React.FC = () => {
 
                             <Paper elevation={0} sx={{ p: 3, bgcolor: 'background.default', borderRadius: 2, mb: 4 }}>
                                 <Typography variant="body1" color="text.secondary" sx={{ mb: 1 }}>
-                                    アカウントを作成して、アプリケーションの全機能にアクセスしましょう。
+                                    入力は3ステップです。送信後、確認メール内のリンクを開くと登録が完了します。
                                 </Typography>
                             </Paper>
 
@@ -283,7 +283,7 @@ const Register: React.FC = () => {
                                                 required
                                                 fullWidth
                                                 id="lastName"
-                                                label="苗字"
+                                                label="姓"
                                                 name="lastName"
                                                 autoComplete="lname"
                                                 value={formData.lastName}
@@ -303,7 +303,7 @@ const Register: React.FC = () => {
                                                 required
                                                 fullWidth
                                                 id="firstName"
-                                                label="名前"
+                                                label="名"
                                                 name="firstName"
                                                 autoComplete="fname"
                                                 value={formData.firstName}
@@ -338,7 +338,7 @@ const Register: React.FC = () => {
                                                 required
                                                 fullWidth
                                                 id="institution"
-                                                label="所属"
+                                                label="所属機関"
                                                 name="institution"
                                                 autoComplete="institution"
                                                 value={formData.institution}
@@ -395,7 +395,7 @@ const Register: React.FC = () => {
                                                 required
                                                 fullWidth
                                                 name="passwordConfirm"
-                                                label="確認パスワード"
+                                                label="パスワード（確認用）"
                                                 type={showPasswords ? "text" : "password"}
                                                 id="passwordConfirm"
                                                 value={formData.passwordConfirm}
@@ -439,7 +439,7 @@ const Register: React.FC = () => {
                                             variant="contained"
                                             color="primary"
                                         >
-                                            登録する
+                                            確認メールを送信
                                         </Button>
                                     ) : (
                                         <Button

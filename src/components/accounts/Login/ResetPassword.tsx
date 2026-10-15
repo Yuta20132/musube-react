@@ -56,7 +56,7 @@ const ResetPassword: React.FC = () => {
     
     const validateForm = (): boolean => {
         if (!email || !password || !confirmPassword) {
-            setMessage({ type: 'error', text: 'すべてのフィールドを入力してください。' });
+            setMessage({ type: 'error', text: 'すべての項目を入力してください。' });
             return false;
         }
         
@@ -66,12 +66,12 @@ const ResetPassword: React.FC = () => {
         }
         
         if (password !== confirmPassword) {
-            setMessage({ type: 'error', text: 'パスワードが一致しません。' });
+            setMessage({ type: 'error', text: '確認用パスワードが一致しません。同じパスワードを入力してください。' });
             return false;
         }
         
         if (!token) {
-            setMessage({ type: 'error', text: '無効なリセットリンクです。' });
+            setMessage({ type: 'error', text: '再設定用のリンクを確認できませんでした。パスワード再設定メールをもう一度リクエストしてください。' });
             return false;
         }
 
@@ -94,7 +94,7 @@ const ResetPassword: React.FC = () => {
                 { email, token, password },
                 { headers: { "Content-Type": "application/json" } }
             );
-            setMessage({ type: 'success', text: 'パスワードが正常に再設定されました。' });
+            setMessage({ type: 'success', text: 'パスワードを再設定しました。3秒後にログイン画面へ移動します。' });
             
             // 3秒後にログインページに遷移
             setTimeout(() => {
@@ -164,7 +164,7 @@ const ResetPassword: React.FC = () => {
                                         required
                                         fullWidth
                                         name="email"
-                                        label="Email"
+                                        label="メールアドレス"
                                         type="email"
                                         id="email"
                                         autoComplete="email"
@@ -179,6 +179,7 @@ const ResetPassword: React.FC = () => {
                                         fullWidth
                                         name="password"
                                         label="新しいパスワード"
+                                        helperText="10文字以上で入力してください"
                                         type={showPassword ? 'text' : 'password'}
                                         id="password"
                                         autoComplete="new-password"
@@ -209,7 +210,7 @@ const ResetPassword: React.FC = () => {
                                         required
                                         fullWidth
                                         name="confirmPassword"
-                                        label="パスワード確認"
+                                        label="パスワード（確認用）"
                                         type={showConfirmPassword ? 'text' : 'password'}
                                         id="confirmPassword"
                                         autoComplete="new-password"
@@ -243,7 +244,7 @@ const ResetPassword: React.FC = () => {
                                         disabled={loading}
                                         startIcon={<LockResetIcon />}
                                     >
-                                        {loading ? 'パスワード再設定中...' : 'パスワードを再設定'}
+                                        {loading ? '再設定中…' : 'パスワードを再設定'}
                                     </Button>
                                 </Grid>
                             </Grid>

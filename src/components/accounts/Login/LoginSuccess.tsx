@@ -49,11 +49,11 @@ const LoginSuccess: React.FC = () => {
                         <CheckCircleIcon sx={{ fontSize: 80, color: 'success.main', mb: 2 }} />
                         
                         <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', mb: 2 }}>
-                            ログイン成功！
+                            ログインしました
                         </Typography>
                         
                         <Typography variant="body1" color="text.secondary" sx={{ mb: 4 }}>
-                            認証が完了しました。メインページに移動します...
+                            3秒後に掲示板へ移動します。
                         </Typography>
                         
                         <Box sx={{ display: 'flex', justifyContent: 'center', mb: 4 }}>
@@ -76,7 +76,7 @@ const LoginSuccess: React.FC = () => {
                                 }
                             }}
                         >
-                            ホームに進む
+                            掲示板へ進む
                         </Button>
                     </Paper>
                 </Container>

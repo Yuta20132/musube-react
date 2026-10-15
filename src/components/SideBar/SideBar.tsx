@@ -5,7 +5,7 @@ import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { 
   Person as PersonIcon, 
   Forum as ForumIcon, 
@@ -34,6 +34,7 @@ interface ListItem {
 }
 
 const SideBar: React.FC<SideBarProps> = ({ open, onClose }) => {
+  const { pathname } = useLocation();
   const { isLoggedIn, userCategoryId } = useAuth();
 
   const boardIconMap: Record<CategoryId, React.ReactElement> = {
@@ -55,10 +56,10 @@ const SideBar: React.FC<SideBarProps> = ({ open, onClose }) => {
   const fixedItems: ListItem[] = isLoggedIn
     ? [
         { text: 'プロフィール', path: '/profile', icon: <PersonIcon /> },
-        { text: 'ユーザ検索', path: '/user-search', icon: <SearchIcon /> },
-        { text: 'ポリシー', path: '/policy', icon: <GavelIcon /> },
+        { text: 'ユーザー検索', path: '/user-search', icon: <SearchIcon /> },
+        { text: '利用規約とポリシー', path: '/policy', icon: <GavelIcon /> },
       ]
-    : [{ text: 'ポリシー', path: '/policy', icon: <GavelIcon /> }];
+    : [{ text: '利用規約とポリシー', path: '/policy', icon: <GavelIcon /> }];
 
   const listItems: ListItem[] = [...(isLoggedIn && userCategoryId === 5 ? [{ text: "管理者画面", path: "/admin", icon: <SettingsIcon /> }] : []), ...fixedItems.slice(0, 1), ...boardItems, ...fixedItems.slice(1)];
 
@@ -68,7 +69,7 @@ const SideBar: React.FC<SideBarProps> = ({ open, onClose }) => {
       open={open}
       onClose={onClose}
     >
-      <Box sx={{ width: 250 }} role="presentation" onClick={onClose} onKeyDown={onClose}>
+      <Box component="nav" aria-label="すべてのメニュー" sx={{ width: 280, maxWidth: '85vw' }}>
         <Box sx={{ p: 3, textAlign: 'center', bgcolor: 'primary.main', color: 'common.white' }}>
           <Typography variant="h6" sx={{ fontWeight: 600 }}>
             メニュー
@@ -80,6 +81,9 @@ const SideBar: React.FC<SideBarProps> = ({ open, onClose }) => {
               component={RouterLink}
               to={item.path}
               key={item.text}
+              onClick={onClose}
+              selected={pathname === item.path}
+              aria-current={pathname === item.path ? 'page' : undefined}
               sx={{
                 display: 'flex',
                 alignItems: 'center',

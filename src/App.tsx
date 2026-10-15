@@ -46,7 +46,7 @@ const AppRoutes: React.FC = () => {
 
   return (
     <Header>
-      <Box component="main" sx={{ flexGrow: 1, bgcolor: 'background.default' }}>
+      <Box component="main" id="main-content" tabIndex={-1} sx={{ flexGrow: 1, bgcolor: 'background.default' }}>
         <Routes>
           {isLoggedIn ? (
             // ログイン済みユーザー用ルート

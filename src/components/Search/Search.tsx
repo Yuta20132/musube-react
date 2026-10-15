@@ -136,7 +136,7 @@ const Search: React.FC = () => {
     const trimmed = username.trim();
 
     if (!trimmed) {
-      setError('usernameがありません');
+      setError('ユーザー名を入力してください。');
       setResults([]);
       setRowCount(0);
       setSubmittedQuery('');
@@ -203,12 +203,11 @@ const Search: React.FC = () => {
             `linear-gradient(145deg, ${theme.palette.background.paper} 0%, ${theme.palette.primary.light}12 100%)`,
         }}
       >
-        <Typography variant="h5" sx={{ fontWeight: 700 }}>
+        <Typography component="h1" variant="h4" sx={{ fontWeight: 700 }}>
           ユーザー検索
         </Typography>
         <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
-          `username` を部分一致で検索します。ログイン状態の Cookie を利用するため、`credentials:
-          "include"` で送信されます。
+          ユーザー名の一部を入力して、メンバーを探せます。検索結果を選ぶとプロフィールが表示されます。
         </Typography>
 
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2.5 }}>
@@ -236,7 +235,7 @@ const Search: React.FC = () => {
               disabled={loading}
               sx={{ minWidth: { xs: '100%', sm: 140 }, fontWeight: 700 }}
             >
-              検索
+              {loading ? '検索中…' : '検索'}
             </Button>
           </Stack>
         </Box>
@@ -251,7 +250,7 @@ const Search: React.FC = () => {
 
         {hasSearched && !loading && !error && (
           <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" sx={{ mb: 2 }}>
-            <Typography variant="subtitle2" color="text.secondary">
+            <Typography role="status" variant="subtitle2" color="text.secondary">
               「{submittedQuery}」の検索結果: {resultCount} 件
             </Typography>
           </Stack>

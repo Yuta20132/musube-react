@@ -68,7 +68,7 @@ const SearchDetailModal: React.FC<SearchDetailModalProps> = ({ open, content, on
         }}
       >
         <IconButton
-          aria-label="close"
+          aria-label="閉じる"
           onClick={onClose}
           sx={{
             position: 'absolute',
@@ -126,7 +126,7 @@ const SearchDetailModal: React.FC<SearchDetailModalProps> = ({ open, content, on
                 <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 0.5 }}>
                   {getCategoryIcon(content.category)}
                   <Typography variant="body1">
-                    {content.institution || '未設定'}
+                    {content.institution || '所属機関は登録されていません'}
                   </Typography>
                 </Stack>
               </Box>
